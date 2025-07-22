@@ -1,109 +1,140 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using MESharp.Commands;    // where your RelayCommand (or DelegateCommand) lives
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
-using MESharp.API;
 
 namespace MESharp.ViewModels
 {
+	public enum AppPage
+	{
+		Skills,
+		Inventory,
+		Equipment,
+		Npcs,
+		Settings // Added
+	}
+
 	public class MainWindowViewModel : INotifyPropertyChanged
 	{
-		private readonly SkillSession _session;
 		private readonly DateTime _sessionStart;
 		private readonly DispatcherTimer _updateTimer;
 
-		private bool _isListView;
-		public bool IsListView
+		private object _currentViewModel;
+		public object CurrentViewModel
 		{
-			get => _isListView;
-			set
+			get => _currentViewModel;
+			private set => SetProperty(ref _currentViewModel, value);
+		}
+
+		private AppPage _currentPage;
+		public AppPage CurrentPage
+		{
+			get => _currentPage;
+			private set
 			{
-				if (_isListView == value) return;
-				_isListView = value;
-				OnPropertyChanged();
-				SkillsView.Refresh();
+				if (SetProperty(ref _currentPage, value))
+				{
+					OnPropertyChanged(nameof(IsSkillsSelected));
+					OnPropertyChanged(nameof(IsInventorySelected));
+					OnPropertyChanged(nameof(IsEquipmentSelected));
+					OnPropertyChanged(nameof(IsNpcsSelected));
+					OnPropertyChanged(nameof(IsSettingsSelected));
+					OnPropertyChanged(nameof(CurrentPageName)); // Notify that the name has changed
+				}
 			}
 		}
 
-		public ObservableCollection<SkillViewModel> AllSkills { get; }
-		public ICollectionView SkillsView { get; }
+		public string CurrentPageName => $"Active Page:      {CurrentPage}";
 
-		private bool _showOnlyActive;
-		public bool ShowOnlyActive
-		{
-			get => _showOnlyActive;
-			set
-			{
-				if (_showOnlyActive == value) return;
-				_showOnlyActive = value;
-				OnPropertyChanged();
-				SkillsView.Refresh();
-			}
-		}
+		// one bool per view, bound to each ToggleButton.IsChecked
+		public bool IsSkillsSelected => CurrentPage == AppPage.Skills;
+		public bool IsInventorySelected => CurrentPage == AppPage.Inventory;
+		public bool IsEquipmentSelected => CurrentPage == AppPage.Equipment;
+		public bool IsNpcsSelected => CurrentPage == AppPage.Npcs;
+		public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
+
+		// Declare your commands
+		public ICommand ShowSkillsCommand { get; }
+		public ICommand ShowInventoryCommand { get; }
+		public ICommand ShowNpcsCommand { get; }
+		public ICommand ShowSettingsCommand { get; }
 
 		private string _sessionRuntimeString = "--:--:--";
 		public string SessionRuntimeString
 		{
 			get => _sessionRuntimeString;
-			private set
-			{
-				if (_sessionRuntimeString == value) return;
-				_sessionRuntimeString = value;
-				OnPropertyChanged();
-			}
+			private set => SetProperty(ref _sessionRuntimeString, value);
 		}
 
 		public MainWindowViewModel()
 		{
-			// remember when we started
 			_sessionStart = DateTime.UtcNow;
-			_session      = new SkillSession();
 
-			// build our skill cards
-			AllSkills = new ObservableCollection<SkillViewModel>(
-				Enum.GetValues(typeof(SkillName))
-					.Cast<SkillName>()
-					.Select(name => new SkillViewModel(name, _session))
-			);
+			// Wire up commands to methods
+			ShowSkillsCommand    = new RelayCommand(_ => ShowSkills());
+			ShowInventoryCommand = new RelayCommand(_ => ShowInventory());
+			ShowNpcsCommand      = new RelayCommand(_ => ShowNpcs());
+			ShowSettingsCommand  = new RelayCommand(_ => ShowSettings());
 
-			SkillsView = CollectionViewSource.GetDefaultView(AllSkills);
-			SkillsView.Filter = o =>
-			{
-				var vm = (SkillViewModel)o;
-				return !ShowOnlyActive || vm.XpGained > 0;
-			};
-			SkillsView.SortDescriptions.Add(
-				new SortDescription(nameof(SkillViewModel.XpGained),
-									ListSortDirection.Descending)
-			);
-
-			// timer to refresh XP *and* our runtime clock
+			// Timer for session runtime clock
 			_updateTimer = new DispatcherTimer(
 				TimeSpan.FromSeconds(1),
 				DispatcherPriority.Background,
-				(s, e) => RefreshAll(),
+				(s, e) => UpdateSessionTime(),
 				Dispatcher.CurrentDispatcher
 			);
 			_updateTimer.Start();
+
+			// Pick a default view
+			ShowSkills();
 		}
 
-		private void RefreshAll()
+		private void UpdateSessionTime()
 		{
-			foreach (var vm in AllSkills)
-				vm.Update();
-
-			// update the session‐timer string
 			var elapsed = DateTime.UtcNow - _sessionStart;
 			SessionRuntimeString = elapsed.ToString(@"hh\:mm\:ss");
-
-			SkillsView.Refresh();
 		}
 
+		private void ShowSkills()
+		{
+			CurrentViewModel = new SkillsViewModel();
+			CurrentPage      = AppPage.Skills;
+		}
+
+		private void ShowInventory()
+		{
+			CurrentViewModel = new InventoryViewModel();
+			CurrentPage      = AppPage.Inventory;
+		}
+
+		private void ShowNpcs()
+		{
+			CurrentViewModel = new NpcViewModel();
+			CurrentPage      = AppPage.Npcs;
+		}
+
+		private void ShowSettings()
+		{
+			CurrentViewModel = new SettingsViewModel();
+			CurrentPage = AppPage.Settings;
+		}
+
+		#region INotifyPropertyChanged boilerplate
 		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged([CallerMemberName] string propName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propName = null)
+		{
+			if (!Equals(field, newValue))
+			{
+				field = newValue;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+				return true;
+			}
+			return false;
+		}
+		protected void OnPropertyChanged([CallerMemberName] string name = null)
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+		#endregion
 	}
 }
-

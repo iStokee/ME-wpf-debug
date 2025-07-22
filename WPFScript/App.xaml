@@ -1,0 +1,33 @@
+﻿<Application
+    x:Class="MESharp.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MESharp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--  MahApps.Metro essentials  -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />-->
+                <!--  Pick your light & dark accent bases  -->
+                <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />-->
+
+                <!--  Material Design 3 theme (this packs in your Primary/Secondary swatches)  -->
+                <materialDesign:BundledTheme
+                    BaseTheme="Dark"
+                    PrimaryColor="BlueGrey"
+                    SecondaryColor="Orange" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--  Acrylic “glass” brush  -->
+            <Color x:Key="AcrylicBackgroundColor">#CCFFFFFF</Color>
+            <SolidColorBrush x:Key="AcrylicBackgroundBrush" Color="{DynamicResource AcrylicBackgroundColor}" />
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

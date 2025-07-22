@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "KyThF2eiLvA=",
+  "dgSpecHash": "n+6gZMZi2fc=",
   "success": true,
   "projectFilePath": "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\istokee\\.nuget\\packages\\controlzex\\4.4.0\\controlzex.4.4.0.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\costura.fody\\6.0.0\\costura.fody.6.0.0.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\fody\\6.9.2\\fody.6.9.2.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro\\2.4.10\\mahapps.metro.2.4.10.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\materialdesigncolors\\5.2.1\\materialdesigncolors.5.2.1.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\materialdesignthemes\\5.2.1\\materialdesignthemes.5.2.1.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\materialdesignthemes.mahapps\\5.2.1\\materialdesignthemes.mahapps.5.2.1.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\materialdesignthemes.wpf\\1.0.1\\materialdesignthemes.wpf.1.0.1.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\microsoft.csharp\\4.6.0\\microsoft.csharp.4.6.0.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.39\\microsoft.xaml.behaviors.wpf.1.1.39.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\system.data.datasetextensions\\4.6.0-preview3.19128.7\\system.data.datasetextensions.4.6.0-preview3.19128.7.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512"
+  ],
   "logs": []
 }

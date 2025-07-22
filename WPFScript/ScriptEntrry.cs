@@ -78,15 +78,15 @@ namespace MESharp
 		}
 
 
-		public static void Main()
-		{
+		//public static void Main()
+		//{
 
-			// 2) Spin up the STA UI thread
-			var uiThread = new Thread(InitAndShowWindow);
-			uiThread.SetApartmentState(ApartmentState.STA);
-			//uiThread.IsBackground = true;
-			uiThread.Start();
-		}
+		//	// 2) Spin up the STA UI thread
+		//	var uiThread = new Thread(InitAndShowWindow);
+		//	uiThread.SetApartmentState(ApartmentState.STA);
+		//	//uiThread.IsBackground = true;
+		//	uiThread.Start();
+		//}
 
 		private static void InitAndShowWindow()
 		{
