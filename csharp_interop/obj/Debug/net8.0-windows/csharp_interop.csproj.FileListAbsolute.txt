@@ -1,0 +1,12 @@
+C:\Development\ME\csharp_interop\bin\Debug\net8.0-windows\csharp_interop.deps.json
+C:\Development\ME\csharp_interop\bin\Debug\net8.0-windows\csharp_interop.dll
+C:\Development\ME\csharp_interop\bin\Debug\net8.0-windows\csharp_interop.pdb
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.GeneratedMSBuildEditorConfig.editorconfig
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.AssemblyInfoInputs.cache
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.AssemblyInfo.cs
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.csproj.CoreCompileInputs.cache
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.sourcelink.json
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.dll
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\refint\csharp_interop.dll
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\csharp_interop.pdb
+C:\Development\ME\csharp_interop\obj\Debug\net8.0-windows\ref\csharp_interop.dll

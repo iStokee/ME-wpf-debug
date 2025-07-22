@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("WPFScript")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("csharp_interop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f332a390fa813485a8b0e7651905651483e52620")]
-[assembly: System.Reflection.AssemblyProductAttribute("WPFScript")]
-[assembly: System.Reflection.AssemblyTitleAttribute("WPFScript")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyProductAttribute("csharp_interop")]
+[assembly: System.Reflection.AssemblyTitleAttribute("csharp_interop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]
