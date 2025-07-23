@@ -12,7 +12,6 @@
 using MESharp.Converters;
 using MESharp.ViewModels;
 using MESharp.Views;
-using MaterialDesignThemes.MahApps;
 using MaterialDesignThemes.Wpf;
 using MaterialDesignThemes.Wpf.Converters;
 using MaterialDesignThemes.Wpf.Transitions;
@@ -59,7 +58,7 @@ namespace MESharp.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/WPFScript;V1.0.0.0;component/views/skillsview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/WPFScript;component/views/skillsview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\SkillsView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

@@ -101,6 +101,39 @@ namespace MESharp
 			Dispatcher.Run();
 		}
 
+		//private static void InitAndShowWindow()
+		//{
+		//	// 1) Create the WPF Application if it doesn't already exist
+		//	var app = Application.Current ?? new Application();
+
+		//	// 2) Merge all of your MahApps + MaterialDesign resource dictionaries
+		//	void AddDict(string packUri) =>
+		//		app.Resources.MergedDictionaries.Add(new ResourceDictionary
+		//		{
+		//			Source = new Uri(packUri, UriKind.Absolute)
+		//		});
+
+		//	// MahApps.Metro
+		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml");
+		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml");
+		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml");
+		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml");
+		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml");
+
+		//	// MaterialDesignThemes
+		//	AddDict("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml");
+		//	AddDict("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml");
+		//	AddDict("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml");
+
+		//	// MaterialDesignColors (pick whatever palettes you want)
+		//	AddDict("pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml");
+		//	AddDict("pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml");
+
+		//	// 3) Now you can safely show your MainWindow
+		//	app.Run(new MainWindow());
+		//}
+
+
 	}
 
 }

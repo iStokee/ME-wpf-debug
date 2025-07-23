@@ -6,76 +6,69 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v8.0": {
-      "ControlzEx/4.4.0": {
-        "dependencies": {
-          "Microsoft.Xaml.Behaviors.Wpf": "1.1.39",
-          "System.Text.Json": "4.7.2"
-        },
+      "ControlzEx/2.0.0.54": {
         "runtime": {
-          "lib/netcoreapp3.1/ControlzEx.dll": {
+          "lib/net45/ControlzEx.dll": {
+            "assemblyVersion": "2.0.0.54",
+            "fileVersion": "2.0.0.54"
+          },
+          "lib/net45/System.Windows.Interactivity.dll": {
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "3.0.40218.0"
+          }
+        }
+      },
+      "Costura.Fody/0.1.0": {},
+      "Fody/1.13.0": {},
+      "MahApps.Metro/0.1.0": {
+        "runtime": {
+          "lib/net40/MahApps.Metro.Controls.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          },
+          "lib/net40/MahApps.Metro.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          },
+          "lib/net40/System.Windows.Interactivity.dll": {
             "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.4.0.50"
+            "fileVersion": "2.0.20525.0"
           }
         }
       },
-      "Costura.Fody/6.0.0": {
+      "Material.Icons/1.0.0": {
         "dependencies": {
-          "Fody": "6.9.2"
-        }
-      },
-      "Fody/6.9.2": {},
-      "MahApps.Metro/2.4.10": {
-        "dependencies": {
-          "ControlzEx": "4.4.0"
+          "Newtonsoft.Json": "12.0.3"
         },
         "runtime": {
-          "lib/netcoreapp3.1/MahApps.Metro.dll": {
-            "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.4.10.1"
-          }
-        },
-        "resources": {
-          "lib/netcoreapp3.1/de/MahApps.Metro.resources.dll": {
-            "locale": "de"
+          "lib/netstandard2.0/Material.Icons.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
-      "MaterialDesignColors/5.2.1": {
-        "runtime": {
-          "lib/net8.0/MaterialDesignColors.dll": {
-            "assemblyVersion": "5.2.1.0",
-            "fileVersion": "5.2.1.0"
-          }
-        }
-      },
-      "MaterialDesignThemes/5.2.1": {
+      "Material.Icons.WPF/1.0.0": {
         "dependencies": {
-          "MaterialDesignColors": "5.2.1",
-          "Microsoft.Xaml.Behaviors.Wpf": "1.1.39"
+          "Material.Icons": "1.0.0"
         },
         "runtime": {
-          "lib/net8.0/MaterialDesignThemes.Wpf.dll": {
-            "assemblyVersion": "5.2.1.0",
-            "fileVersion": "5.2.1.0"
+          "lib/netcoreapp3.1/Material.Icons.WPF.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
-      "MaterialDesignThemes.MahApps/5.2.1": {
-        "dependencies": {
-          "MahApps.Metro": "2.4.10",
-          "MaterialDesignColors": "5.2.1",
-          "MaterialDesignThemes": "5.2.1"
-        },
+      "MaterialDesignColors/0.0.0": {
         "runtime": {
-          "lib/net8.0/MaterialDesignThemes.MahApps.dll": {
-            "assemblyVersion": "5.2.1.0",
-            "fileVersion": "5.2.1.0"
+          "lib/net45/MaterialDesignColors.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
       "MaterialDesignThemes.Wpf/1.0.1": {
         "dependencies": {
-          "MaterialDesignColors": "5.2.1",
+          "MaterialDesignColors": "0.0.0",
           "Microsoft.CSharp": "4.6.0",
           "System.Data.DataSetExtensions": "4.6.0-preview3.19128.7"
         },
@@ -87,11 +80,11 @@
         }
       },
       "Microsoft.CSharp/4.6.0": {},
-      "Microsoft.Xaml.Behaviors.Wpf/1.1.39": {
+      "Newtonsoft.Json/12.0.3": {
         "runtime": {
-          "lib/net5.0-windows7.0/Microsoft.Xaml.Behaviors.dll": {
-            "assemblyVersion": "1.1.0.0",
-            "fileVersion": "1.1.39.4716"
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
           }
         }
       },
@@ -102,66 +95,58 @@
             "fileVersion": "4.7.19.12807"
           }
         }
-      },
-      "System.Text.Json/4.7.2": {
-        "runtime": {
-          "lib/netcoreapp3.0/System.Text.Json.dll": {
-            "assemblyVersion": "4.0.1.2",
-            "fileVersion": "4.700.20.21406"
-          }
-        }
       }
     }
   },
   "libraries": {
-    "ControlzEx/4.4.0": {
+    "ControlzEx/2.0.0.54": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-pZ5z4hYWwE4R13UMCVs6vII//nL7hz+Nwn4oJlnsZJRGqJNy6Z9KnJiTZfly6lKFu0pMc1aWBZpx+VqFTQKP1Q==",
-      "path": "controlzex/4.4.0",
-      "hashPath": "controlzex.4.4.0.nupkg.sha512"
+      "sha512": "sha512-Jy5YuHQVSFDn4h0w3OyB+05sVooxvpkF/iYhWVzc6pKvx7IxMjWmA0faC4mu89nN5+2TldbTmA0+LPrdHYfY3w==",
+      "path": "controlzex/2.0.0.54",
+      "hashPath": "controlzex.2.0.0.54.nupkg.sha512"
     },
-    "Costura.Fody/6.0.0": {
+    "Costura.Fody/0.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3Uriu9GJABMivG0wXMJs6NQ7FNE3pylir1gZEBAWDvpii3cnrmxXnOG44MMDuIVOIk/Xhef7WZFsaCNV+py9qA==",
-      "path": "costura.fody/6.0.0",
-      "hashPath": "costura.fody.6.0.0.nupkg.sha512"
+      "sha512": "sha512-p2y0YmjacEotul7xXnRl5T11SDH+ieUpEfqLSNSdOyc4TukTNxH2rjOt5AG+FDhiPKgqF43N+KOuypMRO6iDYg==",
+      "path": "costura.fody/0.1.0",
+      "hashPath": "costura.fody.0.1.0.nupkg.sha512"
     },
-    "Fody/6.9.2": {
+    "Fody/1.13.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-YBHobPGogb0vYhGYIxn/ndWqTjNWZveDi5jdjrcshL2vjwU3gQGyDeI7vGgye+2rAM5fGRvlLgNWLW3DpviS/w==",
-      "path": "fody/6.9.2",
-      "hashPath": "fody.6.9.2.nupkg.sha512"
+      "sha512": "sha512-fwVoDrF2Sjq8QgelRkaPX3ZNFutknPOYetFHXdx9yEJi93RgIh5l2E8hPZw2CflBcmK+K4aL+NnJ5pzMyGbuSA==",
+      "path": "fody/1.13.0",
+      "hashPath": "fody.1.13.0.nupkg.sha512"
     },
-    "MahApps.Metro/2.4.10": {
+    "MahApps.Metro/0.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-45exHKJCVYaD1/rNr3ekZPECEBM4uHOt6aYp6yNaJbliFMUo+d3z8Gi1xG+qEkbiHKITX+dlz+BW1FOsjAbl/w==",
-      "path": "mahapps.metro/2.4.10",
-      "hashPath": "mahapps.metro.2.4.10.nupkg.sha512"
+      "sha512": "sha512-jbJJlTLfqlRihEevc+Idorb7gosbEfebMxIQTml0LMM9W+hTBmQkLyHSxlszg3/HmC6cXtUQ7oEfaV8GyawY+A==",
+      "path": "mahapps.metro/0.1.0",
+      "hashPath": "mahapps.metro.0.1.0.nupkg.sha512"
     },
-    "MaterialDesignColors/5.2.1": {
+    "Material.Icons/1.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-D0HW6E2/kzsnEWCh1KDG/K09Fpkvs9mR3n91Y8YSOsEAoQmGZbVAj58ssyAxGTiIPj2zB4ZVnwxkizwO35/v8A==",
-      "path": "materialdesigncolors/5.2.1",
-      "hashPath": "materialdesigncolors.5.2.1.nupkg.sha512"
+      "sha512": "sha512-bmfpHIZYRPVbkDu7QjQ5oCeaQKq8VhETjcoQTQs2cDcC4bPWtiFN0xglyQbrrjdDRnvu0DC6hDq05b0atDrLtw==",
+      "path": "material.icons/1.0.0",
+      "hashPath": "material.icons.1.0.0.nupkg.sha512"
     },
-    "MaterialDesignThemes/5.2.1": {
+    "Material.Icons.WPF/1.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-x8JDqNHJcTLLxIoVts3w7AbSq5Zo0FXTw89XqPN7+n0EKqLXFwWsywiUn08HDyTGAmZVJqbQsWKxKWCI8qfWsQ==",
-      "path": "materialdesignthemes/5.2.1",
-      "hashPath": "materialdesignthemes.5.2.1.nupkg.sha512"
+      "sha512": "sha512-ba1Zi8a+04FeTnV4EL2NFJKg4TlyKK+fNVjzipJ7xK2OGur3D2fyZxTDuOEityMUG6Kq8NHlrMNHLdw4Kn9qTw==",
+      "path": "material.icons.wpf/1.0.0",
+      "hashPath": "material.icons.wpf.1.0.0.nupkg.sha512"
     },
-    "MaterialDesignThemes.MahApps/5.2.1": {
+    "MaterialDesignColors/0.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-8lbnJKQjn3Ri6irNSl797AK3AqgtlYs7NjDsCXPYRhrua2ULb5qX2AY7F7vwpHDPRj8II+auW6trTxS0Im9iEw==",
-      "path": "materialdesignthemes.mahapps/5.2.1",
-      "hashPath": "materialdesignthemes.mahapps.5.2.1.nupkg.sha512"
+      "sha512": "sha512-3fTJC97IQcoZiWptIb5cfsyzgiptJwwzdgxgD1/FmRQKpDeFq11M6KiZA7uxZPjuQEui8fCU4KSGDkz9rx+MrA==",
+      "path": "materialdesigncolors/0.0.0",
+      "hashPath": "materialdesigncolors.0.0.0.nupkg.sha512"
     },
     "MaterialDesignThemes.Wpf/1.0.1": {
       "type": "package",
@@ -177,12 +162,12 @@
       "path": "microsoft.csharp/4.6.0",
       "hashPath": "microsoft.csharp.4.6.0.nupkg.sha512"
     },
-    "Microsoft.Xaml.Behaviors.Wpf/1.1.39": {
+    "Newtonsoft.Json/12.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-8PZKqw9QOcu42xk8puY4P1+EXHL9YGOR9b7qhaYx5cILHul456H073tj99vyPcCt0W0781T9RwHqkx507ZyUpQ==",
-      "path": "microsoft.xaml.behaviors.wpf/1.1.39",
-      "hashPath": "microsoft.xaml.behaviors.wpf.1.1.39.nupkg.sha512"
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
     },
     "System.Data.DataSetExtensions/4.6.0-preview3.19128.7": {
       "type": "package",
@@ -190,13 +175,6 @@
       "sha512": "sha512-ZFJYYi41Wf4xlFKuuRUblw8yThgzBTYeZTs7eGU7sDiu+X+BmeIdT3pstCrmLpDyflDIBuKX1VYmBCGKo14h6w==",
       "path": "system.data.datasetextensions/4.6.0-preview3.19128.7",
       "hashPath": "system.data.datasetextensions.4.6.0-preview3.19128.7.nupkg.sha512"
-    },
-    "System.Text.Json/4.7.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg==",
-      "path": "system.text.json/4.7.2",
-      "hashPath": "system.text.json.4.7.2.nupkg.sha512"
     }
   }
 }

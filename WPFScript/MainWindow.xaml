@@ -182,12 +182,16 @@
 
                 <!--  FIX: Explicitly set the Foreground for all TextBlocks in the StatusBar  -->
                 <!--  Accent header  -->
-                <materialDesign:ColorZone CornerRadius="0" Mode="PrimaryMid">
+                <materialDesign:ColorZone
+                    Grid.Column="0"
+                    VerticalAlignment="Stretch"
+                    CornerRadius="0"
+                    Mode="PrimaryMid">
                     <TextBlock
-                        Margin="16,0"
+                        Margin="0"
                         VerticalAlignment="Center"
                         Foreground="White"
-                        Style="{StaticResource MaterialDesignBody1TextBlock}"
+                        Style="{DynamicResource MaterialDesignBodyMediumTextBlock}"
                         Text="{Binding CurrentPageName}" />
                 </materialDesign:ColorZone>
                 <materialDesign:ColorZone
@@ -208,9 +212,10 @@
 
                         <Button
                             Grid.Column="2"
-                            Margin="12,0,5,0"
+                            Height="30"
+                            Margin="0"
                             Command="{Binding ShowSettingsCommand}"
-                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Style="{DynamicResource MaterialDesignFlatButton}"
                             ToolTip="Settings">
                             <!--  FIX: Set the icon's foreground color  -->
                             <mdControls:PackIcon Foreground="{DynamicResource MaterialDesign.Brush.Primary.Dark.Foreground}" Kind="Cog" />

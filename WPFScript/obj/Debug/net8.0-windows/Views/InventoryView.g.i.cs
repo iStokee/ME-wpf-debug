@@ -9,8 +9,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using MESharp;
+using MESharp.Converters;
 using MESharp.ViewModels;
-using MaterialDesignThemes.MahApps;
+using MESharp.Views;
+using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
 using MaterialDesignThemes.Wpf.Converters;
 using MaterialDesignThemes.Wpf.Transitions;
@@ -57,7 +60,7 @@ namespace MESharp.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/WPFScript;V1.0.0.0;component/views/inventoryview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/WPFScript;component/views/inventoryview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\InventoryView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
