@@ -71,10 +71,11 @@ namespace MESharp
 			};
 
 			// 2) Spin up the STA UI thread
-			var uiThread = new Thread(InitAndShowWindow);
-			uiThread.SetApartmentState(ApartmentState.STA);
-			uiThread.IsBackground = true;
-			uiThread.Start();
+            var uiThread = new Thread(InitAndShowWindow);
+            uiThread.SetApartmentState(ApartmentState.STA);
+            // Keep as a foreground thread so its dispatcher stays alive reliably
+            uiThread.IsBackground = false;
+            uiThread.Start();
 		}
 
 
@@ -88,18 +89,23 @@ namespace MESharp
 		//	uiThread.Start();
 		//}
 
-		private static void InitAndShowWindow()
-		{
-			// You may also need to set the current directory so that
-			// P/Invokes find their native .dlls:
-			//var exeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-			//Environment.CurrentDirectory = exeFolder;
+        private static void InitAndShowWindow()
+        {
+            // Ensure Application exists (when launched from native host)
+            var app = Application.Current ?? new Application();
 
-			//var app = new Application();
-			var wnd = new MainWindow();
-			wnd.ShowDialog();
-			Dispatcher.Run();
-		}
+            // Merge default theme so DynamicResource lookups have values before window loads
+            try
+            {
+                string asmName = (Application.ResourceAssembly ?? Assembly.GetExecutingAssembly()).GetName().Name;
+                Uri themeUri = new Uri($"pack://application:,,,/{asmName};component/Themes/Light.xaml", UriKind.Absolute);
+                app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = themeUri });
+            }
+            catch { /* ignore theme init issues */ }
+
+            // Run the dispatcher with our main window so it owns activation properly
+            app.Run(new MainWindow());
+        }
 
 		//private static void InitAndShowWindow()
 		//{

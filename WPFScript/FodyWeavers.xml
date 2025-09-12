@@ -1,21 +1,3 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
-
-	<!-- embed everything your code references… -->
-	<Costura>
-		<!--
-      Only these assemblies will be embedded.
-      You can add as many <IncludeAssemblies> entries as you need.
-    -->
-		<IncludeAssemblies>
-			MahApps.Metro
-			MaterialDesignThemes.MahApps  <!-- if you use MaterialDesign -->
-			MaterialDesignThemes.Wpf
-			MaterialDesignColors
-			ControlzEx
-			Microsoft.Xaml.Behaviors
-		</IncludeAssemblies>
-	</Costura>
-
+﻿<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+	<Costura />
 </Weavers>

@@ -1,5 +1,5 @@
-﻿<UserControl
-    x:Class="MESharp.Views.InventoryView"
+<UserControl
+    x:Class="MESharp.Views.EquipmentView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{DynamicResource App.BackgroundBrush}"
@@ -7,12 +7,12 @@
 
     <ScrollViewer>
         <StackPanel Margin="12">
-            <GroupBox Header="Inventory">
+            <GroupBox Header="Equipment">
                 <StackPanel>
                     <!-- State + Load -->
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Width="110" Command="{Binding RefreshStateCommand}" Content="Refresh State" Style="{StaticResource AccentButton}" />
-                        <Button Width="100" Margin="8,0,0,0" Command="{Binding LoadAllCommand}" Content="Load Items" Style="{StaticResource AccentButton}" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Width="100" Command="{Binding RefreshStateCommand}" Content="Refresh State" Style="{StaticResource AccentButton}" />
+                        <Button Width="100" Margin="8,0,0,0" Command="{Binding LoadItemsCommand}" Content="Load Items" Style="{StaticResource AccentButton}" />
                         <Ellipse Width="10" Height="10" Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
@@ -32,20 +32,6 @@
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsFull}" Value="True">
-                                            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Ellipse.Style>
-                        </Ellipse>
-                        <TextBlock FontWeight="SemiBold" Text="Full:" />
-                        <TextBlock Text="{Binding IsFull}" />
-                        <Ellipse Width="10" Height="10" Margin="8,0,6,0">
-                            <Ellipse.Style>
-                                <Style TargetType="Ellipse">
-                                    <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
-                                    <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsEmpty}" Value="True">
                                             <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
                                         </DataTrigger>
@@ -60,38 +46,23 @@
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsItemSelected}" Value="True">
+                                        <DataTrigger Binding="{Binding IsFull}" Value="True">
                                             <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Ellipse.Style>
                         </Ellipse>
-                        <TextBlock FontWeight="SemiBold" Text="Selected:" />
-                        <TextBlock Text="{Binding IsItemSelected}" />
-                        <TextBlock Margin="8,0,4,0" FontWeight="SemiBold" Text="Free Slots:" />
-                        <TextBlock Text="{Binding FreeSlots}" />
+                        <TextBlock FontWeight="SemiBold" Text="Full:" />
+                        <TextBlock Text="{Binding IsFull}" />
                     </StackPanel>
 
-                    <!-- Filter + Indicators -->
+                    <!-- Filter & Indicators + Action -->
                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Filter (name or IDs):" />
-                        <TextBox Width="300" Text="{Binding QuickFilterText, UpdateSourceTrigger=PropertyChanged}" />
-                        <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" Content="Treat as IDs" IsChecked="{Binding TreatAsIds}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
-                            <Ellipse.Style>
-                                <Style TargetType="Ellipse">
-                                    <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding QuickContains}" Value="True">
-                                            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Ellipse.Style>
-                        </Ellipse>
-                        <TextBlock VerticalAlignment="Center" Text="Contains:" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding QuickContains}" />
+                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Filter (IDs or Name):" />
+                        <TextBox Width="260" Text="{Binding QuickFilterText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Margin="12,0,6,0" VerticalAlignment="Center" Text="Count:" />
+                        <TextBlock VerticalAlignment="Center" Text="{Binding QuickCount}" />
                         <Ellipse Width="10" Height="10" Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
@@ -120,12 +91,32 @@
                         </Ellipse>
                         <TextBlock VerticalAlignment="Center" Text="All:" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding ContainsAllResult}" />
+                        <Ellipse Width="10" Height="10" Margin="6,0,6,0">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ContainsOnlyFlag}" Value="True">
+                                            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                        <TextBlock VerticalAlignment="Center" Text="Only:" />
+                        <TextBlock VerticalAlignment="Center" Text="{Binding ContainsOnlyResult}" />
                         <Ellipse Width="10" Height="10" Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasCount}" Value="True">
+                                        <DataTrigger Binding="{Binding QuickCount}" Value="0">
+                                            <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding QuickCount}" Value="1">
+                                            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding QuickCount}" Value="2">
                                             <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -134,28 +125,18 @@
                         </Ellipse>
                         <TextBlock VerticalAlignment="Center" Text="Count:" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding QuickCount}" />
+                        <Button Width="120" Margin="12,0,0,0" Command="{Binding AutoUnequipCommand}" Content="Unequip" ToolTip="Uses ID if numeric, else Name" Style="{StaticResource AccentButton}" />
                     </StackPanel>
 
-                    <!-- Actions -->
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Action:" />
-                        <ComboBox Width="140" ItemsSource="{Binding ActionTypes}" SelectedItem="{Binding SelectedAction}" />
-                        <TextBlock Margin="8,0,6,0" VerticalAlignment="Center" Text="Using:" />
-                        <TextBox Width="260" Text="{Binding ActionInput}" />
-                        <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" Content="By ID" IsChecked="{Binding UseIdForAction}" />
-                        <Button Width="120" Margin="8,0,0,0" Command="{Binding ExecuteActionCommand}" Content="Execute" Style="{StaticResource AccentButton}" />
-                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding ActionResult}" />
-                    </StackPanel>
-
-                    <!-- Items list (filtered) -->
-                    <ListView Height="420" Margin="0,8,0,0" Background="{DynamicResource App.CardBrush}" ItemsSource="{Binding ItemsView}">
+                    <!-- Filtered Items -->
+                    <ListView Height="320" Margin="0,8,0,0" Background="{DynamicResource App.CardBrush}" ItemsSource="{Binding QuickItems}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="60" DisplayMemberBinding="{Binding Slot}" Header="Slot" />
-                                <GridViewColumn Width="70" DisplayMemberBinding="{Binding Id}" Header="ID" />
-                                <GridViewColumn Width="240" DisplayMemberBinding="{Binding Name}" Header="Name" />
-                                <GridViewColumn Width="90" DisplayMemberBinding="{Binding Amount}" Header="Amount" />
-                                <GridViewColumn Width="90" DisplayMemberBinding="{Binding Exp}" Header="XP" />
+                                <GridViewColumn Width="70" Header="Slot" DisplayMemberBinding="{Binding Slot}" />
+                                <GridViewColumn Width="80" Header="ID" DisplayMemberBinding="{Binding Id}" />
+                                <GridViewColumn Width="240" Header="Name" DisplayMemberBinding="{Binding Name}" />
+                                <GridViewColumn Width="100" Header="Amount" DisplayMemberBinding="{Binding Amount}" />
+                                <GridViewColumn Width="80" Header="XP" DisplayMemberBinding="{Binding Xp}" />
                             </GridView>
                         </ListView.View>
                     </ListView>

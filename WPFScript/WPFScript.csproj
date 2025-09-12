@@ -1,54 +1,40 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿
 
-	<PropertyGroup>
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<Nullable>enable</Nullable>
-		<UseWPF>true</UseWPF>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<OutputType>WinExe</OutputType>
-		<IncludeSymbols>True</IncludeSymbols>
-		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-	</PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<GenerateAssemblyInfo>True</GenerateAssemblyInfo>
-		<IsPublishable>False</IsPublishable>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<GenerateAssemblyInfo>True</GenerateAssemblyInfo>
-		<IsPublishable>False</IsPublishable>
-	</PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command=":: ensure the target folder exists&#xD;&#xA;if not exist &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot; (&#xD;&#xA;  mkdir &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:: copy the freshly built DLL into that folder&#xD;&#xA;xcopy /Y /I &quot;$(TargetPath)&quot; &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;" />
+  </Target>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command=":: ensure the target folder exists&#xD;&#xA;if not exist &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot; (&#xD;&#xA;  mkdir &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:: copy the freshly built DLL into that folder&#xD;&#xA;xcopy /Y /I &quot;$(TargetPath)&quot; &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;" />
-	</Target>
+  <ItemGroup>
+    <Compile Remove="ScriptEntry.cs" />
+  </ItemGroup>
 
-	<ItemGroup Condition="'$(OutputType)'=='Library'">
-		<ApplicationDefinition Remove="App.xaml" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Fody" Version="6.9.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="ControlzEx" Version="4.4.0" />
-		<PackageReference Include="Costura.Fody" Version="6.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Fody" Version="6.9.2">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
-		<PackageReference Include="MaterialDesignColors" Version="5.2.1" />
-		<PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
-		<PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
-		<PackageReference Include="MaterialDesignThemes.Wpf" Version="1.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="csharp_interop">
-	    <HintPath>..\..\..\..\ME\csharp_interop\bin\Debug\net8.0-windows\csharp_interop.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
+  <ItemGroup>
+    <Reference Include="csharp_interop">
+      <HintPath>..\..\x64\Build_DLL\csharp_interop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

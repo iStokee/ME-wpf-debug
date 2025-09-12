@@ -13,6 +13,8 @@ namespace MESharp.ViewModels
 		Inventory,
 		Equipment,
 		Npcs,
+		Objects,
+		Bank,
 		Settings // Added
 	}
 
@@ -40,6 +42,8 @@ namespace MESharp.ViewModels
 					OnPropertyChanged(nameof(IsInventorySelected));
 					OnPropertyChanged(nameof(IsEquipmentSelected));
 					OnPropertyChanged(nameof(IsNpcsSelected));
+					OnPropertyChanged(nameof(IsObjectsSelected));
+					OnPropertyChanged(nameof(IsBankSelected));
 					OnPropertyChanged(nameof(IsSettingsSelected));
 					OnPropertyChanged(nameof(CurrentPageName)); // Notify that the name has changed
 				}
@@ -53,12 +57,17 @@ namespace MESharp.ViewModels
 		public bool IsInventorySelected => CurrentPage == AppPage.Inventory;
 		public bool IsEquipmentSelected => CurrentPage == AppPage.Equipment;
 		public bool IsNpcsSelected => CurrentPage == AppPage.Npcs;
+		public bool IsObjectsSelected => CurrentPage == AppPage.Objects;
+		public bool IsBankSelected => CurrentPage == AppPage.Bank;
 		public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
 
 		// Declare your commands
 		public ICommand ShowSkillsCommand { get; }
 		public ICommand ShowInventoryCommand { get; }
+		public ICommand ShowEquipmentCommand { get; }
 		public ICommand ShowNpcsCommand { get; }
+		public ICommand ShowObjectsCommand { get; }
+		public ICommand ShowBankCommand { get; }
 		public ICommand ShowSettingsCommand { get; }
 
 		private string _sessionRuntimeString = "--:--:--";
@@ -75,7 +84,10 @@ namespace MESharp.ViewModels
 			// Wire up commands to methods
 			ShowSkillsCommand    = new RelayCommand(_ => ShowSkills());
 			ShowInventoryCommand = new RelayCommand(_ => ShowInventory());
+			ShowEquipmentCommand = new RelayCommand(_ => ShowEquipment());
 			ShowNpcsCommand      = new RelayCommand(_ => ShowNpcs());
+			ShowObjectsCommand   = new RelayCommand(_ => ShowObjects());
+			ShowBankCommand      = new RelayCommand(_ => ShowBank());
 			ShowSettingsCommand  = new RelayCommand(_ => ShowSettings());
 
 			// Timer for session runtime clock
@@ -109,10 +121,28 @@ namespace MESharp.ViewModels
 			CurrentPage      = AppPage.Inventory;
 		}
 
+		private void ShowEquipment()
+		{
+			CurrentViewModel = new EquipmentViewModel();
+			CurrentPage      = AppPage.Equipment;
+		}
+
 		private void ShowNpcs()
 		{
 			CurrentViewModel = new NpcViewModel();
 			CurrentPage      = AppPage.Npcs;
+		}
+
+		private void ShowObjects()
+		{
+			CurrentViewModel = new ObjectsViewModel();
+			CurrentPage      = AppPage.Objects;
+		}
+
+		private void ShowBank()
+		{
+			CurrentViewModel = new BankViewModel();
+			CurrentPage      = AppPage.Bank;
 		}
 
 		private void ShowSettings()

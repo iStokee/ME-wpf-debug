@@ -1,7 +1,7 @@
 # Build outputs
-bin/
-obj/
-out/
+\bin
+\obj
+\out
 
 # User-specific files
 *.user
@@ -34,3 +34,5 @@ project.lock.json
 settings.json
 
 
+/WPFScript/.vs
+/WPFScript/obj

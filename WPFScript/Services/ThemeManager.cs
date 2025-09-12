@@ -1,58 +1,67 @@
-﻿using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
-using MESharp.Models;
+﻿using MESharp.Models;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
 
 namespace MESharp.Services
 {
-	public static class ThemeManager
-	{
-		private static readonly string SettingsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
-		private static readonly PaletteHelper PaletteHelper = new PaletteHelper();
+    public static class ThemeManager
+    {
+        private static readonly string SettingsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
 
-		public static void ApplyTheme(ThemeSettings settings)
-		{
-			if (settings == null) return;
+        private static Uri GetThemePackUri(string relative)
+        {
+            var asm = Application.ResourceAssembly ?? typeof(ThemeManager).Assembly;
+            var asmName = asm.GetName().Name;
+            return new Uri($"pack://application:,,,/{asmName};component/{relative}", UriKind.Absolute);
+        }
 
-			// Get the theme from the application's resource dictionary
-			var theme = Application.Current != null
-				? Application.Current.Resources.GetTheme()
-				: null;
+        public static void ApplyTheme(ThemeSettings settings)
+        {
+            if (settings == null) return;
 
-			// Set Light/Dark  
-			theme.SetBaseTheme(settings.IsDark ? BaseTheme.Dark : BaseTheme.Light);
+            var app = Application.Current;
+            if (app == null) return;
 
-			// Set Primary Color  
-			if (!string.IsNullOrEmpty(settings.PrimaryColor))
-			{
-				var primarySwatch = SwatchHelper.Swatches.FirstOrDefault(s => s.Name.Equals(settings.PrimaryColor, StringComparison.OrdinalIgnoreCase));
-				if (primarySwatch != null)
-				{
-					// Fix: Use a valid color from the swatch's Lookup dictionary  
-					var primaryColor = primarySwatch.Lookup.FirstOrDefault().Value;
-					theme.SetPrimaryColor(primaryColor);
-				}
-			}
+            // 1) Swap base theme dictionary (Light/Dark)
+            var merged = app.Resources.MergedDictionaries;
+            // Remove any existing theme dicts
+            for (int i = merged.Count - 1; i >= 0; i--)
+            {
+                var src = merged[i].Source?.ToString() ?? string.Empty;
+                if (src.EndsWith("Themes/Light.xaml", StringComparison.OrdinalIgnoreCase) ||
+                    src.EndsWith("Themes/Dark.xaml", StringComparison.OrdinalIgnoreCase) ||
+                    src.Contains("/Themes/Light.xaml", StringComparison.OrdinalIgnoreCase) ||
+                    src.Contains("/Themes/Dark.xaml", StringComparison.OrdinalIgnoreCase))
+                {
+                    merged.RemoveAt(i);
+                }
+            }
+            var baseThemePath = settings.IsDark ? "Themes/Dark.xaml" : "Themes/Light.xaml";
+            merged.Add(new ResourceDictionary { Source = GetThemePackUri(baseThemePath) });
 
-			// Set Secondary Color  
-			if (!string.IsNullOrEmpty(settings.SecondaryColor))
-			{
-				var secondarySwatch = SwatchHelper.Swatches.FirstOrDefault(s => s.Name.Equals(settings.SecondaryColor, StringComparison.OrdinalIgnoreCase));
-				if (secondarySwatch != null)
-				{
-					// Fix: Use a valid color from the swatch's Lookup dictionary for secondary color  
-					var secondaryColor = secondarySwatch.Lookup.FirstOrDefault().Value;
-					theme.SetSecondaryColor(secondaryColor);
-				}
-			}
+            // 2) Apply Primary color (will override the defaults from theme)
+            var primary = ParseColor(settings.PrimaryColor) ?? (settings.IsDark ? (Color)ColorConverter.ConvertFromString("#FF7AA2FF") : (Color)ColorConverter.ConvertFromString("#FF3F51B5"));
 
-			PaletteHelper.SetTheme(theme);
-		}
+            var primaryBrush = new SolidColorBrush(primary);
+            primaryBrush.Freeze();
+
+            var primaryFg = new SolidColorBrush(GetIdealForeground(primary));
+            primaryFg.Freeze();
+
+            // derive a soft tint of primary for selections (about 20% alpha)
+            var primarySoft = Color.FromArgb(0x33, primary.R, primary.G, primary.B);
+            var primarySoftBrush = new SolidColorBrush(primarySoft);
+            primarySoftBrush.Freeze();
+
+            app.Resources["PrimaryBrush"] = primaryBrush;
+            app.Resources["PrimaryForegroundBrush"] = primaryFg;
+            app.Resources["PrimarySoftBrush"] = primarySoftBrush;
+
+            // Custom background overrides removed per UX feedback
+        }
 
 		public static void SaveSettings(ThemeSettings settings)
 		{
@@ -67,22 +76,41 @@ namespace MESharp.Services
 			}
 		}
 
-		public static ThemeSettings LoadSettings()
-		{
-			if (!File.Exists(SettingsFilePath))
-			{
-				return new ThemeSettings { IsDark = false, PrimaryColor = "Purple", SecondaryColor = "DeepPurple" };
-			}
+        public static ThemeSettings LoadSettings()
+        {
+            if (!File.Exists(SettingsFilePath))
+            {
+                return new ThemeSettings { IsDark = false, PrimaryColor = "#3F51B5" };
+            }
 
 			try
 			{
 				string json = File.ReadAllText(SettingsFilePath);
 				return JsonSerializer.Deserialize<ThemeSettings>(json);
 			}
-			catch (Exception)
-			{
-				return new ThemeSettings { IsDark = false, PrimaryColor = "Purple", SecondaryColor = "DeepPurple" };
-			}
-		}
-	}
+            catch (Exception)
+            {
+                return new ThemeSettings { IsDark = false, PrimaryColor = "#3F51B5" };
+            }
+        }
+
+        private static Color GetIdealForeground(Color bg)
+        {
+            // Perceived luminance (WCAG 2.0)
+            double L = 0.2126 * bg.ScR + 0.7152 * bg.ScG + 0.0722 * bg.ScB;
+            return L > 0.5 ? Colors.Black : Colors.White;
+        }
+
+        public static Color? ParseColor(string? nameOrHex)
+        {
+            if (string.IsNullOrWhiteSpace(nameOrHex)) return null;
+            try
+            {
+                var obj = ColorConverter.ConvertFromString(nameOrHex.Trim());
+                if (obj is Color c) return c;
+            }
+            catch { }
+            return null;
+        }
+    }
 }
