@@ -32,6 +32,12 @@
             <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
 
             <!--  DataTemplates for Views  -->
+            <DataTemplate DataType="{x:Type vm:GameViewModel}">
+                <views:GameView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ChatViewModel}">
+                <views:ChatView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:SkillsViewModel}">
                 <views:SkillsView />
             </DataTemplate>
@@ -209,6 +215,34 @@
             Background="{DynamicResource App.CardBrush}"
             DockPanel.Dock="Top">
             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                <ToggleButton
+                    Margin="5,0,5,0"
+                    Command="{Binding ShowGameCommand}"
+                    IsChecked="{Binding IsGameSelected, Mode=OneWay}"
+                    Style="{StaticResource DarkToggleButtonStyle}"
+                    ToolTip="Game">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Kind="ApplicationCog" />
+                        <TextBlock Text="Game" />
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton
+                    Margin="5,0,5,0"
+                    Command="{Binding ShowChatCommand}"
+                    IsChecked="{Binding IsChatSelected, Mode=OneWay}"
+                    Style="{StaticResource DarkToggleButtonStyle}"
+                    ToolTip="Chat">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Kind="Message" />
+                        <TextBlock Text="Chat" />
+                    </StackPanel>
+                </ToggleButton>
                 <!--  Apply the new style to the navigation buttons  -->
                 <ToggleButton
                     Margin="5,0,5,0"

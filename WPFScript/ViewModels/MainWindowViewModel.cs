@@ -9,6 +9,8 @@ namespace MESharp.ViewModels
 {
 	public enum AppPage
 	{
+		Game,
+		Chat,
 		Skills,
 		Inventory,
 		Equipment,
@@ -53,6 +55,8 @@ namespace MESharp.ViewModels
 		public string CurrentPageName => $"Active Page:      {CurrentPage}";
 
 		// one bool per view, bound to each ToggleButton.IsChecked
+		public bool IsGameSelected => CurrentPage == AppPage.Game;
+		public bool IsChatSelected => CurrentPage == AppPage.Chat;
 		public bool IsSkillsSelected => CurrentPage == AppPage.Skills;
 		public bool IsInventorySelected => CurrentPage == AppPage.Inventory;
 		public bool IsEquipmentSelected => CurrentPage == AppPage.Equipment;
@@ -62,6 +66,8 @@ namespace MESharp.ViewModels
 		public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
 
 		// Declare your commands
+		public ICommand ShowGameCommand { get; }
+		public ICommand ShowChatCommand { get; }
 		public ICommand ShowSkillsCommand { get; }
 		public ICommand ShowInventoryCommand { get; }
 		public ICommand ShowEquipmentCommand { get; }
@@ -82,6 +88,8 @@ namespace MESharp.ViewModels
 			_sessionStart = DateTime.UtcNow;
 
 			// Wire up commands to methods
+			ShowGameCommand      = new RelayCommand(_ => ShowGame());
+			ShowChatCommand      = new RelayCommand(_ => ShowChat());
 			ShowSkillsCommand    = new RelayCommand(_ => ShowSkills());
 			ShowInventoryCommand = new RelayCommand(_ => ShowInventory());
 			ShowEquipmentCommand = new RelayCommand(_ => ShowEquipment());
@@ -100,7 +108,7 @@ namespace MESharp.ViewModels
 			_updateTimer.Start();
 
 			// Pick a default view
-			ShowSkills();
+			ShowGame();
 		}
 
 		private void UpdateSessionTime()
@@ -166,5 +174,18 @@ namespace MESharp.ViewModels
 		protected void OnPropertyChanged([CallerMemberName] string name = null)
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		#endregion
+
+
+		private void ShowGame()
+		{
+			CurrentViewModel = new GameViewModel();
+			CurrentPage      = AppPage.Game;
+		}
+
+		private void ShowChat()
+		{
+			CurrentViewModel = new ChatViewModel();
+			CurrentPage      = AppPage.Chat;
+		}
 	}
 }

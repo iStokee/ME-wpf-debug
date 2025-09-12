@@ -1,0 +1,89 @@
+<UserControl
+    x:Class="MESharp.Views.GameView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Margin="0,0,0,8"
+            FontSize="18"
+            FontWeight="SemiBold"
+            Text="Game Status" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Text="State:" />
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="1"
+                Text="{Binding State}" />
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Text="ProcessId:" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding ProcessId}" />
+
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                Text="Handle:" />
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="1"
+                Text="{Binding ProcessHandle}" />
+
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                Text="HWND:" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="1"
+                Text="{Binding GameWindow}" />
+
+            <TextBlock
+                Grid.Row="4"
+                Grid.Column="0"
+                Text="Injected:" />
+            <TextBlock
+                Grid.Row="4"
+                Grid.Column="1"
+                Text="{Binding IsInjected}" />
+
+            <TextBlock
+                Grid.Row="5"
+                Grid.Column="0"
+                Text="LocalPlayer:" />
+            <TextBlock
+                Grid.Row="5"
+                Grid.Column="1"
+                Text="{Binding LocalPlayerName}" />
+
+            <TextBlock
+                Grid.Row="6"
+                Grid.Column="0"
+                Text="Version:" />
+            <TextBlock
+                Grid.Row="6"
+                Grid.Column="1"
+                Text="{Binding Version}" />
+        </Grid>
+    </Grid>
+</UserControl>
+
