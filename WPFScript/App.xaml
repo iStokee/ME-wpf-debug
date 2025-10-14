@@ -14,6 +14,7 @@
             <!--  Acrylic “glass” brush  -->
             <Color x:Key="AcrylicBackgroundColor">#CCFFFFFF</Color>
             <SolidColorBrush x:Key="AcrylicBackgroundBrush" Color="{DynamicResource AcrylicBackgroundColor}" />
+
         </ResourceDictionary>
     </Application.Resources>
 

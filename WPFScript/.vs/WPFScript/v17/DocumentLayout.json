@@ -1,15 +1,32 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\gameview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\gameview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\chatviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\chatviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\chatview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\chatview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
-      "VerticalTabListWidth": 256,
+      "VerticalTabListWidth": 172,
       "DocumentGroups": [
         {
-          "DockedWidth": 1032,
-          "SelectedChildIndex": -1,
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,6 +47,59 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-14T18:42:42.618Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "GameView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\GameView.xaml",
+              "RelativeDocumentMoniker": "Views\\GameView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\GameView.xaml",
+              "RelativeToolTip": "Views\\GameView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-14T18:38:08.424Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ChatViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ChatViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ChatViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ChatViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ChatViewModel.cs",
+              "ViewState": "AgIAALUAAAAAAAAAAAAowOQAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-14T16:57:37.189Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ChatView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ChatView.xaml",
+              "RelativeDocumentMoniker": "Views\\ChatView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ChatView.xaml",
+              "RelativeToolTip": "Views\\ChatView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-14T16:52:53.956Z",
+              "EditorCaption": ""
             }
           ]
         }

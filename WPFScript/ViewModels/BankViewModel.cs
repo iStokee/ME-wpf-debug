@@ -18,7 +18,6 @@ namespace MESharp.ViewModels
         public string QuickFilterText { get => _quickFilterText; set { if (Set(ref _quickFilterText, value)) UpdateQuickFilter(); } }
         public int QuickStack { get => _quickStack; set { if (Set(ref _quickStack, value)) OnPropertyChanged(nameof(HasStack)); } }
 
-
 		public bool HasStack => QuickStack > 0;
 
         private string _idsInput, _namesInput, _idInput, _nameInput;
@@ -26,7 +25,6 @@ namespace MESharp.ViewModels
         public string NamesInput { get => _namesInput; set => Set(ref _namesInput, value); }
         public string IdInput { get => _idInput; set => Set(ref _idInput, value); }
         public string NameInput { get => _nameInput; set => Set(ref _nameInput, value); }
-
         private string _actionResult, _stackResult;
         public string ActionResult { get => _actionResult; set => Set(ref _actionResult, value); }
         public string StackResult { get => _stackResult; set => Set(ref _stackResult, value); }
@@ -49,23 +47,27 @@ namespace MESharp.ViewModels
         public BankViewModel()
         {
             RefreshStateCommand = new RelayCommand(_ => IsOpen = Bank.IsOpen);
+            
             CloseCommand = new RelayCommand(_ => { Bank.Close(); IsOpen = Bank.IsOpen; });
+            
             DepositAllCommand = new RelayCommand(_ => ActionResult = Bank.DepositAll() ? "✔ Deposited" : "✘ Failed");
+            
             DepositAllExceptIdsCommand = new RelayCommand(_ => {
                 var ids = ParseIds(IdsInput);
-                ActionResult = Bank.DepositAllExcept(ids) ? "✔ Deposited (except)" : "✘ Failed";
-            });
+                ActionResult = Bank.DepositAllExcept(ids) ? "✔ Deposited (except)" : "✘ Failed";});
+
             DepositAllExceptNamesCommand = new RelayCommand(_ => {
                 var names = ParseNames(NamesInput);
-                ActionResult = Bank.DepositAllExcept(names) ? "✔ Deposited (except)" : "✘ Failed";
-            });
+                ActionResult = Bank.DepositAllExcept(names) ? "✔ Deposited (except)" : "✘ Failed";});
+
             GetStackByIdCommand = new RelayCommand(_ => {
-                if (int.TryParse(IdInput, out var id)) StackResult = Bank.GetStack(id).ToString();
-            });
+                if (int.TryParse(IdInput, out var id)) StackResult = Bank.GetStack(id).ToString();});
+
             GetStackByNameCommand = new RelayCommand(_ => StackResult = Bank.GetStack(NameInput).ToString());
+            
             DoActionByIdCommand = new RelayCommand(_ => {
-                if (int.TryParse(IdInput, out var id)) ActionResult = Bank.DoActionById(id, ActionIndex, Offset) ? "✔ OK" : "✘ Failed";
-            });
+                if (int.TryParse(IdInput, out var id)) ActionResult = Bank.DoActionById(id, ActionIndex, Offset) ? "✔ OK" : "✘ Failed";});
+
             DoActionByNameCommand = new RelayCommand(_ => ActionResult = Bank.DoActionByName(NameInput, ActionIndex, Offset) ? "✔ OK" : "✘ Failed");
 
             UpdateQuickFilter();
@@ -79,6 +81,7 @@ namespace MESharp.ViewModels
             foreach (var p in parts) if (int.TryParse(p.Trim(), out var id)) list.Add(id);
             return list.ToArray();
         }
+
         private static string[] ParseNames(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return Array.Empty<string>();

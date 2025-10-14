@@ -43,6 +43,7 @@
                 </Ellipse.Style>
             </Ellipse>
             <CheckBox Margin="5" VerticalAlignment="Center" Content="Show Only Alive" IsChecked="{Binding ShowOnlyAlive}" />
+            <CheckBox Margin="5" VerticalAlignment="Center" Content="Live Refresh" IsChecked="{Binding LiveRefresh}" />
 
             <TextBlock
                 Margin="5,5,5,7"
@@ -62,23 +63,49 @@
         <!--  Unified NPC Grid  -->
         <DataGrid
             Grid.Row="1"
+            ItemsSource="{Binding NpcsView}"
+            SelectedItem="{Binding SelectedNpc, Mode=TwoWay}"
+            SelectionMode="Single"
+            SelectionUnit="FullRow"
+            RowHeight="28"
             AutoGenerateColumns="False"
             CanUserSortColumns="True"
-            CanUserResizeColumns="True"
-            ColumnWidth="SizeToCells"
+            CanUserResizeColumns="False"
             IsReadOnly="True"
             Background="{DynamicResource App.CardBrush}"
-            ItemsSource="{Binding NpcsView}"
-            SelectedItem="{Binding SelectedNpc, Mode=TwoWay}">
+            Foreground="{DynamicResource App.ForegroundBrush}">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="Padding" Value="6,4" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Ascending">
+                            <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Descending">
+                            <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Header="Name" SortMemberPath="Name" Width="*" MinWidth="200" />
+                <DataGridTextColumn Binding="{Binding Name}" Header="Name" SortMemberPath="Name" Width="220" />
                 <DataGridTextColumn Binding="{Binding Id}" Header="ID" SortMemberPath="Id" Width="80" />
                 <DataGridTextColumn Binding="{Binding Health}" Header="Health" SortMemberPath="Health" Width="90" />
                 <DataGridTextColumn Binding="{Binding X}" Header="X" SortMemberPath="X" Width="70" />
                 <DataGridTextColumn Binding="{Binding Y}" Header="Y" SortMemberPath="Y" Width="70" />
                 <DataGridTextColumn Binding="{Binding Distance}" Header="Distance" SortMemberPath="Distance" Width="90" />
                 <DataGridTextColumn Binding="{Binding Animation}" Header="Animation" SortMemberPath="Animation" Width="100" />
-                <DataGridTextColumn Binding="{Binding UniqueId}" Header="UniqueId" SortMemberPath="UniqueId" Width="120" />
+                <DataGridTextColumn Binding="{Binding UniqueId}" Header="UniqueId" SortMemberPath="UniqueId" Width="140" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

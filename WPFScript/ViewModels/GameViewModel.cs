@@ -26,7 +26,47 @@ namespace MESharp.ViewModels
         public bool IsInjected { get => _isInjected; private set => Set(ref _isInjected, value); }
 
         private string _localPlayerName = string.Empty;
-        public string LocalPlayerName { get => _localPlayerName; private set => Set(ref _localPlayerName, value); }
+        public string LocalPlayerName
+        {
+            get => _localPlayerName;
+            private set
+            {
+                if (Set(ref _localPlayerName, value))
+                {
+                    OnPropertyChanged(nameof(DisplayedLocalPlayerName));
+                }
+            }
+        }
+
+        private bool _isLocalPlayerNameVisible;
+        public bool IsLocalPlayerNameVisible
+        {
+            get => _isLocalPlayerNameVisible;
+            set
+            {
+                if (Set(ref _isLocalPlayerNameVisible, value))
+                {
+                    OnPropertyChanged(nameof(DisplayedLocalPlayerName));
+                }
+            }
+        }
+
+        public string DisplayedLocalPlayerName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(LocalPlayerName))
+                    return "(not available)";
+
+                if (IsLocalPlayerNameVisible)
+                    return LocalPlayerName;
+
+                var length = LocalPlayerName.Length;
+                if (length < 4) length = 4;
+                if (length > 12) length = 12;
+                return new string('*', length);
+            }
+        }
 
         private string _version = string.Empty;
         public string Version { get => _version; private set => Set(ref _version, value); }
@@ -54,10 +94,16 @@ namespace MESharp.ViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        private void Set<T>(ref T f, T v, [CallerMemberName] string? n = null)
+        private bool Set<T>(ref T f, T v, [CallerMemberName] string? n = null)
         {
-            if (!Equals(f, v)) { f = v; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n)); }
+            if (!Equals(f, v)) { f = v; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n)); return true; }
+            return false;
+        }
+
+        private void OnPropertyChanged(string? propertyName)
+        {
+            if (string.IsNullOrWhiteSpace(propertyName)) return;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
-

@@ -3,29 +3,159 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             Background="{DynamicResource App.BackgroundBrush}"
+             Foreground="{DynamicResource App.ForegroundBrush}">
     <Grid Margin="8">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Chat" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8"/>
-        <ListView Grid.Row="1" ItemsSource="{Binding Messages}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="160"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Time}" Foreground="Gray"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Text}" TextWrapping="Wrap"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Refresh Snapshot"
+                        Command="{Binding RefreshCommand}" />
+                <Button Content="Clear Snapshot"
+                        Margin="8,0,0,0"
+                        Command="{Binding ClearCommand}" />
+                <CheckBox Content="Auto refresh snapshot"
+                          Margin="16,0,0,0"
+                          VerticalAlignment="Center"
+                          IsChecked="{Binding IsLiveMode, Mode=TwoWay}" />
+                <CheckBox Content="Capture live events"
+                          Margin="16,0,0,0"
+                          VerticalAlignment="Center"
+                          IsChecked="{Binding CaptureEvents, Mode=TwoWay}" />
+                <Button Content="Clear Events"
+                        Margin="8,0,0,0"
+                        Command="{Binding ClearEventsCommand}" />
+            </StackPanel>
+        </StackPanel>
+
+        <TabControl Grid.Row="2">
+            <TabItem Header="Snapshot">
+                <Grid Margin="0,8,0,0">
+                    <ListView ItemsSource="{Binding Messages}"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              Background="{DynamicResource App.CardBrush}"
+                              Foreground="{DynamicResource App.ForegroundBrush}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Sequence}" Width="50"/>
+                                <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}" Width="90"/>
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="160"/>
+                                <GridViewColumn Header="Text" Width="260">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Extra1" Width="180">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Extra1}" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Extra2" Width="180">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Extra2}" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Timestamp" DisplayMemberBinding="{Binding TimestampRaw}" Width="140"/>
+                                <GridViewColumn Header="Total" DisplayMemberBinding="{Binding TimeTotalRaw}" Width="90"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource App.MutedBrush}"
+                               Text="No chat messages yet. Use the controls above to refresh the snapshot.">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasMessages}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Live Events">
+                <Grid Margin="0,8,0,0">
+                    <ListView ItemsSource="{Binding LiveEvents}"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              Background="{DynamicResource App.CardBrush}"
+                              Foreground="{DynamicResource App.ForegroundBrush}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Sequence}" Width="60"/>
+                                <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}" Width="100"/>
+                                <GridViewColumn Header="Channel" DisplayMemberBinding="{Binding Channel}" Width="140"/>
+                                <GridViewColumn Header="Names" Width="200">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Names}" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Text" Width="260">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Details" Width="220">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Details}" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Tick" DisplayMemberBinding="{Binding Tick}" Width="80"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource App.MutedBrush}"
+                               Text="No live events captured yet. Enable 'Capture live events' above or trigger chat activity.">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasEvents}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>
-

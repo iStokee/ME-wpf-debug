@@ -60,7 +60,6 @@
                 <views:SettingsView />
             </DataTemplate>
 
-            <!--  Stylized ToggleButton, theme-aware (no hard-coded hover bg)  -->
             <Style x:Key="DarkToggleButtonStyle" TargetType="ToggleButton">
                 <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                 <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
@@ -73,34 +72,34 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
-                            <Border
-                                x:Name="border"
-                                Padding="{TemplateBinding Padding}"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="8">
-                                <ContentPresenter
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    RecognizesAccessKey="True" />
+                            <Border x:Name="border"
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True" />
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsKeyboardFocused" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
                                     <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="#666" />
+                                    <Setter Property="Foreground" Value="#66808080" />
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#33808080" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -179,7 +178,9 @@
                         Click="OnMinimizeClick"
                         Style="{StaticResource IconButton}"
                         ToolTip="Minimize">
-                        <iconPacks:PackIconMaterial Kind="WindowMinimize" />
+                        <iconPacks:PackIconMaterial
+                            Kind="WindowMinimize"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                     <Button
                         Width="40"
@@ -188,7 +189,9 @@
                         Click="OnMaximizeClick"
                         Style="{StaticResource IconButton}"
                         ToolTip="Maximize/Restore">
-                        <iconPacks:PackIconMaterial Kind="WindowMaximize" />
+                        <iconPacks:PackIconMaterial
+                            Kind="WindowMaximize"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                     <Button
                         Width="40"
@@ -197,7 +200,9 @@
                         Click="OnCloseClick"
                         Style="{StaticResource IconButton}"
                         ToolTip="Close">
-                        <iconPacks:PackIconMaterial Kind="Close" />
+                        <iconPacks:PackIconMaterial
+                            Kind="Close"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                 </StackPanel>
             </Grid>
@@ -225,6 +230,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="ApplicationCog" />
                         <TextBlock Text="Game" />
                     </StackPanel>
@@ -239,6 +245,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Message" />
                         <TextBlock Text="Chat" />
                     </StackPanel>
@@ -254,6 +261,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Trophy" />
                         <TextBlock Text="Skills" />
                     </StackPanel>
@@ -268,6 +276,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="ViewList" />
                         <TextBlock Text="Inventory" />
                     </StackPanel>
@@ -282,6 +291,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Robot" />
                         <TextBlock Text="NPCs" />
                     </StackPanel>
@@ -296,6 +306,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Shield" />
                         <TextBlock Text="Equipment" />
                     </StackPanel>
@@ -310,6 +321,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Cube" />
                         <TextBlock Text="Objects" />
                     </StackPanel>
@@ -324,6 +336,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Bank" />
                         <TextBlock Text="Bank" />
                     </StackPanel>
@@ -338,6 +351,7 @@
                         <iconPacks:PackIconMaterial
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                             Kind="Cog" />
                         <TextBlock Text="Settings" />
                     </StackPanel>

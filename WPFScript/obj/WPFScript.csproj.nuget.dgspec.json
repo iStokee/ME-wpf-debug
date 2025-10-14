@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj": {}
+    "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj": {}
   },
   "projects": {
-    "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj": {
+    "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
+        "projectUniqueName": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
         "projectName": "WPFScript",
-        "projectPath": "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
+        "projectPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
         "packagesPath": "C:\\Users\\istokee\\.nuget\\packages\\",
-        "outputPath": "C:\\Development\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\",
+        "outputPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,10 +50,6 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
-            "ControlzEx": {
-              "target": "Package",
-              "version": "[4.4.0, )"
-            },
             "Costura.Fody": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -66,25 +62,13 @@
               "target": "Package",
               "version": "[6.9.2, )"
             },
-            "MahApps.Metro": {
+            "MahApps.Metro.IconPacks": {
               "target": "Package",
-              "version": "[2.4.10, )"
+              "version": "[6.1.0, )"
             },
-            "MaterialDesignColors": {
+            "Microsoft.Xaml.Behaviors.Wpf": {
               "target": "Package",
-              "version": "[5.2.1, )"
-            },
-            "MaterialDesignThemes": {
-              "target": "Package",
-              "version": "[5.2.1, )"
-            },
-            "MaterialDesignThemes.MahApps": {
-              "target": "Package",
-              "version": "[5.2.1, )"
-            },
-            "MaterialDesignThemes.Wpf": {
-              "target": "Package",
-              "version": "[1.0.1, )"
+              "version": "[1.1.135, )"
             }
           },
           "imports": [
@@ -106,7 +90,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

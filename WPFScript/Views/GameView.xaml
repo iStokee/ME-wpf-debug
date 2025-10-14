@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{DynamicResource App.BackgroundBrush}"
+    Foreground="{DynamicResource App.ForegroundBrush}"
     mc:Ignorable="d">
     <Grid Margin="8">
         <Grid.RowDefinitions>
@@ -16,72 +18,154 @@
             FontWeight="SemiBold"
             Text="Game Status" />
         <Grid Grid.Row="1">
+            <Grid.Resources>
+                <Style x:Key="ValueTextStyle" TargetType="TextBlock">
+                    <Setter Property="Margin" Value="16,6,0,6" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="RevealNameToggleStyle" TargetType="ToggleButton">
+                    <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                    <Setter Property="BorderThickness" Value="2" />
+                    <Setter Property="Padding" Value="12,4" />
+                    <Setter Property="MinWidth" Value="70" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="Content" Value="Show" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Border x:Name="border"
+                                        CornerRadius="8"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      RecognizesAccessKey="True" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                                        <Setter Property="Content" Value="Hide" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="#66808080" />
+                                        <Setter TargetName="border" Property="BorderBrush" Value="#33808080" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Resources>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="State:" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
+                Style="{StaticResource ValueTextStyle}"
                 Text="{Binding State}" />
 
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="ProcessId:" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
+                Style="{StaticResource ValueTextStyle}"
                 Text="{Binding ProcessId}" />
 
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="Handle:" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
+                Style="{StaticResource ValueTextStyle}"
                 Text="{Binding ProcessHandle}" />
 
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="HWND:" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
+                Style="{StaticResource ValueTextStyle}"
                 Text="{Binding GameWindow}" />
 
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="Injected:" />
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="1"
+                Style="{StaticResource ValueTextStyle}"
                 Text="{Binding IsInjected}" />
 
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="LocalPlayer:" />
-            <TextBlock
+            <StackPanel
                 Grid.Row="5"
                 Grid.Column="1"
-                Text="{Binding LocalPlayerName}" />
+                Margin="0,4,10,4"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayedLocalPlayerName}" />
+                <ToggleButton
+                    Margin="12,0,0,0"
+                    IsChecked="{Binding IsLocalPlayerNameVisible, Mode=TwoWay}"
+                    Style="{StaticResource RevealNameToggleStyle}"
+                    ToolTip="Reveal or hide the local player name" />
+            </StackPanel>
 
             <TextBlock
                 Grid.Row="6"
                 Grid.Column="0"
+                Margin="0,6,0,6"
                 Text="Version:" />
             <TextBlock
                 Grid.Row="6"
                 Grid.Column="1"
+                Style="{StaticResource ValueTextStyle}"
                 Text="{Binding Version}" />
         </Grid>
     </Grid>

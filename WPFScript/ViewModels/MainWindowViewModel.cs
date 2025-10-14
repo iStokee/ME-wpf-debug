@@ -40,6 +40,8 @@ namespace MESharp.ViewModels
 			{
 				if (SetProperty(ref _currentPage, value))
 				{
+					OnPropertyChanged(nameof(IsGameSelected));
+					OnPropertyChanged(nameof(IsChatSelected));
 					OnPropertyChanged(nameof(IsSkillsSelected));
 					OnPropertyChanged(nameof(IsInventorySelected));
 					OnPropertyChanged(nameof(IsEquipmentSelected));

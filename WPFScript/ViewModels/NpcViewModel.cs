@@ -13,7 +13,20 @@ namespace MESharp.ViewModels
 {
 	public class NpcViewModel : INotifyPropertyChanged
 	{
-		private readonly DispatcherTimer _updateTimer;
+	private readonly DispatcherTimer _updateTimer;
+
+	private bool _liveRefresh = true;
+	public bool LiveRefresh
+	{
+		get => _liveRefresh;
+		set
+		{
+			if (_liveRefresh == value) return;
+			_liveRefresh = value;
+			OnPropertyChanged();
+			UpdateTimer();
+		}
+	}
 
 		public ObservableCollection<Npcs.Npc> AllNpcs { get; }
 		public ICollectionView NpcsView { get; }
@@ -81,16 +94,32 @@ namespace MESharp.ViewModels
 			NpcsView = CollectionViewSource.GetDefaultView(AllNpcs);
 			NpcsView.Filter = FilterPredicate;
 
-			DoActionCommand = new RelayCommand(_ => ExecuteDoAction(),
-											   _ => !string.IsNullOrWhiteSpace(FilterText) || SelectedNpc != null);
+		DoActionCommand = new RelayCommand(_ => ExecuteDoAction(),
+										   _ => !string.IsNullOrWhiteSpace(FilterText) || SelectedNpc != null);
 
-			_updateTimer = new DispatcherTimer(
-				TimeSpan.FromSeconds(1),
-				DispatcherPriority.Background,
-				(s, e) => RefreshAll(),
-				Dispatcher.CurrentDispatcher);
-			_updateTimer.Start();
+		_updateTimer = new DispatcherTimer(
+			TimeSpan.FromSeconds(1),
+			DispatcherPriority.Background,
+			(s, e) => RefreshAll(),
+			Dispatcher.CurrentDispatcher);
+		UpdateTimer();
+	}
+
+	private void UpdateTimer()
+	{
+		if (_liveRefresh)
+		{
+			if (!_updateTimer.IsEnabled)
+			{
+				_updateTimer.Start();
+				RefreshAll();
+			}
 		}
+		else if (_updateTimer.IsEnabled)
+		{
+			_updateTimer.Stop();
+		}
+	}
 
 		private bool FilterPredicate(object o)
 		{

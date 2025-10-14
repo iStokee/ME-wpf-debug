@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)materialdesignthemes\5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('$(NuGetPackageRoot)materialdesignthemes\5.2.1\build\MaterialDesignThemes.targets')" />
+    <Import Project="$(NuGetPackageRoot)system.text.json\8.0.5\buildTransitive\net6.0\System.Text.Json.targets" Condition="Exists('$(NuGetPackageRoot)system.text.json\8.0.5\buildTransitive\net6.0\System.Text.Json.targets')" />
     <Import Project="$(NuGetPackageRoot)fody\6.9.2\build\Fody.targets" Condition="Exists('$(NuGetPackageRoot)fody\6.9.2\build\Fody.targets')" />
     <Import Project="$(NuGetPackageRoot)costura.fody\6.0.0\build\Costura.Fody.targets" Condition="Exists('$(NuGetPackageRoot)costura.fody\6.0.0\build\Costura.Fody.targets')" />
   </ImportGroup>
