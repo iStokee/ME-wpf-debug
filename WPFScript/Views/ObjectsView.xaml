@@ -10,52 +10,117 @@
             <GroupBox Header="Objects">
                 <StackPanel>
                     <StackPanel Margin="0,0,0,8">
-                        <TextBlock Text="Select object types to load:" FontSize="12" Margin="0,0,0,4" />
+                        <TextBlock
+                            Margin="0,0,0,4"
+                            FontSize="12"
+                            Text="Select object types to load:" />
                         <WrapPanel>
-                            <CheckBox Content="Object [0]" IsChecked="{Binding IncludeObject}" Margin="0,0,12,8" />
-                            <CheckBox Content="NPC [1]" IsChecked="{Binding IncludeNpc}" Margin="0,0,12,8" />
-                            <CheckBox Content="Player [2]" IsChecked="{Binding IncludePlayer}" Margin="0,0,12,8" />
-                            <CheckBox Content="Ground [3]" IsChecked="{Binding IncludeGroundItem}" Margin="0,0,12,8" />
-                            <CheckBox Content="Highlight [4]" IsChecked="{Binding IncludeHighlight}" Margin="0,0,12,8" />
-                            <CheckBox Content="Projectile [5]" IsChecked="{Binding IncludeProjectile}" Margin="0,0,12,8" />
-                            <CheckBox Content="Tile [8]" IsChecked="{Binding IncludeTile}" Margin="0,0,12,8" />
-                            <CheckBox Content="Object [12]" IsChecked="{Binding IncludeObject12}" Margin="0,0,12,8" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Object [0]"
+                                IsChecked="{Binding IncludeObject}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="NPC [1]"
+                                IsChecked="{Binding IncludeNpc}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Player [2]"
+                                IsChecked="{Binding IncludePlayer}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Ground [3]"
+                                IsChecked="{Binding IncludeGroundItem}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Highlight [4]"
+                                IsChecked="{Binding IncludeHighlight}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Projectile [5]"
+                                IsChecked="{Binding IncludeProjectile}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Tile [8]"
+                                IsChecked="{Binding IncludeTile}" />
+                            <CheckBox
+                                Margin="0,0,12,8"
+                                Content="Object [12]"
+                                IsChecked="{Binding IncludeObject12}" />
                         </WrapPanel>
                     </StackPanel>
 
                     <WrapPanel Margin="0,0,0,8" VerticalAlignment="Center">
-                        <CheckBox Content="Interactable only" IsChecked="{Binding OnlyInteractable}" Margin="0,0,12,0" />
-                        <CheckBox Content="Live refresh" IsChecked="{Binding LiveRefresh}" Margin="0,0,12,0" />
-                        <Button Width="100" Command="{Binding RefreshCommand}" Content="Refresh" Style="{StaticResource AccentButton}" Margin="0,0,12,0" />
-                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource App.MutedBrush}" Text="Refresh runs automatically when types change." />
+                        <CheckBox
+                            Margin="0,0,12,0"
+                            Content="Interactable only"
+                            IsChecked="{Binding OnlyInteractable}" />
+                        <CheckBox
+                            Margin="0,0,12,0"
+                            Content="Live refresh"
+                            IsChecked="{Binding LiveRefresh}" />
+                        <Button
+                            Width="100"
+                            Height="30"
+                            Margin="0,0,12,0"
+                            Command="{Binding RefreshCommand}"
+                            Content="Refresh"
+                            Style="{StaticResource AccentButton}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource App.MutedBrush}"
+                            Text="Refresh runs automatically when types change." />
                     </WrapPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                        <TextBlock Text="Filter (name or ID):" VerticalAlignment="Center" />
-                        <TextBox Width="220" Margin="8,0,0,0" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource App.MutedBrush}" Text="Use * for wildcard." />
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Text="Filter (name or ID):" />
+                        <TextBox
+                            Width="220"
+                            Margin="8,0,0,0"
+                            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource App.MutedBrush}"
+                            Text="Use * for wildcard." />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                        <TextBlock Text="Action index:" VerticalAlignment="Center" />
-                        <ComboBox Width="80" Margin="8,0,0,0" ItemsSource="{Binding ActionIndices}" SelectedItem="{Binding ActionIndex}" />
-                        <Button Width="100" Margin="12,0,0,0" Command="{Binding DoActionCommand}" Content="Do Action" Style="{StaticResource AccentButton}" />
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Text="Action index:" />
+                        <ComboBox
+                            Width="100"
+                            Margin="8,0,0,0"
+                            ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                            ItemsSource="{Binding ActionIndices}"
+                            SelectedItem="{Binding ActionIndex}"
+                            Style="{StaticResource AppComboBox}" />
+                        <Button
+                            Width="100"
+                            Height="30"
+                            Margin="12,0,0,0"
+                            Command="{Binding DoActionCommand}"
+                            Content="DoAction"
+                            Style="{StaticResource AccentButton}" />
                     </StackPanel>
 
-                    <DataGrid Margin="0"
-                              ItemsSource="{Binding ObjectsView}"
-                              SelectedItem="{Binding SelectedObject, Mode=TwoWay}"
-                              SelectionMode="Single"
-                              SelectionUnit="FullRow"
-                              RowHeight="28"
-                              AutoGenerateColumns="False"
-                              CanUserSortColumns="True"
-                              CanUserResizeColumns="False"
-                             IsReadOnly="True"
-                              Background="{DynamicResource App.CardBrush}"
-                              Foreground="{DynamicResource App.ForegroundBrush}">
+                    <DataGrid
+                        Margin="0"
+                        AutoGenerateColumns="False"
+                        Background="{DynamicResource App.CardBrush}"
+                        CanUserResizeColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="True"
+                        Foreground="{DynamicResource App.ForegroundBrush}"
+                        HeadersVisibility="Column"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding ObjectsView}"
+                        RowHeaderWidth="0"
+                        RowHeight="28"
+                        SelectedItem="{Binding SelectedObject, Mode=TwoWay}"
+                        SelectionMode="Single"
+                        SelectionUnit="FullRow">
                         <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                            <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="DataGridColumnHeader">
                                 <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
                                 <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                                 <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
@@ -78,16 +143,52 @@
                             </Style>
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Id}" Header="ID" SortMemberPath="Id" Width="70" />
-                            <DataGridTextColumn Binding="{Binding Name}" Header="Name" SortMemberPath="Name" Width="200" />
-                            <DataGridTextColumn Binding="{Binding Action}" Header="Action" SortMemberPath="Action" Width="160" />
-                            <DataGridTextColumn Binding="{Binding TypeLabel}" Header="Type" SortMemberPath="Type" Width="120" />
-                            <DataGridTextColumn Binding="{Binding Distance, StringFormat={}{0:F1}}" Header="Dist" SortMemberPath="Distance" Width="80" />
-                            <DataGridTextColumn Binding="{Binding Floor}" Header="Floor" SortMemberPath="Floor" Width="80" />
-                            <DataGridTextColumn Binding="{Binding Life}" Header="Life" SortMemberPath="Life" Width="80" />
-                            <DataGridTextColumn Binding="{Binding Animation}" Header="Anim" SortMemberPath="Animation" Width="80" />
-                            <DataGridTextColumn Binding="{Binding CombatLevel}" Header="Cmb" SortMemberPath="CombatLevel" Width="80" />
-                            <DataGridTemplateColumn Header="Tile" Width="180">
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding Id}"
+                                Header="ID"
+                                SortMemberPath="Id" />
+                            <DataGridTextColumn
+                                Width="200"
+                                Binding="{Binding Name}"
+                                Header="Name"
+                                SortMemberPath="Name" />
+                            <DataGridTextColumn
+                                Width="160"
+                                Binding="{Binding Action}"
+                                Header="Action"
+                                SortMemberPath="Action" />
+                            <DataGridTextColumn
+                                Width="120"
+                                Binding="{Binding TypeLabel}"
+                                Header="Type"
+                                SortMemberPath="Type" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding Distance, StringFormat={}{0:F1}}"
+                                Header="Dist"
+                                SortMemberPath="Distance" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding Floor}"
+                                Header="Floor"
+                                SortMemberPath="Floor" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding Life}"
+                                Header="Life"
+                                SortMemberPath="Life" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding Animation}"
+                                Header="Anim"
+                                SortMemberPath="Animation" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding CombatLevel}"
+                                Header="Cmb"
+                                SortMemberPath="CombatLevel" />
+                            <DataGridTemplateColumn Width="180" Header="Tile">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock>

@@ -1,9 +1,10 @@
-﻿using MESharp.Commands;    // where your RelayCommand (or DelegateCommand) lives
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
+using MESharp.Commands;
 
 namespace MESharp.ViewModels
 {
@@ -20,10 +21,12 @@ namespace MESharp.ViewModels
 		Settings // Added
 	}
 
-	public class MainWindowViewModel : INotifyPropertyChanged
+	public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 	{
 		private readonly DateTime _sessionStart;
 		private readonly DispatcherTimer _updateTimer;
+        private readonly EventHandler _sessionTimerHandler;
+        private readonly Dictionary<AppPage, object> _viewModelCache = new();
 
 		private object _currentViewModel;
 		public object CurrentViewModel
@@ -101,12 +104,12 @@ namespace MESharp.ViewModels
 			ShowSettingsCommand  = new RelayCommand(_ => ShowSettings());
 
 			// Timer for session runtime clock
-			_updateTimer = new DispatcherTimer(
-				TimeSpan.FromSeconds(1),
-				DispatcherPriority.Background,
-				(s, e) => UpdateSessionTime(),
-				Dispatcher.CurrentDispatcher
-			);
+            _sessionTimerHandler = (_, __) => UpdateSessionTime();
+			_updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _updateTimer.Tick += _sessionTimerHandler;
 			_updateTimer.Start();
 
 			// Pick a default view
@@ -121,44 +124,37 @@ namespace MESharp.ViewModels
 
 		private void ShowSkills()
 		{
-			CurrentViewModel = new SkillsViewModel();
-			CurrentPage      = AppPage.Skills;
+			SwitchView(AppPage.Skills, () => new SkillsViewModel());
 		}
 
 		private void ShowInventory()
 		{
-			CurrentViewModel = new InventoryViewModel();
-			CurrentPage      = AppPage.Inventory;
+			SwitchView(AppPage.Inventory, () => new InventoryViewModel());
 		}
 
 		private void ShowEquipment()
 		{
-			CurrentViewModel = new EquipmentViewModel();
-			CurrentPage      = AppPage.Equipment;
+			SwitchView(AppPage.Equipment, () => new EquipmentViewModel());
 		}
 
 		private void ShowNpcs()
 		{
-			CurrentViewModel = new NpcViewModel();
-			CurrentPage      = AppPage.Npcs;
+			SwitchView(AppPage.Npcs, () => new NpcViewModel());
 		}
 
 		private void ShowObjects()
 		{
-			CurrentViewModel = new ObjectsViewModel();
-			CurrentPage      = AppPage.Objects;
+			SwitchView(AppPage.Objects, () => new ObjectsViewModel());
 		}
 
 		private void ShowBank()
 		{
-			CurrentViewModel = new BankViewModel();
-			CurrentPage      = AppPage.Bank;
+			SwitchView(AppPage.Bank, () => new BankViewModel());
 		}
 
 		private void ShowSettings()
 		{
-			CurrentViewModel = new SettingsViewModel();
-			CurrentPage = AppPage.Settings;
+			SwitchView(AppPage.Settings, () => new SettingsViewModel());
 		}
 
 		#region INotifyPropertyChanged boilerplate
@@ -180,14 +176,72 @@ namespace MESharp.ViewModels
 
 		private void ShowGame()
 		{
-			CurrentViewModel = new GameViewModel();
-			CurrentPage      = AppPage.Game;
+			SwitchView(AppPage.Game, () => new GameViewModel());
 		}
 
 		private void ShowChat()
 		{
-			CurrentViewModel = new ChatViewModel();
-			CurrentPage      = AppPage.Chat;
+			SwitchView(AppPage.Chat, () => new ChatViewModel());
 		}
+
+		private void SwitchView(AppPage page, Func<object> factory)
+		{
+            if (page == CurrentPage && CurrentViewModel != null)
+            {
+                if (CurrentViewModel is IActivatableViewModel alreadyActive)
+                {
+                    try { alreadyActive.OnActivated(); } catch { /* ignore */ }
+                }
+                return;
+            }
+
+            if (_currentViewModel is IActivatableViewModel toDeactivate)
+            {
+                try { toDeactivate.OnDeactivated(); } catch { /* ignore */ }
+            }
+
+            var next = GetOrCreateViewModel(page, factory);
+            CurrentViewModel = next;
+            CurrentPage = page;
+
+            if (next is IActivatableViewModel toActivate)
+            {
+                try { toActivate.OnActivated(); } catch { /* ignore */ }
+            }
+		}
+
+        private object GetOrCreateViewModel(AppPage page, Func<object> factory)
+        {
+            if (factory == null) throw new ArgumentNullException(nameof(factory));
+
+            if (!_viewModelCache.TryGetValue(page, out var vm))
+            {
+                vm = factory();
+                _viewModelCache[page] = vm;
+            }
+            return vm;
+        }
+
+        public void Dispose()
+        {
+            try { _updateTimer.Stop(); } catch { /* ignore */ }
+            _updateTimer.Tick -= _sessionTimerHandler;
+
+            foreach (var vm in _viewModelCache.Values)
+            {
+                if (vm is IActivatableViewModel activatable)
+                {
+                    try { activatable.OnDeactivated(); } catch { /* ignore */ }
+                }
+
+                if (vm is IDisposable disposable)
+                {
+                    try { disposable.Dispose(); } catch { /* ignore */ }
+                }
+            }
+
+            _viewModelCache.Clear();
+            CurrentViewModel = null;
+        }
 	}
 }

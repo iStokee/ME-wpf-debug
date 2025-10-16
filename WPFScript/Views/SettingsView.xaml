@@ -7,7 +7,6 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:MESharp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:MESharp.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Background="{DynamicResource App.BackgroundBrush}"
@@ -17,46 +16,13 @@
     <UserControl.Resources>
         <conv:ObjectEqualsMultiConverter x:Key="ObjectEqualsMultiConverter" />
         <!--  Toggle style similar to top nav buttons  -->
-        <Style x:Key="ThemeToggleButtonStyle" TargetType="ToggleButton">
-            <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
-            <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-            <Setter Property="BorderThickness" Value="2" />
+        <Style
+            x:Key="ThemeToggleButtonStyle"
+            BasedOn="{StaticResource {x:Type ToggleButton}}"
+            TargetType="ToggleButton">
             <Setter Property="Padding" Value="10,6" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Border
-                            x:Name="border"
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="#666" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
     </UserControl.Resources>
-
-    <UserControl.DataContext>
-        <vm:SettingsViewModel />
-    </UserControl.DataContext>
 
     <StackPanel Margin="24">
         <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
@@ -187,7 +153,20 @@
                                         Height="16"
                                         Margin="0,0,8,0"
                                         Background="{Binding Brush}"
-                                        CornerRadius="3" />
+                                        CornerRadius="3">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="BorderThickness" Value="1" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryForegroundBrush}" />
+                                                        <Setter Property="BorderThickness" Value="2" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
                                 </StackPanel>
                             </ToggleButton>
@@ -214,7 +193,7 @@
                             <iconPacks:PackIconMaterial
                                 Width="28"
                                 Height="16"
-                                Margin="5,4,5,4"
+                                Margin="5,6,5,4"
                                 Kind="Palette" />
                             <TextBlock Margin="0,4,8,4" Text="Pick Color" />
                         </StackPanel>
@@ -225,7 +204,7 @@
                             <iconPacks:PackIconMaterial
                                 Width="28"
                                 Height="16"
-                                Margin="5,4,5,4"
+                                Margin="5,6,5,4"
                                 Kind="ShuffleVariant" />
                             <TextBlock Margin="0,4,8,4" Text="Random" />
                         </StackPanel>
@@ -261,7 +240,20 @@
                                             Height="16"
                                             Margin="0,0,8,0"
                                             Background="{Binding Brush}"
-                                            CornerRadius="3" />
+                                            CornerRadius="3">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="BorderThickness" Value="1" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryForegroundBrush}" />
+                                                            <Setter Property="BorderThickness" Value="2" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
                                         <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
                                     </StackPanel>
                                     <Border
@@ -275,9 +267,9 @@
                                         <Button
                                             Width="16"
                                             Height="16"
+                                            Margin="0,-2,0,0"
                                             Padding="0"
                                             HorizontalAlignment="Center"
-                                            Margin="0 -2 0 0 "
                                             VerticalAlignment="Center"
                                             Background="Transparent"
                                             BorderBrush="Transparent"

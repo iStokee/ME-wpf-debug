@@ -9,11 +9,25 @@
         <StackPanel Margin="12">
             <GroupBox Header="Inventory">
                 <StackPanel>
-                    <!-- State + Load -->
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Width="110" Command="{Binding RefreshStateCommand}" Content="Refresh State" Style="{StaticResource AccentButton}" />
-                        <Button Width="100" Margin="8,0,0,0" Command="{Binding LoadAllCommand}" Content="Load Items" Style="{StaticResource AccentButton}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
+                    <!--  State + Load  -->
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <Button
+                            Width="110"
+                            Height="30"
+                            Command="{Binding RefreshStateCommand}"
+                            Content="Refresh State"
+                            Style="{StaticResource AccentButton}" />
+                        <Button
+                            Width="100"
+                            Height="30"
+                            Margin="8,0,0,0"
+                            Command="{Binding LoadAllCommand}"
+                            Content="Load Items"
+                            Style="{StaticResource AccentButton}" />
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -27,7 +41,10 @@
                         </Ellipse>
                         <TextBlock FontWeight="SemiBold" Text="Open:" />
                         <TextBlock Text="{Binding IsOpen}" />
-                        <Ellipse Width="10" Height="10" Margin="8,0,6,0">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="8,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -41,7 +58,10 @@
                         </Ellipse>
                         <TextBlock FontWeight="SemiBold" Text="Full:" />
                         <TextBlock Text="{Binding IsFull}" />
-                        <Ellipse Width="10" Height="10" Margin="8,0,6,0">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="8,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -55,7 +75,10 @@
                         </Ellipse>
                         <TextBlock FontWeight="SemiBold" Text="Empty:" />
                         <TextBlock Text="{Binding IsEmpty}" />
-                        <Ellipse Width="10" Height="10" Margin="8,0,6,0">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="8,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -69,16 +92,29 @@
                         </Ellipse>
                         <TextBlock FontWeight="SemiBold" Text="Selected:" />
                         <TextBlock Text="{Binding IsItemSelected}" />
-                        <TextBlock Margin="8,0,4,0" FontWeight="SemiBold" Text="Free Slots:" />
+                        <TextBlock
+                            Margin="8,0,4,0"
+                            FontWeight="SemiBold"
+                            Text="Free Slots:" />
                         <TextBlock Text="{Binding FreeSlots}" />
                     </StackPanel>
 
-                    <!-- Filter + Indicators -->
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Filter (name or IDs):" />
+                    <!--  Filter + Indicators  -->
+                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Text="Filter (name or IDs):" />
                         <TextBox Width="300" Text="{Binding QuickFilterText, UpdateSourceTrigger=PropertyChanged}" />
-                        <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" Content="Treat as IDs" IsChecked="{Binding TreatAsIds}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
+                        <CheckBox
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Content="Treat as IDs"
+                            IsChecked="{Binding TreatAsIds}" />
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -92,7 +128,10 @@
                         </Ellipse>
                         <TextBlock VerticalAlignment="Center" Text="Contains:" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding QuickContains}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -106,7 +145,10 @@
                         </Ellipse>
                         <TextBlock VerticalAlignment="Center" Text="Any:" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding ContainsAnyResult}" />
-                        <Ellipse Width="10" Height="10" Margin="6,0,6,0">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="6,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -120,7 +162,10 @@
                         </Ellipse>
                         <TextBlock VerticalAlignment="Center" Text="All:" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding ContainsAllResult}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="12,0,6,0">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
@@ -136,26 +181,69 @@
                         <TextBlock VerticalAlignment="Center" Text="{Binding QuickCount}" />
                     </StackPanel>
 
-                    <!-- Actions -->
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Action:" />
-                        <ComboBox Width="140" ItemsSource="{Binding ActionTypes}" SelectedItem="{Binding SelectedAction}" />
-                        <TextBlock Margin="8,0,6,0" VerticalAlignment="Center" Text="Using:" />
+                    <!--  Actions  -->
+                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Text="Action:" />
+                        <ComboBox
+                            Width="140"
+                            ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                            ItemsSource="{Binding ActionTypes}"
+                            SelectedItem="{Binding SelectedAction}"
+                            Style="{StaticResource AppComboBox}" />
+                        <TextBlock
+                            Margin="8,0,6,0"
+                            VerticalAlignment="Center"
+                            Text="Using:" />
                         <TextBox Width="260" Text="{Binding ActionInput}" />
-                        <CheckBox Margin="8,0,0,0" VerticalAlignment="Center" Content="By ID" IsChecked="{Binding UseIdForAction}" />
-                        <Button Width="120" Margin="8,0,0,0" Command="{Binding ExecuteActionCommand}" Content="Execute" Style="{StaticResource AccentButton}" />
-                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding ActionResult}" />
+                        <CheckBox
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Content="By ID"
+                            IsChecked="{Binding UseIdForAction}" />
+                        <Button
+                            Width="120"
+                            Height="30"
+                            Margin="8,0,0,0"
+                            Command="{Binding ExecuteActionCommand}"
+                            Content="Execute"
+                            Style="{StaticResource AccentButton}" />
+                        <TextBlock
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding ActionResult}" />
                     </StackPanel>
 
-                    <!-- Items list (filtered) -->
-                    <ListView Height="420" Margin="0,8,0,0" Background="{DynamicResource App.CardBrush}" ItemsSource="{Binding ItemsView}">
+                    <!--  Items list (filtered)  -->
+                    <ListView
+                        Height="420"
+                        Margin="0,8,0,0"
+                        Background="{DynamicResource App.CardBrush}"
+                        ItemsSource="{Binding ItemsView}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="60" DisplayMemberBinding="{Binding Slot}" Header="Slot" />
-                                <GridViewColumn Width="70" DisplayMemberBinding="{Binding Id}" Header="ID" />
-                                <GridViewColumn Width="240" DisplayMemberBinding="{Binding Name}" Header="Name" />
-                                <GridViewColumn Width="90" DisplayMemberBinding="{Binding Amount}" Header="Amount" />
-                                <GridViewColumn Width="90" DisplayMemberBinding="{Binding Exp}" Header="XP" />
+                                <GridViewColumn
+                                    Width="60"
+                                    DisplayMemberBinding="{Binding Slot}"
+                                    Header="Slot" />
+                                <GridViewColumn
+                                    Width="70"
+                                    DisplayMemberBinding="{Binding Id}"
+                                    Header="ID" />
+                                <GridViewColumn
+                                    Width="240"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Header="Name" />
+                                <GridViewColumn
+                                    Width="90"
+                                    DisplayMemberBinding="{Binding Amount}"
+                                    Header="Amount" />
+                                <GridViewColumn
+                                    Width="90"
+                                    DisplayMemberBinding="{Binding Exp}"
+                                    Header="XP" />
                             </GridView>
                         </ListView.View>
                     </ListView>

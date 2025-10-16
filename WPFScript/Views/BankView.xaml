@@ -2,94 +2,325 @@
     x:Class="MESharp.Views.BankView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     Background="{DynamicResource App.BackgroundBrush}"
     Foreground="{DynamicResource App.ForegroundBrush}">
 
     <ScrollViewer>
-        <StackPanel Margin="12">
-            <GroupBox Header="Bank">
+        <StackPanel Margin="24">
+
+            <!--  Header  -->
+            <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
+                <iconPacks:PackIconMaterial
+                    Width="24"
+                    Height="24"
+                    Margin="0,0,8,0"
+                    Foreground="{DynamicResource PrimaryBrush}"
+                    Kind="BankOutline" />
+                <TextBlock
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="Bank Tools" />
+            </StackPanel>
+
+            <!--  Status + quick lookup  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
                 <StackPanel>
-                    <!-- Filter + State -->
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Filter (name or ID):" />
-                        <TextBox Width="240" Text="{Binding QuickFilterText, UpdateSourceTrigger=PropertyChanged}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
-                            <Ellipse.Style>
-                                <Style TargetType="Ellipse">
-                                    <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasStack}" Value="True">
-                                            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Ellipse.Style>
-                        </Ellipse>
-                        <TextBlock VerticalAlignment="Center" Text="Stack:" />
-                        <TextBlock VerticalAlignment="Center" Text="{Binding QuickStack}" />
-                        <Button Width="120" Margin="12,0,0,0" Command="{Binding RefreshStateCommand}" Content="Refresh State" Style="{StaticResource AccentButton}" />
-                        <Ellipse Width="10" Height="10" Margin="12,0,6,0">
-                            <Ellipse.Style>
-                                <Style TargetType="Ellipse">
-                                    <Setter Property="Fill" Value="{DynamicResource App.BorderBrush}" />
+                    <TextBlock FontWeight="SemiBold" Text="Status and Lookup" />
+
+                    <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                        <TextBlock
+                            Margin="0,0,12,8"
+                            VerticalAlignment="Center"
+                            Text="Filter (name or ID):" />
+                        <TextBox
+                            Width="220"
+                            Margin="0,0,12,8"
+                            Text="{Binding QuickFilterText, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button
+                            Width="140"
+                            Margin="0,0,12,8"
+                            Command="{Binding RefreshStateCommand}"
+                            Content="Refresh State"
+                            Style="{StaticResource AccentButton}" />
+                        <Button
+                            Width="120"
+                            Margin="0,0,12,8"
+                            Command="{Binding CloseCommand}"
+                            Content="Close Bank"
+                            Style="{StaticResource AccentButton}" />
+                    </WrapPanel>
+
+                    <WrapPanel Margin="0,4,0,0" VerticalAlignment="Center">
+                        <TextBlock Margin="0,0,12,8" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="Status: Closed" />
+                                    <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsOpen}" Value="True">
-                                            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+                                            <Setter Property="Text" Value="Status: Open" />
+                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Ellipse.Style>
-                        </Ellipse>
-                        <TextBlock FontWeight="SemiBold" Text="Open:" />
-                        <TextBlock Text="{Binding IsOpen}" />
-                        <Button Width="100" Margin="12,0,0,0" Command="{Binding CloseCommand}" Content="Close" />
-                    </StackPanel>
+                            </TextBlock.Style>
+                        </TextBlock>
 
-                    <!-- Deposit -->
-                    <StackPanel Margin="0,8,0,0">
-                        <TextBlock FontWeight="SemiBold" Text="Deposit" />
-                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <Button Width="140" Content="Deposit All" Command="{Binding DepositAllCommand}" Style="{StaticResource AccentButton}" />
-                            <TextBox Width="260" Margin="12,0,0,0" Text="{Binding IdsInput}" />
-                            <Button Width="200" Margin="8,0,0,0" Content="Deposit All Except IDs" Command="{Binding DepositAllExceptIdsCommand}" Style="{StaticResource AccentButton}" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <TextBox Width="260" Text="{Binding NamesInput}" />
-                            <Button Width="220" Margin="8,0,0,0" Content="Deposit All Except Names" Command="{Binding DepositAllExceptNamesCommand}" Style="{StaticResource AccentButton}" />
-                        </StackPanel>
-                    </StackPanel>
+                        <TextBlock Margin="0,0,12,8" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
+                                    <Setter Property="Text" Value="{Binding QuickStack, StringFormat=Matching stack: {0}}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasStack}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </WrapPanel>
 
-                    <!-- Stacks -->
-                    <StackPanel Margin="0,8,0,0">
-                        <TextBlock FontWeight="SemiBold" Text="Stacks" />
-                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <TextBox Width="120" Text="{Binding IdInput}" />
-                            <Button Width="160" Margin="8,0,0,0" Content="Get Stack (ID)" Command="{Binding GetStackByIdCommand}" Style="{StaticResource AccentButton}" />
-                            <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding StackResult}" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <TextBox Width="240" Text="{Binding NameInput}" />
-                            <Button Width="180" Margin="8,0,0,0" Content="Get Stack (Name)" Command="{Binding GetStackByNameCommand}" Style="{StaticResource AccentButton}" />
-                        </StackPanel>
-                    </StackPanel>
-
-                    <!-- Actions -->
-                    <StackPanel Margin="0,8,0,0">
-                        <TextBlock FontWeight="SemiBold" Text="Actions" />
-                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <TextBlock VerticalAlignment="Center" Text="Action:" />
-                            <TextBox Width="60" Margin="4,0,8,0" Text="{Binding ActionIndex}" />
-                            <TextBlock VerticalAlignment="Center" Text="Offset:" />
-                            <TextBox Width="60" Margin="4,0,8,0" Text="{Binding Offset}" />
-                            <TextBox Width="120" Text="{Binding IdInput}" />
-                            <Button Width="160" Margin="8,0,0,0" Content="DoAction (ID)" Command="{Binding DoActionByIdCommand}" Style="{StaticResource AccentButton}" />
-                            <TextBox Width="240" Margin="8,0,0,0" Text="{Binding NameInput}" />
-                            <Button Width="180" Margin="8,0,0,0" Content="DoAction (Name)" Command="{Binding DoActionByNameCommand}" Style="{StaticResource AccentButton}" />
-                            <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding ActionResult}" />
-                        </StackPanel>
-                    </StackPanel>
+                    <TextBlock Margin="0,8,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+                                <Setter Property="Text" Value="{Binding StackResult, StringFormat=Stack result: {0}}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding StackResult}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding StackResult}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
-            </GroupBox>
+            </Border>
+
+            <!--  Deposit options  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock FontWeight="SemiBold" Text="Deposit" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Send everything to the bank or keep specific items by ID or name." />
+
+                    <Button
+                        Width="160"
+                        Margin="0,12,0,0"
+                        Command="{Binding DepositAllCommand}"
+                        Content="Deposit All"
+                        Style="{StaticResource AccentButton}" />
+
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,12,8"
+                            VerticalAlignment="Center"
+                            Text="Keep IDs:" />
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            MinWidth="220"
+                            Margin="0,0,12,8"
+                            Text="{Binding IdsInput}" />
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Width="200"
+                            Margin="0,0,0,8"
+                            Command="{Binding DepositAllExceptIdsCommand}"
+                            Content="Deposit All Except IDs"
+                            Style="{StaticResource AccentButton}" />
+
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            Text="Keep names:" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            MinWidth="220"
+                            Margin="0,0,12,0"
+                            Text="{Binding NamesInput}" />
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Width="220"
+                            Command="{Binding DepositAllExceptNamesCommand}"
+                            Content="Deposit All Except Names"
+                            Style="{StaticResource AccentButton}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!--  Stack lookups  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock FontWeight="SemiBold" Text="Stack Lookups" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Query the amount of an item in the open bank by ID or name." />
+
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,12,8"
+                            VerticalAlignment="Center"
+                            Text="Item ID:" />
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="140"
+                            Margin="0,0,12,8"
+                            Text="{Binding IdInput}" />
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Width="160"
+                            Margin="0,0,0,8"
+                            Command="{Binding GetStackByIdCommand}"
+                            Content="Get Stack (ID)"
+                            Style="{StaticResource AccentButton}" />
+
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            Text="Item name:" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            MinWidth="200"
+                            Margin="0,0,12,0"
+                            Text="{Binding NameInput}" />
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Width="180"
+                            Command="{Binding GetStackByNameCommand}"
+                            Content="Get Stack (Name)"
+                            Style="{StaticResource AccentButton}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!--  Actions  -->
+            <Border
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock FontWeight="SemiBold" Text="Actions" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Trigger a specific action entry on a bank item by ID or name." />
+
+                    <WrapPanel Margin="0,12,0,0">
+                        <StackPanel Width="100" Margin="0,0,12,12">
+                            <TextBlock Text="Action #" />
+                            <TextBox Text="{Binding ActionIndex}" />
+                        </StackPanel>
+                        <StackPanel Width="100" Margin="0,0,12,12">
+                            <TextBlock Text="Offset" />
+                            <TextBox Text="{Binding Offset}" />
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <WrapPanel Margin="0,0,0,12">
+                        <StackPanel Width="160" Margin="0,0,12,12">
+                            <TextBlock Text="Item ID" />
+                            <TextBox Text="{Binding IdInput}" />
+                        </StackPanel>
+                        <Button
+                            Width="160"
+                            Height="32"
+                            Margin="0,3,0,0"
+                            Command="{Binding DoActionByIdCommand}"
+                            Content="Invoke by ID"
+                            Style="{StaticResource AccentButton}" />
+                    </WrapPanel>
+
+                    <WrapPanel>
+                        <StackPanel Width="240" Margin="0,0,12,12">
+                            <TextBlock Text="Item name" />
+                            <TextBox Text="{Binding NameInput}" />
+                        </StackPanel>
+                        <Button
+                            Width="180"
+                            Height="32"
+                            Margin="0,3,0,0"
+                            Command="{Binding DoActionByNameCommand}"
+                            Content="Invoke by Name"
+                            Style="{StaticResource AccentButton}" />
+                    </WrapPanel>
+
+                    <TextBlock Margin="0,12,0,0" FontWeight="SemiBold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+                                <Setter Property="Text" Value="{Binding ActionResult}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActionResult}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ActionResult}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

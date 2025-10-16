@@ -7,14 +7,8 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:MESharp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:MESharp.ViewModels"
     Background="{DynamicResource App.BackgroundBrush}"
     mc:Ignorable="d">
-
-    <UserControl.DataContext>
-        <vm:SkillsViewModel />
-    </UserControl.DataContext>
-
     <UserControl.Resources>
         <ResourceDictionary>
 
@@ -351,54 +345,6 @@
                 <StackPanel Orientation="Vertical" />
             </ItemsPanelTemplate>
 
-            <!--  Stylized ToggleButton, theme-aware  -->
-            <Style x:Key="DarkToggleButtonStyle" TargetType="ToggleButton">
-                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
-                <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-                <Setter Property="BorderThickness" Value="2" />
-                <Setter Property="Padding" Value="10,4" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="FontSize" Value="14" />
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ToggleButton">
-                            <Border
-                                x:Name="border"
-                                Padding="{TemplateBinding Padding}"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="8">
-                                <ContentPresenter
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    RecognizesAccessKey="True" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsKeyboardFocused" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="#666" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -418,7 +364,6 @@
                 Margin="0,0,10,0"
                 Padding="0"
                 IsChecked="{Binding IsListView, Mode=TwoWay}"
-                Style="{StaticResource DarkToggleButtonStyle}"
                 ToolTip="Switch to List View">
                 <iconPacks:PackIconMaterial
                     Width="20"
@@ -433,7 +378,6 @@
                 Margin="0,0,10,0"
                 Padding="0"
                 IsChecked="{Binding IsListView, Converter={StaticResource InverseBoolConverter}, Mode=TwoWay}"
-                Style="{StaticResource DarkToggleButtonStyle}"
                 ToolTip="Switch to Grid View">
                 <iconPacks:PackIconMaterial
                     Width="20"
@@ -445,7 +389,6 @@
             <ToggleButton
                 Content="Active Only"
                 IsChecked="{Binding ShowOnlyActive, Mode=TwoWay}"
-                Style="{StaticResource DarkToggleButtonStyle}"
                 ToolTip="Show only skills with XP gains" />
         </StackPanel>
 

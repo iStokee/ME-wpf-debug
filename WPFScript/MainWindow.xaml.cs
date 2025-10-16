@@ -1,11 +1,6 @@
-using MESharp.ViewModels;
-using MESharp.Native;
-using System.Windows.Interop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,6 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
+using MESharp.ViewModels;
+using MESharp.API;
 
 namespace MESharp
 {
@@ -39,10 +37,12 @@ namespace MESharp
 
 			// Register our UI thread and hwnd with the native layer so it doesn't spoof focus
 				try
-				{
-					NativeUI.UI_RegisterWpfThreadId(NativeUI.GetCurrentThreadId());
+                {
+                    Console.WriteLine("[Managed] Registering UI thread + hwnd");
+                    API.Focus.RegisterManagedThread(NativeMethods.GetCurrentThreadId());
 					var hwnd = new WindowInteropHelper(this).Handle;
-					NativeUI.UI_RegisterWpfHwnd(hwnd);
+                    Console.WriteLine($"[Managed] MainWindow HWND={hwnd}");
+				    API.Focus.RegisterManagedWindow(hwnd);
 
                     // Nudge focus towards this window when user clicks inside (helps fight native focus spoofing)
                     this.PreviewMouseDown += (_, __) =>
@@ -50,12 +50,70 @@ namespace MESharp
                         try { this.Activate(); Keyboard.Focus(this); } catch { }
                     };
                 }
-                catch { /* best effort */ }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Managed] Failed to register UI thread/HWND: {ex}");
+                }
 
             // Once the window is loaded and we have an HWND, ask native side to bring us to foreground
             this.Loaded += (_, __) =>
             {
-                try { NativeUI.UI_ActivateWpfWindow(); } catch { }
+                try
+                {
+                    Console.WriteLine("[Managed] Requesting native focus activation + spoof OFF");
+					API.Focus.ActivateManagedWindow();
+					API.Focus.SetFocusSpoofEnabled(false);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Managed] Activate request failed: {ex}");
+                }
+            };
+
+            this.Activated += (_, __) =>
+            {
+                try
+                {
+                    Console.WriteLine("[Managed] Window activated; spoof OFF");
+					API.Focus.SetFocusSpoofEnabled(false);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Managed] Activate handler failed: {ex}");
+                }
+            };
+
+            this.Deactivated += (_, __) =>
+            {
+                try
+                {
+                    Console.WriteLine("[Managed] Window deactivated; spoof ON");
+					API.Focus.SetFocusSpoofEnabled(true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Managed] Deactivate handler failed: {ex}");
+                }
+            };
+
+            this.Closed += (_, __) =>
+            {
+                try
+                {
+                    Console.WriteLine("[Managed] Window closed; spoof ON");
+					API.Focus.SetFocusSpoofEnabled(true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Managed] Close handler failed: {ex}");
+                }
+                finally
+                {
+                    if (this.DataContext is IDisposable disposableVm)
+                    {
+                        try { disposableVm.Dispose(); } catch { /* ignore */ }
+                    }
+                }
             };
         }
 
@@ -89,5 +147,11 @@ namespace MESharp
                 ? WindowState.Normal
                 : WindowState.Maximized;
         }
+    }
+
+    internal static class NativeMethods
+    {
+        [DllImport("kernel32.dll")]
+        internal static extern uint GetCurrentThreadId();
     }
 }

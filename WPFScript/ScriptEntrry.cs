@@ -71,75 +71,30 @@ namespace MESharp
 			};
 
 			// 2) Spin up the STA UI thread
-            var uiThread = new Thread(InitAndShowWindow);
-            uiThread.SetApartmentState(ApartmentState.STA);
-            // Keep as a foreground thread so its dispatcher stays alive reliably
-            uiThread.IsBackground = false;
-            uiThread.Start();
+			var uiThread = new Thread(InitAndShowWindow);
+			uiThread.SetApartmentState(ApartmentState.STA);
+			// Keep as a foreground thread so its dispatcher stays alive reliably
+			uiThread.IsBackground = false;
+			uiThread.Start();
 		}
 
+		private static void InitAndShowWindow()
+		{
+			// Ensure Application exists (when launched from native host)
+			var app = Application.Current ?? new Application();
 
-		//public static void Main()
-		//{
+			// Merge default theme so DynamicResource lookups have values before window loads
+			try
+			{
+				string asmName = (Application.ResourceAssembly ?? Assembly.GetExecutingAssembly()).GetName().Name;
+				Uri themeUri = new Uri($"pack://application:,,,/{asmName};component/Themes/Light.xaml", UriKind.Absolute);
+				app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = themeUri });
+			}
+			catch { /* ignore theme init issues */ }
 
-		//	// 2) Spin up the STA UI thread
-		//	var uiThread = new Thread(InitAndShowWindow);
-		//	uiThread.SetApartmentState(ApartmentState.STA);
-		//	//uiThread.IsBackground = true;
-		//	uiThread.Start();
-		//}
-
-        private static void InitAndShowWindow()
-        {
-            // Ensure Application exists (when launched from native host)
-            var app = Application.Current ?? new Application();
-
-            // Merge default theme so DynamicResource lookups have values before window loads
-            try
-            {
-                string asmName = (Application.ResourceAssembly ?? Assembly.GetExecutingAssembly()).GetName().Name;
-                Uri themeUri = new Uri($"pack://application:,,,/{asmName};component/Themes/Light.xaml", UriKind.Absolute);
-                app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = themeUri });
-            }
-            catch { /* ignore theme init issues */ }
-
-            // Run the dispatcher with our main window so it owns activation properly
-            app.Run(new MainWindow());
-        }
-
-		//private static void InitAndShowWindow()
-		//{
-		//	// 1) Create the WPF Application if it doesn't already exist
-		//	var app = Application.Current ?? new Application();
-
-		//	// 2) Merge all of your MahApps + MaterialDesign resource dictionaries
-		//	void AddDict(string packUri) =>
-		//		app.Resources.MergedDictionaries.Add(new ResourceDictionary
-		//		{
-		//			Source = new Uri(packUri, UriKind.Absolute)
-		//		});
-
-		//	// MahApps.Metro
-		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml");
-		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml");
-		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml");
-		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml");
-		//	AddDict("pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml");
-
-		//	// MaterialDesignThemes
-		//	AddDict("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml");
-		//	AddDict("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml");
-		//	AddDict("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml");
-
-		//	// MaterialDesignColors (pick whatever palettes you want)
-		//	AddDict("pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml");
-		//	AddDict("pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml");
-
-		//	// 3) Now you can safely show your MainWindow
-		//	app.Run(new MainWindow());
-		//}
-
-
+			// Run the dispatcher with our main window so it owns activation properly
+			app.Run(new MainWindow());
+		}
 	}
 
 }

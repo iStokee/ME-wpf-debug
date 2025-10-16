@@ -12,17 +12,19 @@ using System.Windows.Threading;
 
 namespace MESharp.ViewModels
 {
-    public class ObjectsViewModel : INotifyPropertyChanged
+    public class ObjectsViewModel : INotifyPropertyChanged, IDisposable, IActivatableViewModel
     {
         private const int DefaultResultLimit = 400;
         private static readonly TimeSpan LiveRefreshInterval = TimeSpan.FromSeconds(1);
 
         private readonly DispatcherTimer _timer;
+        private bool _disposed;
+        private bool _isActive;
 
         public ObservableCollection<Objects.GameObject> AllObjects { get; } = new();
         public ICollectionView ObjectsView { get; }
 
-        public IEnumerable<int> ActionIndices { get; } = Enumerable.Range(0, 11);
+        public IReadOnlyList<int> ActionIndices { get; } = Enumerable.Range(0, 11).ToArray();
 
         private Objects.GameObject? _selectedObject;
         public Objects.GameObject? SelectedObject
@@ -172,10 +174,12 @@ namespace MESharp.ViewModels
             ObjectsView.Filter = FilterPredicate;
             ObjectsView.SortDescriptions.Add(new SortDescription(nameof(Objects.GameObject.Distance), ListSortDirection.Ascending));
 
-            _timer = new DispatcherTimer(LiveRefreshInterval, DispatcherPriority.Background, OnTimerTick, Dispatcher.CurrentDispatcher)
+            _timer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
+                Interval = LiveRefreshInterval,
                 IsEnabled = false
             };
+            _timer.Tick += OnTimerTick;
 
             RefreshCommand = new RelayCommand(_ => Refresh(), _ => CanRefresh());
             DoActionCommand = new RelayCommand(_ => DoAction(), _ => CanDoAction());
@@ -198,7 +202,12 @@ namespace MESharp.ViewModels
 
         private void UpdateTimer()
         {
-            if (_liveRefresh && HasTypeSelection)
+            if (_disposed)
+                return;
+
+            var shouldRun = _isActive && _liveRefresh && HasTypeSelection;
+
+            if (shouldRun)
             {
                 if (!_timer.IsEnabled)
                 {
@@ -213,6 +222,9 @@ namespace MESharp.ViewModels
 
         private void OnTimerTick(object? sender, EventArgs e)
         {
+            if (_disposed)
+                return;
+
             Refresh();
         }
 
@@ -223,7 +235,7 @@ namespace MESharp.ViewModels
 
         private void Refresh()
         {
-            if (IsBusy)
+            if (_disposed || IsBusy)
                 return;
 
             if (!HasTypeSelection)
@@ -364,5 +376,54 @@ namespace MESharp.ViewModels
 
         private void OnPropertyChanged(string propertyName)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            OnDeactivated();
+
+            _disposed = true;
+
+            try
+            {
+                _timer.Tick -= OnTimerTick;
+            }
+            catch { /* ignore */ }
+        }
+
+        public void OnActivated()
+        {
+            if (_disposed)
+                return;
+
+            if (_isActive)
+            {
+                UpdateTimer();
+                if (HasTypeSelection)
+                {
+                    Refresh();
+                }
+                return;
+            }
+
+            _isActive = true;
+            UpdateTimer();
+
+            if (HasTypeSelection)
+            {
+                Refresh();
+            }
+        }
+
+        public void OnDeactivated()
+        {
+            if (_disposed || !_isActive)
+                return;
+
+            _isActive = false;
+            try { _timer.Stop(); } catch { /* ignore */ }
+        }
     }
 }

@@ -2,13 +2,16 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
-using csharp_interop.csharp_api;
+using MESharp.API;
 
 namespace MESharp.ViewModels
 {
-    public class GameViewModel : INotifyPropertyChanged
+    public class GameViewModel : INotifyPropertyChanged, IDisposable, IActivatableViewModel
     {
         private readonly DispatcherTimer _timer;
+        private readonly EventHandler _tickHandler;
+        private bool _isActive;
+        private bool _disposed;
 
         private GameState _state;
         public GameState State { get => _state; private set => Set(ref _state, value); }
@@ -73,13 +76,24 @@ namespace MESharp.ViewModels
 
         public GameViewModel()
         {
-            _timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background, (s,e) => Refresh(), Dispatcher.CurrentDispatcher);
-            _timer.Start();
-            Refresh();
+            _tickHandler = OnTimerTick;
+            _timer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
+            {
+                Interval = TimeSpan.FromSeconds(1),
+                IsEnabled = false
+            };
+            _timer.Tick += _tickHandler;
+
+            OnActivated();
         }
+
+        private void OnTimerTick(object? sender, EventArgs e) => Refresh();
 
         private void Refresh()
         {
+            if (_disposed)
+                return;
+
             try
             {
                 State = Game.State;
@@ -104,6 +118,50 @@ namespace MESharp.ViewModels
         {
             if (string.IsNullOrWhiteSpace(propertyName)) return;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void OnActivated()
+        {
+            if (_disposed)
+                return;
+
+            if (_isActive)
+            {
+                Refresh();
+                return;
+            }
+
+            _isActive = true;
+            if (!_timer.IsEnabled)
+            {
+                try { _timer.Start(); } catch { /* ignore */ }
+            }
+
+            Refresh();
+        }
+
+        public void OnDeactivated()
+        {
+            if (_disposed || !_isActive)
+                return;
+
+            _isActive = false;
+            try { _timer.Stop(); } catch { /* ignore */ }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            OnDeactivated();
+
+            _disposed = true;
+            try
+            {
+                _timer.Tick -= _tickHandler;
+            }
+            catch { /* ignore */ }
         }
     }
 }

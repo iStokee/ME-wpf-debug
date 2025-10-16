@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WPFScript")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e750bbb61b52b3c92adbced04b0cdfb55ae7b884")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82d0d5ab52cfc1f4a29f38555c8f1ac3f58568f9")]
 [assembly: System.Reflection.AssemblyProductAttribute("WPFScript")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WPFScript")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -11,7 +11,7 @@
     Width="1000"
     Height="900"
     MinWidth="650"
-    Background="{DynamicResource App.BackgroundBrush}"
+    Background="Transparent"
     ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
@@ -60,306 +60,255 @@
                 <views:SettingsView />
             </DataTemplate>
 
-            <Style x:Key="DarkToggleButtonStyle" TargetType="ToggleButton">
-                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
-                <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-                <Setter Property="BorderThickness" Value="2" />
-                <Setter Property="Padding" Value="10,4" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="FontSize" Value="14" />
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ToggleButton">
-                            <Border x:Name="border"
-                                    Padding="{TemplateBinding Padding}"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="8">
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"
-                                                  RecognizesAccessKey="True" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsKeyboardFocused" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="#66808080" />
-                                    <Setter TargetName="border" Property="BorderBrush" Value="#33808080" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
         </ResourceDictionary>
     </Window.Resources>
 
+    <Border
+        Background="{DynamicResource App.BackgroundBrush}"
+        BorderThickness="2"
+        CornerRadius="0">
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="34"
+                Opacity="1"
+                ShadowDepth="0"
+                Color="{DynamicResource PrimaryColor}" />
+        </Border.Effect>
 
-
-    <DockPanel>
-        <!--  Custom Title Bar  -->
-        <Border
-            Height="40"
-            Background="{DynamicResource App.CardBrush}"
-            DockPanel.Dock="Top">
-            <Grid x:Name="TitleBarGrid" MouseLeftButtonDown="OnTitleBarMouseDown">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel
-                    Margin="10,0"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial
-                        Width="18"
-                        Height="18"
-                        Margin="0,0,8,0"
-                        Foreground="{DynamicResource PrimaryBrush}"
-                        Kind="Bug" />
-                    <TextBlock FontWeight="SemiBold" Text="MESharp Debug Util" />
-                </StackPanel>
-                <Border
-                    Grid.Column="1"
-                    Margin="0,0,25,0"
-                    Padding="8,5,8,5"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Background="{DynamicResource App.CardBrush}"
-                    BorderBrush="{DynamicResource PrimaryBrush}"
-                    BorderThickness="0,0,0,0"
-                    CornerRadius="12">
-                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+        <DockPanel>
+            <!--  Custom Title Bar  -->
+            <Border
+                Height="40"
+                Background="{DynamicResource App.CardBrush}"
+                DockPanel.Dock="Top">
+                <Grid x:Name="TitleBarGrid" MouseLeftButtonDown="OnTitleBarMouseDown">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
                         <iconPacks:PackIconMaterial
                             Width="18"
                             Height="18"
-                            Margin="6,0,6,0"
+                            Margin="0,0,8,0"
                             Foreground="{DynamicResource PrimaryBrush}"
-                            Kind="TimerOutline" />
-                        <TextBlock
-                            Margin="0,0,6,0"
-                            FontSize="14"
-                            FontWeight="SemiBold"
-                            Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                            Text="Session:" />
-                        <TextBlock
-                            Margin="0,2,6,0"
-                            FontFamily="Consolas"
-                            FontSize="14"
-                            Foreground="{DynamicResource App.ForegroundBrush}"
-                            Text="{Binding SessionRuntimeString}" />
+                            Kind="Bug" />
+                        <TextBlock FontWeight="SemiBold" Text="MESharp Debug Util" />
                     </StackPanel>
-                </Border>
-                <StackPanel
-                    Grid.Column="2"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <Button
-                        Width="40"
-                        Height="28"
-                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                        Click="OnMinimizeClick"
-                        Style="{StaticResource IconButton}"
-                        ToolTip="Minimize">
-                        <iconPacks:PackIconMaterial
-                            Kind="WindowMinimize"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                    </Button>
-                    <Button
-                        Width="40"
-                        Height="28"
-                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                        Click="OnMaximizeClick"
-                        Style="{StaticResource IconButton}"
-                        ToolTip="Maximize/Restore">
-                        <iconPacks:PackIconMaterial
-                            Kind="WindowMaximize"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                    </Button>
-                    <Button
-                        Width="40"
-                        Height="28"
-                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
-                        Click="OnCloseClick"
-                        Style="{StaticResource IconButton}"
-                        ToolTip="Close">
-                        <iconPacks:PackIconMaterial
-                            Kind="Close"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                    </Button>
+                    <Border
+                        Grid.Column="1"
+                        Margin="0,0,25,0"
+                        Padding="8,5,8,5"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource App.CardBrush}"
+                        BorderBrush="{DynamicResource PrimaryBrush}"
+                        BorderThickness="0,0,0,0"
+                        CornerRadius="12">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Width="18"
+                                Height="18"
+                                Margin="6,0,6,0"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Kind="TimerOutline" />
+                            <TextBlock
+                                Margin="0,0,6,0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="Session:" />
+                            <TextBlock
+                                Margin="0,2,6,0"
+                                FontFamily="Consolas"
+                                FontSize="14"
+                                Foreground="{DynamicResource App.ForegroundBrush}"
+                                Text="{Binding SessionRuntimeString}" />
+                        </StackPanel>
+                    </Border>
+                    <StackPanel
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Button
+                            Width="40"
+                            Height="28"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="OnMinimizeClick"
+                            Style="{StaticResource WindowControlButton}"
+                            ToolTip="Minimize">
+                            <iconPacks:PackIconMaterial Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Kind="WindowMinimize" />
+                        </Button>
+                        <Button
+                            Width="40"
+                            Height="28"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="OnMaximizeClick"
+                            Style="{StaticResource WindowControlButton}"
+                            ToolTip="Maximize/Restore">
+                            <iconPacks:PackIconMaterial Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Kind="WindowMaximize" />
+                        </Button>
+                        <Button
+                            Width="40"
+                            Height="28"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="OnCloseClick"
+                            Style="{StaticResource CloseWindowButton}"
+                            ToolTip="Close">
+                            <iconPacks:PackIconMaterial Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!--  Divider under title bar  -->
+            <Border
+                Height="1"
+                Background="{DynamicResource PrimaryBrush}"
+                DockPanel.Dock="Top" />
+            <!--  Top Tab Bar  -->
+            <Border
+                Height="48"
+                Margin="4,5,4,0"
+                Background="{DynamicResource App.CardBrush}"
+                DockPanel.Dock="Top">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowGameCommand}"
+                        IsChecked="{Binding IsGameSelected, Mode=OneWay}"
+                        ToolTip="Game">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="ApplicationCog" />
+                            <TextBlock Text="Game" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowChatCommand}"
+                        IsChecked="{Binding IsChatSelected, Mode=OneWay}"
+                        ToolTip="Chat">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Message" />
+                            <TextBlock Text="Chat" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <!--  Apply the new style to the navigation buttons  -->
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowSkillsCommand}"
+                        IsChecked="{Binding IsSkillsSelected, Mode=OneWay}"
+                        ToolTip="Skills">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Trophy" />
+                            <TextBlock Text="Skills" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowInventoryCommand}"
+                        IsChecked="{Binding IsInventorySelected, Mode=OneWay}"
+                        ToolTip="Inventory">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="ViewList" />
+                            <TextBlock Text="Inventory" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowNpcsCommand}"
+                        IsChecked="{Binding IsNpcsSelected, Mode=OneWay}"
+                        ToolTip="NPCs">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Robot" />
+                            <TextBlock Text="NPCs" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowEquipmentCommand}"
+                        IsChecked="{Binding IsEquipmentSelected, Mode=OneWay}"
+                        ToolTip="Equipment">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Shield" />
+                            <TextBlock Text="Equipment" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowObjectsCommand}"
+                        IsChecked="{Binding IsObjectsSelected, Mode=OneWay}"
+                        ToolTip="Objects">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Cube" />
+                            <TextBlock Text="Objects" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowBankCommand}"
+                        IsChecked="{Binding IsBankSelected, Mode=OneWay}"
+                        ToolTip="Bank">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Bank" />
+                            <TextBlock Text="Bank" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        Margin="5,0,5,0"
+                        Command="{Binding ShowSettingsCommand}"
+                        IsChecked="{Binding IsSettingsSelected, Mode=OneWay}"
+                        ToolTip="Settings">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                Kind="Cog" />
+                            <TextBlock Text="Settings" />
+                        </StackPanel>
+                    </ToggleButton>
                 </StackPanel>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!--  Divider under title bar  -->
-        <Border
-            Height="1"
-            Background="{DynamicResource PrimaryBrush}"
-            DockPanel.Dock="Top" />
-        <!--  Top Tab Bar  -->
-        <Border
-            Height="48"
-            Margin="4,5,4,0"
-            Background="{DynamicResource App.CardBrush}"
-            DockPanel.Dock="Top">
-            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowGameCommand}"
-                    IsChecked="{Binding IsGameSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Game">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="ApplicationCog" />
-                        <TextBlock Text="Game" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowChatCommand}"
-                    IsChecked="{Binding IsChatSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Chat">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Message" />
-                        <TextBlock Text="Chat" />
-                    </StackPanel>
-                </ToggleButton>
-                <!--  Apply the new style to the navigation buttons  -->
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowSkillsCommand}"
-                    IsChecked="{Binding IsSkillsSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Skills">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Trophy" />
-                        <TextBlock Text="Skills" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowInventoryCommand}"
-                    IsChecked="{Binding IsInventorySelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Inventory">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="ViewList" />
-                        <TextBlock Text="Inventory" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowNpcsCommand}"
-                    IsChecked="{Binding IsNpcsSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="NPCs">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Robot" />
-                        <TextBlock Text="NPCs" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowEquipmentCommand}"
-                    IsChecked="{Binding IsEquipmentSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Equipment">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Shield" />
-                        <TextBlock Text="Equipment" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowObjectsCommand}"
-                    IsChecked="{Binding IsObjectsSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Objects">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Cube" />
-                        <TextBlock Text="Objects" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowBankCommand}"
-                    IsChecked="{Binding IsBankSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Bank">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Bank" />
-                        <TextBlock Text="Bank" />
-                    </StackPanel>
-                </ToggleButton>
-                <ToggleButton
-                    Margin="5,0,5,0"
-                    Command="{Binding ShowSettingsCommand}"
-                    IsChecked="{Binding IsSettingsSelected, Mode=OneWay}"
-                    Style="{StaticResource DarkToggleButtonStyle}"
-                    ToolTip="Settings">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                            Kind="Cog" />
-                        <TextBlock Text="Settings" />
-                    </StackPanel>
-                </ToggleButton>
-            </StackPanel>
-        </Border>
-
-        <!--  Content Area  -->
-        <ContentControl Margin="4" Content="{Binding CurrentViewModel}" />
-    </DockPanel>
+            <!--  Content Area  -->
+            <ContentControl Margin="4" Content="{Binding CurrentViewModel}" />
+        </DockPanel>
+    </Border>
 </Window>

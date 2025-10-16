@@ -1,40 +1,50 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Input;
 using System.Windows.Threading;
-using csharp_interop.csharp_api;
+using MESharp.API;
 using MESharp.Commands;
 
 namespace MESharp.ViewModels
 {
-    public class ChatViewModel : INotifyPropertyChanged
+    public class ChatViewModel : INotifyPropertyChanged, IDisposable, IActivatableViewModel
     {
-        private const int SnapshotLimit = 200;
         private const int EventLimit = 300;
 
         private readonly DispatcherTimer _timer;
+        private readonly NotifyCollectionChangedEventHandler _liveEventsChangedHandler;
         private long _eventSequence;
+        private bool _disposed;
+        private bool _isActive;
 
-        public ObservableCollection<MessageItem> Messages { get; } = new();
         public ObservableCollection<EventItem> LiveEvents { get; } = new();
 
-        public bool HasMessages => Messages.Count > 0;
         public bool HasEvents => LiveEvents.Count > 0;
 
-        public class MessageItem
+        private bool _eventsSupported = true;
+        public bool EventsSupported
         {
-            public int Sequence { get; set; }
-            public string Time { get; set; } = "";
-            public string Name { get; set; } = "";
-            public string Text { get; set; } = "";
-            public string Extra1 { get; set; } = "";
-            public string Extra2 { get; set; } = "";
-            public string TimestampRaw { get; set; } = "";
-            public string TimeTotalRaw { get; set; } = "";
+            get => _eventsSupported;
+            private set
+            {
+                if (Set(ref _eventsSupported, value))
+                {
+                    OnPropertyChanged(nameof(EventsStatusMessage));
+                }
+            }
+        }
+
+        private string _eventsStatusMessage = string.Empty;
+        public string EventsStatusMessage
+        {
+            get => _eventsStatusMessage;
+            private set => Set(ref _eventsStatusMessage, value);
         }
 
         public class EventItem
@@ -48,25 +58,17 @@ namespace MESharp.ViewModels
             public int Tick { get; set; }
         }
 
-        private bool _isLiveMode = true;
-        public bool IsLiveMode
-        {
-            get => _isLiveMode;
-            set
-            {
-                if (Set(ref _isLiveMode, value) && _isLiveMode)
-                {
-                    RefreshSnapshot(force: true);
-                }
-            }
-        }
-
         private bool _captureEvents = true;
         public bool CaptureEvents
         {
             get => _captureEvents;
             set
             {
+                if (!EventsSupported && value)
+                {
+                    return;
+                }
+
                 if (Set(ref _captureEvents, value) && value)
                 {
                     DrainEvents();
@@ -74,78 +76,70 @@ namespace MESharp.ViewModels
             }
         }
 
-        public ICommand RefreshCommand { get; }
-        public ICommand ClearCommand { get; }
         public ICommand ClearEventsCommand { get; }
 
         public ChatViewModel()
         {
-            Messages.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasMessages));
-            LiveEvents.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasEvents));
+            _liveEventsChangedHandler = (_, __) => OnPropertyChanged(nameof(HasEvents));
+            LiveEvents.CollectionChanged += _liveEventsChangedHandler;
 
-            _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(750), DispatcherPriority.Background, OnTick, Dispatcher.CurrentDispatcher);
-            _timer.Start();
+            RefreshEventSupport();
 
-            RefreshSnapshot(force: true);
-            DrainEvents();
-
-            RefreshCommand = new RelayCommand(_ =>
+            _timer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
-                IsLiveMode = true;
-                RefreshSnapshot(force: true);
-                DrainEvents();
+                Interval = TimeSpan.FromMilliseconds(750),
+                IsEnabled = false
+            };
+            _timer.Tick += OnTick;
+
+            ClearEventsCommand = new RelayCommand(_ =>
+            {
+                LiveEvents.Clear();
+                _eventSequence = 0;
             });
-            ClearCommand = new RelayCommand(_ => Messages.Clear());
-            ClearEventsCommand = new RelayCommand(_ => LiveEvents.Clear());
+
+            OnActivated();
         }
 
         private void OnTick(object? sender, EventArgs e)
         {
-            RefreshSnapshot();
+            if (_disposed)
+                return;
+
             DrainEvents();
         }
 
-        private void RefreshSnapshot(bool force = false)
+        private void RefreshEventSupport()
         {
-            if (!IsLiveMode && !force)
+            if (_disposed)
                 return;
 
-            try
+            var supported = Chat.SupportsEvents;
+            var message = Chat.EventsSupportError ?? string.Empty;
+
+            if (supported != EventsSupported)
             {
-                var list = Chat.GetMessages();
-                Messages.Clear();
-
-                if (list.Length == 0)
-                    return;
-
-                var start = Math.Max(0, list.Length - SnapshotLimit);
-                int sequence = 1;
-
-                for (int i = list.Length - 1; i >= start; i--)
+                EventsSupported = supported;
+                if (!supported && CaptureEvents)
                 {
-                    var m = list[i];
-                    Messages.Add(new MessageItem
-                    {
-                        Sequence = sequence++,
-                        Time = FormatMessageTime(m),
-                        Name = m.Name,
-                        Text = m.Text,
-                        Extra1 = m.Extra1,
-                        Extra2 = m.Extra2,
-                        TimestampRaw = m.Timestamp.ToString(),
-                        TimeTotalRaw = m.TimeTotal.ToString()
-                    });
+                    CaptureEvents = false;
                 }
             }
-            catch
+
+            if (!string.Equals(EventsStatusMessage, message, StringComparison.Ordinal))
             {
-                // ignore transient failures (e.g., native layer not initialised)
+                EventsStatusMessage = message;
             }
         }
 
         private void DrainEvents()
         {
-            if (!CaptureEvents)
+            if (_disposed)
+                return;
+
+            RefreshEventSupport();
+
+            if (!CaptureEvents || !EventsSupported)
                 return;
 
             try
@@ -161,9 +155,9 @@ namespace MESharp.ViewModels
                     {
                         Sequence = _eventSequence,
                         Time = FormatEventTime(evt),
-                        Channel = string.IsNullOrWhiteSpace(evt.ChatType) ? "(unknown)" : evt.ChatType,
+                        Channel = FormatChannel(evt.ChatType),
                         Names = ComposeNames(evt),
-                        Text = evt.Text,
+                        Text = CleanChatText(evt.Text),
                         Details = BuildDetails(evt),
                         Tick = evt.TickCount
                     });
@@ -176,38 +170,43 @@ namespace MESharp.ViewModels
             }
             catch
             {
-                // ignore
+                // ignore transient failures (e.g., native layer not initialised yet)
             }
         }
 
-        private static string FormatMessageTime(Chat.Message message)
+        private static string CleanChatText(string text)
         {
-            if (message.TimeTotal > 0)
+            if (string.IsNullOrEmpty(text))
+                return string.Empty;
+
+            var sb = new StringBuilder(text.Length);
+            var insideTag = false;
+
+            foreach (var ch in text)
             {
-                var clamped = Math.Min(message.TimeTotal, 365UL * 24 * 60 * 60);
-                return TimeSpan.FromSeconds(clamped).ToString(@"hh\:mm\:ss");
+                if (ch == '<')
+                {
+                    insideTag = true;
+                    continue;
+                }
+
+                if (insideTag)
+                {
+                    if (ch == '>')
+                        insideTag = false;
+                    continue;
+                }
+
+                sb.Append(ch);
             }
 
-            if (message.Timestamp > 0)
-            {
-                try
-                {
-                    if (message.Timestamp > 4_000_000_000UL)
-                    {
-                        var millis = Math.Min(message.Timestamp, (ulong)long.MaxValue);
-                        return DateTimeOffset.FromUnixTimeMilliseconds((long)millis).ToLocalTime().ToString("HH:mm:ss");
-                    }
+            return sb.ToString().Trim();
+        }
 
-                    var seconds = Math.Min(message.Timestamp, (ulong)long.MaxValue);
-                    return DateTimeOffset.FromUnixTimeSeconds((long)seconds).ToLocalTime().ToString("HH:mm:ss");
-                }
-                catch
-                {
-                    // fall back to now
-                }
-            }
-
-            return DateTime.Now.ToString("HH:mm:ss");
+        private static string FormatChannel(string channelRaw)
+        {
+            var channel = CleanChatText(channelRaw);
+            return string.IsNullOrWhiteSpace(channel) ? "(unknown)" : channel;
         }
 
         private static string FormatEventTime(Chat.ChatEvent evt)
@@ -225,29 +224,53 @@ namespace MESharp.ViewModels
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(evt.TimestampFormatted))
-                return evt.TimestampFormatted;
-
-            return DateTime.Now.ToString("HH:mm:ss");
+            var formatted = CleanChatText(evt.TimestampFormatted);
+            return string.IsNullOrWhiteSpace(formatted)
+                ? DateTime.Now.ToString("HH:mm:ss")
+                : formatted;
         }
 
         private static string ComposeNames(Chat.ChatEvent evt)
         {
             var parts = new[] { evt.Name, evt.Name2, evt.Name3 }
+                .Select(CleanChatText)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Distinct()
+                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
             return parts.Length > 0 ? string.Join(" | ", parts) : "(n/a)";
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            OnDeactivated();
+
+            _disposed = true;
+
+            try
+            {
+                _timer.Tick -= OnTick;
+            }
+            catch { /* ignore */ }
+
+            LiveEvents.CollectionChanged -= _liveEventsChangedHandler;
+
+            _captureEvents = false;
+
+            GC.SuppressFinalize(this);
         }
 
         private static string BuildDetails(Chat.ChatEvent evt)
         {
             var parts = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(evt.SkillName))
+            var skillName = CleanChatText(evt.SkillName);
+            if (!string.IsNullOrWhiteSpace(skillName))
             {
-                var skill = evt.SkillName;
+                var skill = skillName;
                 if (evt.SkillIndex != 0)
                     skill += $" ({evt.SkillIndex})";
                 if (evt.Experience != 0)
@@ -260,9 +283,10 @@ namespace MESharp.ViewModels
                 parts.Add($"Item {evt.ItemId} x{evt.ItemAmount}");
             }
 
-            if (!string.IsNullOrWhiteSpace(evt.TimestampFormatted))
+            var prettyTime = CleanChatText(evt.TimestampFormatted);
+            if (!string.IsNullOrWhiteSpace(prettyTime))
             {
-                parts.Add(evt.TimestampFormatted);
+                parts.Add(prettyTime);
             }
 
             if (evt.TickCount != 0)
@@ -290,6 +314,35 @@ namespace MESharp.ViewModels
         {
             if (string.IsNullOrWhiteSpace(propertyName)) return;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void OnActivated()
+        {
+            if (_disposed)
+                return;
+
+            if (_isActive)
+            {
+                DrainEvents();
+                return;
+            }
+
+            _isActive = true;
+            if (!_timer.IsEnabled)
+            {
+                try { _timer.Start(); } catch { /* ignore */ }
+            }
+
+            DrainEvents();
+        }
+
+        public void OnDeactivated()
+        {
+            if (_disposed || !_isActive)
+                return;
+
+            _isActive = false;
+            try { _timer.Stop(); } catch { /* ignore */ }
         }
     }
 }

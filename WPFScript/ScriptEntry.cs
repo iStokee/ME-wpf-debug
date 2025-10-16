@@ -103,8 +103,9 @@ namespace MESharp
 
 		private static void InitAndShowWindow()
 		{
-			// 1) Create the WPF Application if it doesn't already exist
-			var app = Application.Current ?? new Application();
+            // 1) Create the WPF Application if it doesn't already exist
+            Console.WriteLine("[Managed] InitAndShowWindow starting on thread " + Thread.CurrentThread.ManagedThreadId);
+            var app = Application.Current ?? new Application();
 
 			// 2) Merge our custom theme dictionaries (no external UI libs)
 			void AddDict(string packUri) =>
@@ -114,9 +115,11 @@ namespace MESharp
 			AddDict("Themes/Light.xaml");
 
 			// 3) Show MainWindow
-			app.Run(new MainWindow());
-		}
+            Console.WriteLine("[Managed] Launching MainWindow");
+            app.Run(new MainWindow());
+            Console.WriteLine("[Managed] MainWindow.Run exited");
+        }
 
-	}
+    }
 
 }

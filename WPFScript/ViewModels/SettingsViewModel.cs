@@ -77,22 +77,38 @@ namespace MESharp.ViewModels
         private void LoadCurrentSettings()
         {
             var settings = MESharp.Services.ThemeManager.LoadSettings();
+
             _isDark = settings.IsDark;
-            _selectedPrimary = ColorOption.MatchOrDefault(AvailableColors, settings.PrimaryColor);
-            // Load custom colors
+
+            CustomColors.Clear();
             if (settings.CustomColors != null && settings.CustomColors.Count > 0)
             {
-                CustomColors.Clear();
-                foreach (var hex in settings.CustomColors.Distinct())
+                foreach (var hex in settings.CustomColors.Distinct(System.StringComparer.OrdinalIgnoreCase))
                 {
-                    var c = (Color)ColorConverter.ConvertFromString(hex);
-                    var brush = new SolidColorBrush(c); brush.Freeze();
-                    CustomColors.Add(new ColorOption { Name = hex.ToUpperInvariant(), Hex = hex, Brush = brush });
+                    if (string.IsNullOrWhiteSpace(hex)) continue;
+                    try
+                    {
+                        var color = (Color)ColorConverter.ConvertFromString(hex);
+                        var brush = new SolidColorBrush(color);
+                        brush.Freeze();
+                        CustomColors.Add(new ColorOption
+                        {
+                            Name = hex.ToUpperInvariant(),
+                            Hex = hex,
+                            Brush = brush
+                        });
+                    }
+                    catch
+                    {
+                        // Ignore malformed persisted colors
+                    }
                 }
             }
+
+            _selectedPrimary = FindMatchingColor(settings.PrimaryColor) ?? ColorOption.MatchOrDefault(AvailableColors, settings.PrimaryColor);
+
             OnPropertyChanged(nameof(IsDark));
             OnPropertyChanged(nameof(SelectedPrimary));
-            OnPropertyChanged(nameof(CustomColors));
         }
 
         private void UpdateAndSaveTheme()
@@ -166,6 +182,14 @@ namespace MESharp.ViewModels
                 CustomColors.Add(new ColorOption { Name = hex, Hex = hex, Brush = brush });
             }
             UpdateAndSaveTheme();
+        }
+
+        private ColorOption FindMatchingColor(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            return CustomColors.FirstOrDefault(c =>
+                       c.Hex.Equals(value, System.StringComparison.OrdinalIgnoreCase) ||
+                       c.Name.Equals(value, System.StringComparison.OrdinalIgnoreCase));
         }
 
 		#region INotifyPropertyChanged  
