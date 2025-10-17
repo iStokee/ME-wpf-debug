@@ -60,7 +60,7 @@
                 x:Key="SkillTitleTextStyle"
                 BasedOn="{StaticResource SkillTextBlockStyle}"
                 TargetType="TextBlock">
-                <Setter Property="FontSize" Value="17" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Margin" Value="0,0,0,0" />
             </Style>
@@ -349,51 +349,84 @@
     </UserControl.Resources>
 
 
-    <DockPanel Margin="12">
-        <!--  Header: toggle + session runtime  -->
-        <StackPanel
-            Margin="0,0,0,8"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Top"
-            Orientation="Horizontal">
+    <ScrollViewer>
+        <StackPanel Margin="24">
 
-            <!--  List View Toggle  -->
-            <ToggleButton
-                Width="36"
-                Height="36"
-                Margin="0,0,10,0"
-                Padding="0"
-                IsChecked="{Binding IsListView, Mode=TwoWay}"
-                ToolTip="Switch to List View">
+            <!--  Header  -->
+            <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
                 <iconPacks:PackIconMaterial
-                    Width="20"
-                    Height="20"
-                    Kind="ViewList" />
-            </ToggleButton>
+                    Width="24"
+                    Height="24"
+                    Margin="0,0,8,0"
+                    Foreground="{DynamicResource PrimaryBrush}"
+                    Kind="TrophyVariant" />
+                <TextBlock
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="Skills" />
+            </StackPanel>
 
-            <!--  Grid View Toggle  -->
-            <ToggleButton
-                Width="36"
-                Height="36"
-                Margin="0,0,10,0"
-                Padding="0"
-                IsChecked="{Binding IsListView, Converter={StaticResource InverseBoolConverter}, Mode=TwoWay}"
-                ToolTip="Switch to Grid View">
-                <iconPacks:PackIconMaterial
-                    Width="20"
-                    Height="20"
-                    Kind="ViewGrid" />
-            </ToggleButton>
+            <!--  Controls Card  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="View Options" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Toggle between grid and list view, and filter active skills." />
 
-            <!--  Keep your “Show Only Active” next  -->
-            <ToggleButton
-                Content="Active Only"
-                IsChecked="{Binding ShowOnlyActive, Mode=TwoWay}"
-                ToolTip="Show only skills with XP gains" />
-        </StackPanel>
+                    <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                        <!--  List View Toggle  -->
+                        <ToggleButton
+                            Width="36"
+                            Height="36"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            IsChecked="{Binding IsListView, Mode=TwoWay}"
+                            ToolTip="Switch to List View">
+                            <iconPacks:PackIconMaterial
+                                Width="20"
+                                Height="20"
+                                Kind="ViewList" />
+                        </ToggleButton>
 
-        <!--  Scrollable grid of uniform cards  -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <!--  Grid View Toggle  -->
+                        <ToggleButton
+                            Width="36"
+                            Height="36"
+                            Margin="0,0,10,0"
+                            Padding="0"
+                            IsChecked="{Binding IsListView, Converter={StaticResource InverseBoolConverter}, Mode=TwoWay}"
+                            ToolTip="Switch to Grid View">
+                            <iconPacks:PackIconMaterial
+                                Width="20"
+                                Height="20"
+                                Kind="ViewGrid" />
+                        </ToggleButton>
+
+                        <!--  Keep your "Show Only Active" next  -->
+                        <ToggleButton
+                            Content="Active Only"
+                            IsChecked="{Binding ShowOnlyActive, Mode=TwoWay}"
+                            ToolTip="Show only skills with XP gains" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!--  Skills Display Card  -->
+            <Border
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <ScrollViewer MaxHeight="640" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding SkillsView}">
                 <ItemsControl.Style>
                     <Style TargetType="ItemsControl">
@@ -411,10 +444,9 @@
                     </Style>
                 </ItemsControl.Style>
             </ItemsControl>
-
-
-        </ScrollViewer>
-
-    </DockPanel>
+                </ScrollViewer>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 
 </UserControl>

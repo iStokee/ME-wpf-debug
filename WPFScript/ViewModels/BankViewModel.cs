@@ -1,7 +1,9 @@
 using MESharp.API;
 using MESharp.Commands;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -39,10 +41,16 @@ namespace MESharp.ViewModels
         public ICommand GetStackByNameCommand { get; }
         public ICommand DoActionByIdCommand { get; }
         public ICommand DoActionByNameCommand { get; }
+        public ICommand LoadItemsCommand { get; }
+        public ICommand ClearItemsCommand { get; }
 
         private int _actionIndex, _offset;
         public int ActionIndex { get => _actionIndex; set => Set(ref _actionIndex, value); }
         public int Offset { get => _offset; set => Set(ref _offset, value); }
+
+        // Items collection for DataGrid
+        public ObservableCollection<ItemContainer> Items { get; } = new ObservableCollection<ItemContainer>();
+        public int ItemCount => Items.Count;
 
         public BankViewModel()
         {
@@ -69,6 +77,9 @@ namespace MESharp.ViewModels
                 if (int.TryParse(IdInput, out var id)) ActionResult = Bank.DoActionById(id, ActionIndex, Offset) ? "✔ OK" : "✘ Failed";});
 
             DoActionByNameCommand = new RelayCommand(_ => ActionResult = Bank.DoActionByName(NameInput, ActionIndex, Offset) ? "✔ OK" : "✘ Failed");
+
+            LoadItemsCommand = new RelayCommand(_ => LoadItems());
+            ClearItemsCommand = new RelayCommand(_ => ClearItems());
 
             UpdateQuickFilter();
         }
@@ -116,6 +127,23 @@ namespace MESharp.ViewModels
                 StackResult = s.ToString();
             }
         }
+
+		private void LoadItems()
+		{
+			Items.Clear();
+			var items = Bank.GetItemsDetailed(includeCoordinates: false);
+			foreach (var item in items)
+			{
+				Items.Add(item);
+			}
+			OnPropertyChanged(nameof(ItemCount));
+		}
+
+		private void ClearItems()
+		{
+			Items.Clear();
+			OnPropertyChanged(nameof(ItemCount));
+		}
 
 		private void OnPropertyChanged(string v)
 		{

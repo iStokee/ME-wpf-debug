@@ -18,6 +18,22 @@ namespace MESharp.ViewModels
     private bool _isActive;
 	private bool _disposed;
 
+	private bool _autoLoad;
+	public bool AutoLoad
+	{
+		get => _autoLoad;
+		set
+		{
+			if (_autoLoad == value) return;
+			_autoLoad = value;
+			OnPropertyChanged();
+			if (_autoLoad && _isActive)
+			{
+				RefreshAll();
+			}
+		}
+	}
+
 	private bool _liveRefresh = true;
 	public bool LiveRefresh
 	{
@@ -30,6 +46,8 @@ namespace MESharp.ViewModels
 			UpdateTimer();
 		}
 	}
+
+	public bool HasNpcs => AllNpcs.Count > 0;
 
 	private void OnTimerTick(object? sender, EventArgs e)
 	{
@@ -99,7 +117,7 @@ namespace MESharp.ViewModels
 
 		public NpcViewModel()
 		{
-			AllNpcs = new ObservableCollection<Npcs.Npc>(Npcs.GetAll());
+			AllNpcs = new ObservableCollection<Npcs.Npc>();
 			NpcsView = CollectionViewSource.GetDefaultView(AllNpcs);
 			NpcsView.Filter = FilterPredicate;
 
@@ -154,13 +172,14 @@ namespace MESharp.ViewModels
 
 	private void RefreshAll()
 	{
-		if (_disposed)
+		if (_disposed || !_autoLoad)
 			return;
 
 		var latest = Npcs.GetAll();
 		AllNpcs.Clear();
 		foreach (var n in latest) AllNpcs.Add(n);
 		NpcsView.Refresh();
+		OnPropertyChanged(nameof(HasNpcs));
 	}
 
 		private void ExecuteDoAction()

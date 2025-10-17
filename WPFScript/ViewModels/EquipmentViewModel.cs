@@ -16,6 +16,7 @@ namespace MESharp.ViewModels
         public bool IsFull { get => _isFull; set => SetProperty(ref _isFull, value); }
 
         public ObservableCollection<Equipment.Item> Items { get; } = new();
+        public bool HasItems => QuickItems.Count > 0;
 
         public ICommand RefreshStateCommand { get; }
         public ICommand LoadItemsCommand { get; }
@@ -64,7 +65,13 @@ namespace MESharp.ViewModels
             LoadItemsCommand = new RelayCommand(_ =>
             {
                 Items.Clear();
-                foreach (var it in Equipment.GetAllItems()) Items.Add(it);
+                QuickItems.Clear();
+                foreach (var it in Equipment.GetAllItems())
+                {
+                    Items.Add(it);
+                    QuickItems.Add(it);
+                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasItems)));
             });
 
             ContainsAnyCommand = new RelayCommand(_ =>
@@ -100,13 +107,11 @@ namespace MESharp.ViewModels
 
             AutoUnequipCommand = new RelayCommand(_ =>
             {
-                if (int.TryParse(IdInput, out var id))
+                if (int.TryParse(QuickFilterText, out var id))
                     ActionResult = Equipment.UnequipById(id) ? "✔ Unequipped" : "✘ Failed";
-                else if (!string.IsNullOrWhiteSpace(NameInput))
-                    ActionResult = Equipment.UnequipByName(NameInput) ? "✔ Unequipped" : "✘ Failed";
+                else if (!string.IsNullOrWhiteSpace(QuickFilterText))
+                    ActionResult = Equipment.UnequipByName(QuickFilterText) ? "✔ Unequipped" : "✘ Failed";
             });
-
-            UpdateQuickFilter();
         }
 
         private static int[] ParseIds(string s)
@@ -137,7 +142,15 @@ namespace MESharp.ViewModels
             QuickCount = 0;
 
             var q = QuickFilterText;
-            if (string.IsNullOrWhiteSpace(q)) { return; }
+            if (string.IsNullOrWhiteSpace(q))
+            {
+                // Show all items when no filter
+                foreach (var it in Equipment.GetAllItems())
+                    QuickItems.Add(it);
+                QuickCount = QuickItems.Count;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasItems)));
+                return;
+            }
 
             // If looks like IDs (number or comma/space separated numbers)
             var looksLikeIds = false;
@@ -179,6 +192,8 @@ namespace MESharp.ViewModels
                         QuickItems.Add(it);
                 QuickCount = QuickItems.Count;
             }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasItems)));
         }
     }
 }

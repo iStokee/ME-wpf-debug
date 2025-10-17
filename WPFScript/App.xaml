@@ -11,9 +11,15 @@
                 <ResourceDictionary Source="Themes/Light.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!--  Acrylic “glass” brush  -->
+            <!--  Acrylic "glass" brush  -->
             <Color x:Key="AcrylicBackgroundColor">#CCFFFFFF</Color>
             <SolidColorBrush x:Key="AcrylicBackgroundBrush" Color="{DynamicResource AcrylicBackgroundColor}" />
+
+            <!--  Default Primary color resources to prevent white fill on mouseover before theme loads  -->
+            <Color x:Key="PrimaryColor">#FF3F51B5</Color>
+            <SolidColorBrush x:Key="PrimaryBrush" Color="#FF3F51B5" />
+            <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="PrimarySoftBrush" Color="#333F51B5" />
 
         </ResourceDictionary>
     </Application.Resources>

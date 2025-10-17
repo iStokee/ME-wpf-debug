@@ -24,13 +24,7 @@ namespace MESharp
 			{
 			InitializeComponent();
 
-			// Apply saved theme once window resources are available
-			try
-			{
-				var settings = MESharp.Services.ThemeManager.LoadSettings();
-				MESharp.Services.ThemeManager.ApplyTheme(settings);
-			}
-			catch { /* ignore theme init issues */ }
+			// Theme is now loaded in App.OnStartup() before window creation
 
             var vm = new MainWindowViewModel();
             	this.DataContext = vm;

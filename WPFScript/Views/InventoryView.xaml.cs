@@ -24,13 +24,6 @@ namespace MESharp.Views
 		public InventoryView()
 		{
 			InitializeComponent();
-
-
-			// ① instantiate your VM
-			var vm = new InventoryViewModel();
-
-			// ② wire it up
-			this.DataContext = vm;
 		}
 	}
 }

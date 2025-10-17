@@ -84,7 +84,11 @@ namespace MESharp.ViewModels
             };
             _timer.Tick += _tickHandler;
 
-            OnActivated();
+            // Defer OnActivated to allow window to show first (improves startup time)
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+            {
+                OnActivated();
+            }), DispatcherPriority.Background);
         }
 
         private void OnTimerTick(object? sender, EventArgs e) => Refresh();

@@ -2,111 +2,181 @@
     x:Class="MESharp.Views.ObjectsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     Background="{DynamicResource App.BackgroundBrush}"
     Foreground="{DynamicResource App.ForegroundBrush}">
 
     <ScrollViewer>
-        <StackPanel Margin="12">
-            <GroupBox Header="Objects">
-                <StackPanel>
-                    <StackPanel Margin="0,0,0,8">
-                        <TextBlock
-                            Margin="0,0,0,4"
-                            FontSize="12"
-                            Text="Select object types to load:" />
-                        <WrapPanel>
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Object [0]"
-                                IsChecked="{Binding IncludeObject}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="NPC [1]"
-                                IsChecked="{Binding IncludeNpc}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Player [2]"
-                                IsChecked="{Binding IncludePlayer}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Ground [3]"
-                                IsChecked="{Binding IncludeGroundItem}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Highlight [4]"
-                                IsChecked="{Binding IncludeHighlight}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Projectile [5]"
-                                IsChecked="{Binding IncludeProjectile}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Tile [8]"
-                                IsChecked="{Binding IncludeTile}" />
-                            <CheckBox
-                                Margin="0,0,12,8"
-                                Content="Object [12]"
-                                IsChecked="{Binding IncludeObject12}" />
-                        </WrapPanel>
-                    </StackPanel>
+        <StackPanel Margin="24">
 
-                    <WrapPanel Margin="0,0,0,8" VerticalAlignment="Center">
+            <!--  Header  -->
+            <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
+                <iconPacks:PackIconMaterial
+                    Width="24"
+                    Height="24"
+                    Margin="0,0,8,0"
+                    Foreground="{DynamicResource PrimaryBrush}"
+                    Kind="Cube" />
+                <TextBlock
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="Objects" />
+            </StackPanel>
+
+            <!--  Object Type Selection Card  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Object Types" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Select which object types to load. Refresh runs automatically when types change." />
+
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
                         <CheckBox
-                            Margin="0,0,12,0"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,16,8"
+                            Content="Object [0]"
+                            IsChecked="{Binding IncludeObject}" />
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="0,0,16,8"
+                            Content="NPC [1]"
+                            IsChecked="{Binding IncludeNpc}" />
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Margin="0,0,16,8"
+                            Content="Player [2]"
+                            IsChecked="{Binding IncludePlayer}" />
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="0,0,16,8"
+                            Content="Ground [3]"
+                            IsChecked="{Binding IncludeGroundItem}" />
+
+                        <CheckBox
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,0,16,8"
+                            Content="Highlight [4]"
+                            IsChecked="{Binding IncludeHighlight}" />
+                        <CheckBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="0,0,16,8"
+                            Content="Projectile [5]"
+                            IsChecked="{Binding IncludeProjectile}" />
+                        <CheckBox
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="0,0,16,8"
+                            Content="Tile [8]"
+                            IsChecked="{Binding IncludeTile}" />
+                        <CheckBox
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="0,0,16,8"
+                            Content="Object [12]"
+                            IsChecked="{Binding IncludeObject12}" />
+
+                        <CheckBox
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="0,0,16,0"
                             Content="Interactable only"
                             IsChecked="{Binding OnlyInteractable}" />
                         <CheckBox
-                            Margin="0,0,12,0"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
                             Content="Live refresh"
                             IsChecked="{Binding LiveRefresh}" />
-                        <Button
-                            Width="100"
-                            Height="30"
-                            Margin="0,0,12,0"
-                            Command="{Binding RefreshCommand}"
-                            Content="Refresh"
-                            Style="{StaticResource AccentButton}" />
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource App.MutedBrush}"
-                            Text="Refresh runs automatically when types change." />
-                    </WrapPanel>
+                    </Grid>
+                    <Button
+                        Width="100"
+                        Height="30"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding RefreshCommand}"
+                        Content="Refresh"
+                        Style="{StaticResource AccentButton}" />
+                </StackPanel>
+            </Border>
 
-                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center" Text="Filter (name or ID):" />
+            <!--  Filter Card  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Filter" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Filter by name or ID (use * for wildcard)." />
+
+                    <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                        <TextBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="Filter:" />
                         <TextBox
-                            Width="220"
-                            Margin="8,0,0,0"
+                            Width="240"
+                            Margin="0,0,12,0"
                             Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource App.MutedBrush}"
-                            Text="Use * for wildcard." />
-                    </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
 
-                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center" Text="Action index:" />
-                        <ComboBox
-                            Width="100"
-                            Margin="8,0,0,0"
-                            ItemContainerStyle="{StaticResource AppComboBoxItem}"
-                            ItemsSource="{Binding ActionIndices}"
-                            SelectedItem="{Binding ActionIndex}"
-                            Style="{StaticResource AppComboBox}" />
-                        <Button
-                            Width="100"
-                            Height="30"
-                            Margin="12,0,0,0"
-                            Command="{Binding DoActionCommand}"
-                            Content="DoAction"
-                            Style="{StaticResource AccentButton}" />
-                    </StackPanel>
+            <!--  Objects List Card  -->
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Nearby Objects" />
 
-                    <DataGrid
-                        Margin="0"
-                        AutoGenerateColumns="False"
-                        Background="{DynamicResource App.CardBrush}"
+                    <Grid>
+                        <DataGrid
+                            Height="460"
+                            AutoGenerateColumns="False"
+                        Background="{DynamicResource App.BackgroundBrush}"
                         CanUserResizeColumns="False"
                         CanUserResizeRows="False"
                         CanUserSortColumns="True"
@@ -203,8 +273,68 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+
+                    <!--  Empty State Message  -->
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="No objects loaded. Select object types and click 'Refresh'.">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasObjects}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
                 </StackPanel>
-            </GroupBox>
+            </Border>
+
+            <!--  Actions Card  -->
+            <Border
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Actions" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Perform actions on objects by filter or selected item." />
+
+                    <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                        <TextBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Text="Action index:" />
+                        <ComboBox
+                            Width="100"
+                            Margin="0,0,12,0"
+                            ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                            ItemsSource="{Binding ActionIndices}"
+                            SelectedItem="{Binding ActionIndex}"
+                            Style="{StaticResource AppComboBox}" />
+                        <Button
+                            Width="100"
+                            Height="30"
+                            Command="{Binding DoActionCommand}"
+                            Content="DoAction"
+                            Style="{StaticResource AccentButton}" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

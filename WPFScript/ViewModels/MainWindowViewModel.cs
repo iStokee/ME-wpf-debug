@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -18,7 +18,11 @@ namespace MESharp.ViewModels
 		Npcs,
 		Objects,
 		Bank,
-		Settings // Added
+		Loot,
+		MaterialCache,
+		TradeWindow,
+		ItemContainers,
+		Settings
 	}
 
 	public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
@@ -51,6 +55,10 @@ namespace MESharp.ViewModels
 					OnPropertyChanged(nameof(IsNpcsSelected));
 					OnPropertyChanged(nameof(IsObjectsSelected));
 					OnPropertyChanged(nameof(IsBankSelected));
+					OnPropertyChanged(nameof(IsLootSelected));
+					OnPropertyChanged(nameof(IsMaterialCacheSelected));
+					OnPropertyChanged(nameof(IsTradeWindowSelected));
+					OnPropertyChanged(nameof(IsItemContainersSelected));
 					OnPropertyChanged(nameof(IsSettingsSelected));
 					OnPropertyChanged(nameof(CurrentPageName)); // Notify that the name has changed
 				}
@@ -68,6 +76,10 @@ namespace MESharp.ViewModels
 		public bool IsNpcsSelected => CurrentPage == AppPage.Npcs;
 		public bool IsObjectsSelected => CurrentPage == AppPage.Objects;
 		public bool IsBankSelected => CurrentPage == AppPage.Bank;
+		public bool IsLootSelected => CurrentPage == AppPage.Loot;
+		public bool IsMaterialCacheSelected => CurrentPage == AppPage.MaterialCache;
+		public bool IsTradeWindowSelected => CurrentPage == AppPage.TradeWindow;
+		public bool IsItemContainersSelected => CurrentPage == AppPage.ItemContainers;
 		public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
 
 		// Declare your commands
@@ -79,6 +91,10 @@ namespace MESharp.ViewModels
 		public ICommand ShowNpcsCommand { get; }
 		public ICommand ShowObjectsCommand { get; }
 		public ICommand ShowBankCommand { get; }
+		public ICommand ShowLootCommand { get; }
+		public ICommand ShowMaterialCacheCommand { get; }
+		public ICommand ShowTradeWindowCommand { get; }
+		public ICommand ShowItemContainersCommand { get; }
 		public ICommand ShowSettingsCommand { get; }
 
 		private string _sessionRuntimeString = "--:--:--";
@@ -101,6 +117,10 @@ namespace MESharp.ViewModels
 			ShowNpcsCommand      = new RelayCommand(_ => ShowNpcs());
 			ShowObjectsCommand   = new RelayCommand(_ => ShowObjects());
 			ShowBankCommand      = new RelayCommand(_ => ShowBank());
+			ShowLootCommand      = new RelayCommand(_ => ShowLoot());
+			ShowMaterialCacheCommand = new RelayCommand(_ => ShowMaterialCache());
+			ShowTradeWindowCommand = new RelayCommand(_ => ShowTradeWindow());
+			ShowItemContainersCommand = new RelayCommand(_ => ShowItemContainers());
 			ShowSettingsCommand  = new RelayCommand(_ => ShowSettings());
 
 			// Timer for session runtime clock
@@ -150,6 +170,26 @@ namespace MESharp.ViewModels
 		private void ShowBank()
 		{
 			SwitchView(AppPage.Bank, () => new BankViewModel());
+		}
+
+		private void ShowLoot()
+		{
+			SwitchView(AppPage.Loot, () => new LootViewModel());
+		}
+
+		private void ShowMaterialCache()
+		{
+			SwitchView(AppPage.MaterialCache, () => new MaterialCacheViewModel());
+		}
+
+		private void ShowTradeWindow()
+		{
+			SwitchView(AppPage.TradeWindow, () => new TradeWindowViewModel());
+		}
+
+		private void ShowItemContainers()
+		{
+			SwitchView(AppPage.ItemContainers, () => new ItemContainersViewModel());
 		}
 
 		private void ShowSettings()

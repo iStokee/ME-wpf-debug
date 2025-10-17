@@ -163,30 +163,49 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
-                        <Border
-                            x:Name="Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6">
-                            <Grid>
-                                <ContentPresenter
-                                    Margin="4,0,24,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Content="{TemplateBinding SelectionBoxItem}"
-                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <Path
-                                    x:Name="Arrow"
-                                    Margin="0,0,8,0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Data="M 0 0 L 8 0 L 4 5 Z"
-                                    Fill="{DynamicResource App.SubtleForegroundBrush}" />
-                            </Grid>
-                        </Border>
+                        <ToggleButton
+                            x:Name="ToggleButton"
+                            Grid.Column="0"
+                            Focusable="False"
+                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border
+                                        x:Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="6">
+                                        <Grid>
+                                            <ContentPresenter
+                                                Margin="6,0,24,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                ContentTemplateSelector="{Binding ItemTemplateSelector, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                IsHitTestVisible="False" />
+                                            <Path
+                                                x:Name="Arrow"
+                                                Margin="0,0,8,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Data="M 0 0 L 8 0 L 4 5 Z"
+                                                Fill="{DynamicResource App.SubtleForegroundBrush}"
+                                                IsHitTestVisible="False" />
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                    <Setter Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                    <Setter Property="BorderThickness" Value="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
                         <Popup
                             x:Name="PART_Popup"
                             AllowsTransparency="True"
@@ -195,6 +214,7 @@
                             Placement="Bottom"
                             PopupAnimation="Slide">
                             <Border
+                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ComboBox}}"
                                 Margin="0,4"
                                 Background="{DynamicResource App.CardBrush}"
                                 BorderBrush="{DynamicResource App.BorderBrush}"
@@ -202,26 +222,27 @@
                                 CornerRadius="6"
                                 SnapsToDevicePixels="True">
                                 <ScrollViewer
+                                    MaxHeight="200"
                                     Foreground="{TemplateBinding Foreground}"
-                                    HorizontalScrollBarVisibility="Auto"
-                                    VerticalScrollBarVisibility="Auto">
-                                    <ItemsPresenter />
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    VerticalScrollBarVisibility="Auto"
+                                    SnapsToDevicePixels="True">
+                                    <ItemsPresenter SnapsToDevicePixels="True" />
                                 </ScrollViewer>
                             </Border>
                         </Popup>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
+                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource App.CardBrush}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                            <Setter TargetName="ToggleButton" Property="Background" Value="{DynamicResource App.CardBrush}" />
+                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
-                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource App.MutedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -417,6 +438,16 @@
         <Setter Property="BorderThickness" Value="0,0,0,1" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="6,4" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
     <Style TargetType="GridViewColumnHeader">
         <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
@@ -508,13 +539,191 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style TargetType="ComboBox">
-        <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+    <Style TargetType="ComboBox" BasedOn="{StaticResource AppComboBox}">
+        <Setter Property="ItemContainerStyle" Value="{StaticResource AppComboBoxItem}" />
+    </Style>
+
+    <!--  Custom ScrollBar Styles  -->
+    <!--  ScrollBar Thumb (the draggable part)  -->
+    <Style x:Key="ScrollBarThumb" TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border
+                        x:Name="ThumbBorder"
+                        Background="{DynamicResource App.BorderBrush}"
+                        CornerRadius="4"
+                        SnapsToDevicePixels="True" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ScrollBar Page Buttons (track)  -->
+    <Style x:Key="ScrollBarPageButton" TargetType="RepeatButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Vertical ScrollBar  -->
+    <Style x:Key="VerticalScrollBar" TargetType="ScrollBar">
+        <Setter Property="Width" Value="12" />
         <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="Padding" Value="6,4" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource ThemedComboBoxItem}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid>
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Opacity="0.3" />
+                        <Track
+                            x:Name="PART_Track"
+                            IsDirectionReversed="True">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton
+                                    Command="ScrollBar.PageUpCommand"
+                                    Style="{StaticResource ScrollBarPageButton}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton
+                                    Command="ScrollBar.PageDownCommand"
+                                    Style="{StaticResource ScrollBarPageButton}" />
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Horizontal ScrollBar  -->
+    <Style x:Key="HorizontalScrollBar" TargetType="ScrollBar">
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid>
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Opacity="0.3" />
+                        <Track x:Name="PART_Track" IsDirectionReversed="False">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton
+                                    Command="ScrollBar.PageLeftCommand"
+                                    Style="{StaticResource ScrollBarPageButton}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton
+                                    Command="ScrollBar.PageRightCommand"
+                                    Style="{StaticResource ScrollBarPageButton}" />
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Apply ScrollBar styles globally  -->
+    <Style TargetType="ScrollBar" BasedOn="{StaticResource {x:Type ScrollBar}}">
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Width" Value="12" />
+                <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid>
+                                <Border
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="6"
+                                    Opacity="0.3" />
+                                <Track
+                                    x:Name="PART_Track"
+                                    IsDirectionReversed="True">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton
+                                            Command="ScrollBar.PageUpCommand"
+                                            Style="{StaticResource ScrollBarPageButton}" />
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton
+                                            Command="ScrollBar.PageDownCommand"
+                                            Style="{StaticResource ScrollBarPageButton}" />
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Height" Value="12" />
+                <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid>
+                                <Border
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="6"
+                                    Opacity="0.3" />
+                                <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton
+                                            Command="ScrollBar.PageLeftCommand"
+                                            Style="{StaticResource ScrollBarPageButton}" />
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton
+                                            Command="ScrollBar.PageRightCommand"
+                                            Style="{StaticResource ScrollBarPageButton}" />
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  ScrollViewer style to ensure scrollbars use our theme  -->
+    <Style TargetType="ScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
     </Style>
 
 </ResourceDictionary>

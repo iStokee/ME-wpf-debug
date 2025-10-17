@@ -21,6 +21,11 @@
             BasedOn="{StaticResource {x:Type ToggleButton}}"
             TargetType="ToggleButton">
             <Setter Property="Padding" Value="10,6" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 

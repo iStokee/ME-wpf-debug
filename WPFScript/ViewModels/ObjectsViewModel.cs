@@ -163,6 +163,8 @@ namespace MESharp.ViewModels
             IncludeObject || IncludeNpc || IncludePlayer || IncludeGroundItem ||
             IncludeHighlight || IncludeProjectile || IncludeTile || IncludeObject12;
 
+        public bool HasObjects => AllObjects.Count > 0;
+
         public ICommand RefreshCommand { get; }
         public ICommand DoActionCommand { get; }
 
@@ -269,6 +271,7 @@ namespace MESharp.ViewModels
                 }
 
                 ObjectsView.Refresh();
+                OnPropertyChanged(nameof(HasObjects));
 
                 if (previous != null)
                 {
