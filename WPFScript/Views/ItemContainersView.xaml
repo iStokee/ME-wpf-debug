@@ -16,6 +16,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
+            <conv:BoolToColorConverter x:Key="BoolToColorConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -167,26 +169,76 @@
                             Width="90"
                             Binding="{Binding HighAlch}"
                             Header="High Alch" />
-                        <DataGridCheckBoxColumn
+                        <DataGridTemplateColumn
                             Width="70"
-                            Binding="{Binding IsNoted, Mode=OneWay}"
-                            Header="Noted" />
-                        <DataGridCheckBoxColumn
+                            Header="Noted">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{Binding IsNoted, Converter={StaticResource BoolToColorConverter}}"
+                                        Text="{Binding IsNoted, Converter={StaticResource BoolToIconConverter}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
                             Width="80"
-                            Binding="{Binding IsStackable, Mode=OneWay}"
-                            Header="Stackable" />
-                        <DataGridCheckBoxColumn
+                            Header="Stackable">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{Binding IsStackable, Converter={StaticResource BoolToColorConverter}}"
+                                        Text="{Binding IsStackable, Converter={StaticResource BoolToIconConverter}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
                             Width="85"
-                            Binding="{Binding IsTradeable, Mode=OneWay}"
-                            Header="Tradeable" />
-                        <DataGridCheckBoxColumn
+                            Header="Tradeable">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{Binding IsTradeable, Converter={StaticResource BoolToColorConverter}}"
+                                        Text="{Binding IsTradeable, Converter={StaticResource BoolToIconConverter}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
                             Width="85"
-                            Binding="{Binding IsBankable, Mode=OneWay}"
-                            Header="Bankable" />
-                        <DataGridCheckBoxColumn
+                            Header="Bankable">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{Binding IsBankable, Converter={StaticResource BoolToColorConverter}}"
+                                        Text="{Binding IsBankable, Converter={StaticResource BoolToIconConverter}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn
                             Width="80"
-                            Binding="{Binding IsAlchable, Mode=OneWay}"
-                            Header="Alchable" />
+                            Header="Alchable">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{Binding IsAlchable, Converter={StaticResource BoolToColorConverter}}"
+                                        Text="{Binding IsAlchable, Converter={StaticResource BoolToIconConverter}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn
                             Width="80"
                             Binding="{Binding ScreenX, StringFormat=F1}"
