@@ -22,6 +22,8 @@ namespace MESharp.ViewModels
 		MaterialCache,
 		TradeWindow,
 		ItemContainers,
+		ItemsUnified,
+		ObjectsUnified,
 		Settings
 	}
 
@@ -59,12 +61,29 @@ namespace MESharp.ViewModels
 					OnPropertyChanged(nameof(IsMaterialCacheSelected));
 					OnPropertyChanged(nameof(IsTradeWindowSelected));
 					OnPropertyChanged(nameof(IsItemContainersSelected));
+					OnPropertyChanged(nameof(IsItemsUnifiedSelected));
+					OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
 					OnPropertyChanged(nameof(IsSettingsSelected));
 					OnPropertyChanged(nameof(CurrentPageName)); // Notify that the name has changed
+					OnPropertyChanged(nameof(IsItemsGroupActive));
+					OnPropertyChanged(nameof(IsObjectsGroupActive));
+					OnPropertyChanged(nameof(IsSidePanelVisible));
 				}
 			}
 		}
 
+
+		// Group tracking
+		public bool IsItemsGroupActive => CurrentPage == AppPage.Inventory || CurrentPage == AppPage.Equipment ||
+		                                   CurrentPage == AppPage.Bank || CurrentPage == AppPage.Loot ||
+		                                   CurrentPage == AppPage.MaterialCache || CurrentPage == AppPage.TradeWindow ||
+		                                   CurrentPage == AppPage.ItemContainers ||
+		                                   CurrentPage == AppPage.ItemsUnified;
+
+		public bool IsObjectsGroupActive => CurrentPage == AppPage.Objects || CurrentPage == AppPage.Npcs ||
+		                                     CurrentPage == AppPage.ObjectsUnified;
+
+		public bool IsSidePanelVisible => IsItemsGroupActive || IsObjectsGroupActive;
 		public string CurrentPageName => $"Active Page:      {CurrentPage}";
 
 		// one bool per view, bound to each ToggleButton.IsChecked
@@ -80,6 +99,8 @@ namespace MESharp.ViewModels
 		public bool IsMaterialCacheSelected => CurrentPage == AppPage.MaterialCache;
 		public bool IsTradeWindowSelected => CurrentPage == AppPage.TradeWindow;
 		public bool IsItemContainersSelected => CurrentPage == AppPage.ItemContainers;
+		public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
+		public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
 		public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
 
 		// Declare your commands
@@ -95,6 +116,8 @@ namespace MESharp.ViewModels
 		public ICommand ShowMaterialCacheCommand { get; }
 		public ICommand ShowTradeWindowCommand { get; }
 		public ICommand ShowItemContainersCommand { get; }
+		public ICommand ShowItemsUnifiedCommand { get; }
+		public ICommand ShowObjectsUnifiedCommand { get; }
 		public ICommand ShowSettingsCommand { get; }
 
 		private string _sessionRuntimeString = "--:--:--";
@@ -121,6 +144,8 @@ namespace MESharp.ViewModels
 			ShowMaterialCacheCommand = new RelayCommand(_ => ShowMaterialCache());
 			ShowTradeWindowCommand = new RelayCommand(_ => ShowTradeWindow());
 			ShowItemContainersCommand = new RelayCommand(_ => ShowItemContainers());
+			ShowItemsUnifiedCommand = new RelayCommand(_ => ShowItemsUnified());
+			ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
 			ShowSettingsCommand  = new RelayCommand(_ => ShowSettings());
 
 			// Timer for session runtime clock
@@ -196,6 +221,16 @@ namespace MESharp.ViewModels
 		{
 			SwitchView(AppPage.Settings, () => new SettingsViewModel());
 		}
+
+	private void ShowItemsUnified()
+	{
+		SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
+	}
+
+	private void ShowObjectsUnified()
+	{
+		SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
+	}
 
 		#region INotifyPropertyChanged boilerplate
 		public event PropertyChangedEventHandler PropertyChanged;

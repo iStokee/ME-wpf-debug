@@ -6,7 +6,7 @@ using System.Windows.Media;
 namespace MESharp.Converters
 {
 	/// <summary>
-	/// Converts bool to icon: true = Green ✓, false = Red ✗
+	/// Converts bool to icon: true = Green ✓, false = Red -
 	/// </summary>
 	public class BoolToIconConverter : IValueConverter
 	{
@@ -14,7 +14,7 @@ namespace MESharp.Converters
 		{
 			if (value is bool b)
 			{
-				return b ? "✓" : "✗";
+				return b ? "✓" : "−";
 			}
 			return "—";
 		}

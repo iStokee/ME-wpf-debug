@@ -31,6 +31,7 @@
             <vm:MainWindowViewModel x:Key="MainWindowViewModel" />
             <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <!--  DataTemplates for Views  -->
             <DataTemplate DataType="{x:Type vm:GameViewModel}">
@@ -68,6 +69,12 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ItemContainersViewModel}">
                 <views:ItemContainersView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ItemsUnifiedViewModel}">
+                <views:ItemsUnifiedView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ObjectsUnifiedViewModel}">
+                <views:ObjectsUnifiedView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
                 <views:SettingsView />
@@ -145,7 +152,7 @@
                     </Border>
                     <StackPanel
                         Grid.Column="2"
-                        Margin=" 0 0 5 0"
+                        Margin="0,0,5,0"
                         VerticalAlignment="Center"
                         Orientation="Horizontal">
                         <Button
@@ -186,7 +193,7 @@
                 DockPanel.Dock="Top" />
             <!--  Top Tab Bar with Horizontal Scrolling  -->
             <Border
-                Height="48"
+                Height="56"
                 Margin="4,5,4,0"
                 Background="{DynamicResource App.CardBrush}"
                 DockPanel.Dock="Top">
@@ -362,6 +369,34 @@
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                                     Kind="Archive" />
                                 <TextBlock Text="Containers" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowItemsUnifiedCommand}"
+                            IsChecked="{Binding IsItemsUnifiedSelected, Mode=OneWay}"
+                            ToolTip="Items (Unified View)">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="PackageVariantClosed" />
+                                <TextBlock Text="Items" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowObjectsUnifiedCommand}"
+                            IsChecked="{Binding IsObjectsUnifiedSelected, Mode=OneWay}"
+                            ToolTip="Objects (Unified View)">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="CubeOutline" />
+                                <TextBlock Text="Objects" />
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton

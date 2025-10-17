@@ -1,0 +1,364 @@
+<UserControl
+    x:Class="MESharp.Views.ObjectsUnifiedView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:MESharp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:MESharp.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:ObjectsUnifiedViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Main Content Area  -->
+        <Grid Grid.Column="0" Margin="0,0,5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  Header  -->
+            <Border
+                Grid.Row="0"
+                Margin="0,0,0,10"
+                Padding="10"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="5">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Text="Game Objects - Unified View" />
+                    <TextBlock
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="View NPCs and Objects with type-specific controls in the side panel"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!--  Object Type Selection and Actions  -->
+            <Border
+                Grid.Row="1"
+                Margin="0,0,0,10"
+                Padding="10"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="Type:" />
+
+                    <ComboBox
+                        Grid.Column="1"
+                        Width="150"
+                        Margin="0,0,15,0"
+                        ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                        ItemsSource="{Binding AvailableObjectTypes}"
+                        SelectedItem="{Binding SelectedObjectType}"
+                        Style="{StaticResource AppComboBox}" />
+
+                    <TextBox
+                        Grid.Column="2"
+                        Width="220"
+                        Margin="0,0,15,0"
+                        Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Button
+                        Grid.Column="3"
+                        Margin="0,0,10,0"
+                        Padding="15,5"
+                        Command="{Binding LoadObjectsCommand}"
+                        Style="{StaticResource AccentButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Kind="Refresh" />
+                            <TextBlock Text="Load" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Grid.Column="4"
+                        Padding="15,5"
+                        Command="{Binding ClearCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Kind="Close" />
+                            <TextBlock Text="Clear" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!--  Objects Table  -->
+            <Border
+                Grid.Row="2"
+                Margin="0,0,0,10"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="5">
+                <Grid>
+                    <DataGrid
+                        Margin="5"
+                        AutoGenerateColumns="False"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        BorderThickness="0"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserSortColumns="True"
+                        Foreground="{DynamicResource App.ForegroundBrush}"
+                        GridLinesVisibility="Horizontal"
+                        HeadersVisibility="Column"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding ObjectsView}"
+                        RowBackground="{DynamicResource App.CardBrush}"
+                        SelectedItem="{Binding SelectedObject}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding Id}"
+                                Header="ID"
+                                SortMemberPath="Id" />
+                            <DataGridTextColumn
+                                Width="*"
+                                MinWidth="200"
+                                Binding="{Binding Name}"
+                                Header="Name"
+                                SortMemberPath="Name" />
+                            <DataGridTextColumn
+                                Width="120"
+                                Binding="{Binding TypeLabel}"
+                                Header="Type"
+                                SortMemberPath="Type" />
+                            <DataGridTextColumn
+                                Width="90"
+                                Binding="{Binding Distance, StringFormat={}{0:F1}}"
+                                Header="Distance"
+                                SortMemberPath="Distance" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding Health}"
+                                Header="Health"
+                                SortMemberPath="Health" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding Animation}"
+                                Header="Anim"
+                                SortMemberPath="Animation" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding X}"
+                                Header="X"
+                                SortMemberPath="X" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding Y}"
+                                Header="Y"
+                                SortMemberPath="Y" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!--  Empty State Message  -->
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="No objects loaded. Select a type and click 'Load'.">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasObjects}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Border>
+
+            <!--  Status Bar  -->
+            <Border
+                Grid.Row="3"
+                Padding="10"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        Grid.Column="0"
+                        Margin="0,0,20,0"
+                        Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Margin="0,0,5,0"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            Kind="Cube" />
+                        <TextBlock VerticalAlignment="Center" Text="Objects: " />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            Text="{Binding ObjectCount, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="{Binding StatusMessage}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!--  Flyout Panel  -->
+        <Border
+            Grid.Column="1"
+            Width="320"
+            Margin="0"
+            Background="{DynamicResource App.CardBrush}"
+            CornerRadius="5">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="10">
+                    <!--  Panel Header  -->
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Object Actions" />
+
+                    <!--  NPC-specific Controls  -->
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="10"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        CornerRadius="5"
+                        Visibility="{Binding IsNpcSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="NPC Actions" />
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                FontSize="11"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="NPC-specific filters and actions"
+                                TextWrapping="Wrap" />
+
+                            <CheckBox
+                                Margin="0,0,0,5"
+                                Content="Show Only Alive"
+                                IsChecked="{Binding ShowOnlyAlive}" />
+
+                            <CheckBox
+                                Margin="0,0,0,5"
+                                Content="Auto-Refresh"
+                                IsChecked="{Binding AutoRefresh}" />
+
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontSize="12"
+                                Text="Action Index:" />
+                            <ComboBox
+                                Margin="0,0,0,5"
+                                ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                                ItemsSource="{Binding ActionIndices}"
+                                SelectedItem="{Binding SelectedActionIndex}"
+                                Style="{StaticResource AppComboBox}" />
+
+                            <Button
+                                Margin="0,5,0,0"
+                                Padding="10,5"
+                                Command="{Binding DoActionCommand}"
+                                Content="Perform Action"
+                                Style="{StaticResource AccentButton}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Objects-specific Controls  -->
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="10"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        CornerRadius="5"
+                        Visibility="{Binding IsObjectsSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="Object Actions" />
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                FontSize="11"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="Object-specific filters and actions"
+                                TextWrapping="Wrap" />
+
+                            <CheckBox
+                                Margin="0,0,0,5"
+                                Content="Interactable Only"
+                                IsChecked="{Binding OnlyInteractable}" />
+
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontSize="12"
+                                Text="Action Index:" />
+                            <ComboBox
+                                Margin="0,0,0,5"
+                                ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                                ItemsSource="{Binding ActionIndices}"
+                                SelectedItem="{Binding SelectedActionIndex}"
+                                Style="{StaticResource AppComboBox}" />
+
+                            <Button
+                                Margin="0,5,0,0"
+                                Padding="10,5"
+                                Command="{Binding DoActionCommand}"
+                                Content="Perform Action"
+                                Style="{StaticResource AccentButton}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

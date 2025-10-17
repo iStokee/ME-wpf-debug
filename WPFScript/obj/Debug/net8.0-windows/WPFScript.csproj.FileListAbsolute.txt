@@ -219,3 +219,7 @@ C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug
 C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\WPFScript.pdb
 C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\WPFScript.genruntimeconfig.cache
 C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\ref\WPFScript.dll
+C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\Views\ItemsUnifiedView.g.cs
+C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\Views\ObjectsUnifiedView.g.cs
+C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\Views\ItemsUnifiedView.baml
+C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\Views\ObjectsUnifiedView.baml
