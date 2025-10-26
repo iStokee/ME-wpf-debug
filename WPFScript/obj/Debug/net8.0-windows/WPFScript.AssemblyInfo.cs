@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MESharp_DebugUtil")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94e43c84a4165a7d88a81bd8e67a5324694c311f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe6a7e3c93b51863056e69d368548148eab9b31a")]
 [assembly: System.Reflection.AssemblyProductAttribute("MESharp_DebugUtil")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MESharp_DebugUtil")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -234,3 +234,5 @@ C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug
 C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\ref\MESharp_DebugUtil.dll
 C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\WPFScript.csproj.Fody.CopyLocal.cache
 C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\WPFScript.csproj.Fody.RuntimeCopyLocal.cache
+C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\bin\Debug\net8.0-windows\csharp_interop.xml
+C:\Development\MemoryError\C#\ME_CSharp_Scripts\ME-wpf-debug\WPFScript\obj\Debug\net8.0-windows\WPFScript.csproj.Up2Date

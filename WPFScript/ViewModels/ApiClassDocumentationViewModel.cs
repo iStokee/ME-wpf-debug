@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using MESharp.Models;
+using MESharp.Services;
 
 namespace MESharp.ViewModels
 {
@@ -23,10 +24,9 @@ namespace MESharp.ViewModels
             ClassName = classType.Name;
             Namespace = classType.Namespace;
 
-            // Placeholder data - in a real app, this would come from attributes or an XML doc file.
+            Summary = XmlDocProvider.GetSummary(classType) ?? $"Provides access to {classType.Name}-related information and actions.";
+            Description = XmlDocProvider.GetRemarks(classType) ?? $"The {classType.Name} class is a key component of the MESharp API, offering a suite of tools to interact with the game's {classType.Name.ToLower()} system.";
             Category = "Core API";
-            Summary = $"Provides access to {classType.Name}-related information and actions.";
-            Description = $"The {classType.Name} class is a key component of the MESharp API, offering a suite of tools to interact with the game's {classType.Name.ToLower()} system.";
 
             LoadProperties(classType);
             LoadMethods(classType);
@@ -38,21 +38,21 @@ namespace MESharp.ViewModels
 
             foreach (var prop in properties)
             {
+                var exampleCode = XmlDocProvider.GetExample(prop);
+                var examples = new List<ApiExampleDoc>();
+                if (!string.IsNullOrWhiteSpace(exampleCode))
+                {
+                    examples.Add(new ApiExampleDoc { Title = "Example", Code = exampleCode });
+                }
+
                 var propDoc = new ApiPropertyDoc
                 {
                     Name = prop.Name,
                     Type = prop.PropertyType.Name,
                     IsStatic = prop.GetGetMethod()?.IsStatic ?? false,
                     IsReadOnly = !prop.CanWrite,
-                    Summary = $"Gets the {prop.Name}.",
-                    Examples = new List<ApiExampleDoc>
-                    {
-                        new ApiExampleDoc
-                        {
-                            Title = "Example",
-                            Code = $"var {prop.Name.ToLower()} = {classType.Name}.{prop.Name};"
-                        }
-                    }
+                    Summary = XmlDocProvider.GetSummary(prop) ?? $"Gets the {prop.Name}.",
+                    Examples = examples
                 };
                 Properties.Add(propDoc);
             }
@@ -65,22 +65,22 @@ namespace MESharp.ViewModels
 
             foreach (var method in methods)
             {
+                var exampleCode = XmlDocProvider.GetExample(method);
+                var examples = new List<ApiExampleDoc>();
+                if (!string.IsNullOrWhiteSpace(exampleCode))
+                {
+                    examples.Add(new ApiExampleDoc { Title = "Example Usage", Code = exampleCode });
+                }
+
                 var methodDoc = new ApiMethodDoc
                 {
                     Name = method.Name,
                     ReturnType = method.ReturnType.Name,
                     IsStatic = method.IsStatic,
-                    Summary = $"Performs an action related to {method.Name}.",
+                    Summary = XmlDocProvider.GetSummary(method) ?? $"Performs an action related to {method.Name}.",
                     ParametersDisplay = GetParametersDisplay(method),
                     Parameters = GetParameters(method),
-                    Examples = new List<ApiExampleDoc>
-                    {
-                        new ApiExampleDoc
-                        {
-                            Title = "Example Usage",
-                            Code = $"// Example for {method.Name}\n{classType.Name}.{method.Name}();"
-                        }
-                    }
+                    Examples = examples
                 };
                 Methods.Add(methodDoc);
             }
@@ -108,7 +108,7 @@ namespace MESharp.ViewModels
             {
                 Name = p.Name,
                 Type = p.ParameterType.Name,
-                Description = "Parameter description placeholder."
+                Description = XmlDocProvider.GetParamDoc(method, p.Name) ?? "Parameter description placeholder."
             }).ToList();
         }
     }
