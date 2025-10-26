@@ -2,6 +2,26 @@
   "version": 3,
   "targets": {
     "net8.0-windows7.0": {
+      "ControlzEx/4.4.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.19",
+          "System.Text.Json": "4.7.2"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/ControlzEx.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/ControlzEx.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ]
+      },
       "Costura.Fody/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -26,6 +46,30 @@
         "type": "package",
         "build": {
           "build/Fody.targets": {}
+        }
+      },
+      "MahApps.Metro/2.4.11": {
+        "type": "package",
+        "dependencies": {
+          "ControlzEx": "[4.4.0, 6.0.0)"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/MahApps.Metro.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/MahApps.Metro.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ],
+        "resource": {
+          "lib/netcoreapp3.1/de/MahApps.Metro.resources.dll": {
+            "locale": "de"
+          }
         }
       },
       "MahApps.Metro.IconPacks/6.1.0": {
@@ -886,6 +930,19 @@
           "Microsoft.WindowsDesktop.App.WPF"
         ]
       },
+      "McMaster.NETCore.Plugins/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/McMaster.NETCore.Plugins.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/McMaster.NETCore.Plugins.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
         "type": "package",
         "compile": {
@@ -921,6 +978,30 @@
     }
   },
   "libraries": {
+    "ControlzEx/4.4.0": {
+      "sha512": "pZ5z4hYWwE4R13UMCVs6vII//nL7hz+Nwn4oJlnsZJRGqJNy6Z9KnJiTZfly6lKFu0pMc1aWBZpx+VqFTQKP1Q==",
+      "type": "package",
+      "path": "controlzex/4.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "controlzex.4.4.0.nupkg.sha512",
+        "controlzex.nuspec",
+        "lib/net45/ControlzEx.dll",
+        "lib/net45/ControlzEx.pdb",
+        "lib/net45/ControlzEx.xml",
+        "lib/net462/ControlzEx.dll",
+        "lib/net462/ControlzEx.pdb",
+        "lib/net462/ControlzEx.xml",
+        "lib/netcoreapp3.0/ControlzEx.dll",
+        "lib/netcoreapp3.0/ControlzEx.pdb",
+        "lib/netcoreapp3.0/ControlzEx.xml",
+        "lib/netcoreapp3.1/ControlzEx.dll",
+        "lib/netcoreapp3.1/ControlzEx.pdb",
+        "lib/netcoreapp3.1/ControlzEx.xml",
+        "logo-mini.png"
+      ]
+    },
     "Costura.Fody/6.0.0": {
       "sha512": "3Uriu9GJABMivG0wXMJs6NQ7FNE3pylir1gZEBAWDvpii3cnrmxXnOG44MMDuIVOIk/Xhef7WZFsaCNV+py9qA==",
       "type": "package",
@@ -975,6 +1056,40 @@
         "netstandardtask/Mono.Cecil.pdb",
         "package_icon.png",
         "package_readme.md"
+      ]
+    },
+    "MahApps.Metro/2.4.11": {
+      "sha512": "pvk757N/ViZy+zlbB56AakryuZkts328M6pX2mMn/Z7r5ifkScDrS300zSBjLd+eGOPeHgUjH4f7cZbRiMyvQg==",
+      "type": "package",
+      "path": "mahapps.metro/2.4.11",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net452/MahApps.Metro.dll",
+        "lib/net452/MahApps.Metro.pdb",
+        "lib/net452/MahApps.Metro.xml",
+        "lib/net452/de/MahApps.Metro.resources.dll",
+        "lib/net46/MahApps.Metro.dll",
+        "lib/net46/MahApps.Metro.pdb",
+        "lib/net46/MahApps.Metro.xml",
+        "lib/net46/de/MahApps.Metro.resources.dll",
+        "lib/net47/MahApps.Metro.dll",
+        "lib/net47/MahApps.Metro.pdb",
+        "lib/net47/MahApps.Metro.xml",
+        "lib/net47/de/MahApps.Metro.resources.dll",
+        "lib/netcoreapp3.0/MahApps.Metro.dll",
+        "lib/netcoreapp3.0/MahApps.Metro.pdb",
+        "lib/netcoreapp3.0/MahApps.Metro.xml",
+        "lib/netcoreapp3.0/de/MahApps.Metro.resources.dll",
+        "lib/netcoreapp3.1/MahApps.Metro.dll",
+        "lib/netcoreapp3.1/MahApps.Metro.pdb",
+        "lib/netcoreapp3.1/MahApps.Metro.xml",
+        "lib/netcoreapp3.1/de/MahApps.Metro.resources.dll",
+        "mahapps.metro.2.4.11.nupkg.sha512",
+        "mahapps.metro.logo.png",
+        "mahapps.metro.nuspec",
+        "tools/VisualStudioToolsManifest.xml"
       ]
     },
     "MahApps.Metro.IconPacks/6.1.0": {
@@ -1837,6 +1952,20 @@
         "mahapps.metro.iconpacks.zondicons.nuspec"
       ]
     },
+    "McMaster.NETCore.Plugins/2.0.0": {
+      "sha512": "pmmrI3qPE53xEJEcg575jQeDNPzMWfNJO8/SASlB9PLPrGVrsyVNFRrvfo+3BzcbQxfUBF1//gTOiJ82dOTlTw==",
+      "type": "package",
+      "path": "mcmaster.netcore.plugins/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net8.0/McMaster.NETCore.Plugins.dll",
+        "lib/net8.0/McMaster.NETCore.Plugins.xml",
+        "mcmaster.netcore.plugins.2.0.0.nupkg.sha512",
+        "mcmaster.netcore.plugins.nuspec"
+      ]
+    },
     "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
       "sha512": "r8qBEXmQfORso2+MVHnt8PSH4761zJ0SIxgQTSEDVLU97EN2FZdG6/ZCYUPhQy+OrPKgnpYBCAs3PS6Bs7wRsg==",
       "type": "package",
@@ -1937,7 +2066,9 @@
     "net8.0-windows7.0": [
       "Costura.Fody >= 6.0.0",
       "Fody >= 6.9.2",
+      "MahApps.Metro >= 2.4.11",
       "MahApps.Metro.IconPacks >= 6.1.0",
+      "McMaster.NETCore.Plugins >= 2.0.0",
       "Microsoft.Xaml.Behaviors.Wpf >= 1.1.135"
     ]
   },
@@ -1949,7 +2080,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
-      "projectName": "WPFScript",
+      "projectName": "MESharp_DebugUtil",
       "projectPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
       "packagesPath": "C:\\Users\\istokee\\.nuget\\packages\\",
       "outputPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\",
@@ -2003,9 +2134,17 @@
             "target": "Package",
             "version": "[6.9.2, )"
           },
+          "MahApps.Metro": {
+            "target": "Package",
+            "version": "[2.4.11, )"
+          },
           "MahApps.Metro.IconPacks": {
             "target": "Package",
             "version": "[6.1.0, )"
+          },
+          "McMaster.NETCore.Plugins": {
+            "target": "Package",
+            "version": "[2.0.0, )"
           },
           "Microsoft.Xaml.Behaviors.Wpf": {
             "target": "Package",

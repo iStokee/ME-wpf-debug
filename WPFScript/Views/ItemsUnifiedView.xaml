@@ -15,8 +15,6 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-            <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
-            <conv:BoolToColorConverter x:Key="BoolToColorConverter" />
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
@@ -28,7 +26,7 @@
         </Grid.ColumnDefinitions>
 
         <!--  Main Content Area  -->
-        <Grid Grid.Column="0" Margin="0,0,5,0">
+        <Grid Grid.Column="0" Margin="0,0,10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -36,24 +34,101 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!--  Header  -->
+            <!--  Header with integrated status  -->
             <Border
                 Grid.Row="0"
                 Margin="0,0,0,10"
-                Padding="10"
+                Padding="12"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
-                <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
                     <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
                         Margin="0,0,0,5"
                         FontSize="18"
                         FontWeight="SemiBold"
                         Text="Item Containers - Unified View" />
+
                     <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,0,0,8"
+                        FontSize="11"
                         Foreground="{DynamicResource App.SubtleForegroundBrush}"
                         Text="Select a container type and use the side panel for container-specific operations"
                         TextWrapping="Wrap" />
-                </StackPanel>
+
+                    <!--  Status bar integrated into header  -->
+                    <Border
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Padding="8,6"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        BorderBrush="{DynamicResource App.BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel
+                                Grid.Column="0"
+                                Margin="0,0,15,0"
+                                Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Width="16"
+                                    Height="16"
+                                    Margin="0,0,5,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource PrimaryBrush}"
+                                    Kind="ViewList" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Text="Items: " />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource PrimaryBrush}"
+                                    Text="{Binding ItemCount, Mode=OneWay}" />
+                            </StackPanel>
+
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="{Binding StatusMessage}"
+                                TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                    </Border>
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Style="{StaticResource HeaderHelpButton}"
+                        ToolTip="Open API docs"
+                        Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <iconPacks:PackIconMaterial
+                            Width="18"
+                            Height="18"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                            Kind="HelpCircleOutline" />
+                    </Button>
+                </Grid>
             </Border>
 
             <!--  Container Selection and Actions  -->
@@ -128,15 +203,17 @@
             <!--  Items Table  -->
             <Border
                 Grid.Row="2"
-                Margin="0,0,0,10"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
                 <DataGrid
                     Margin="5"
                     AutoGenerateColumns="False"
+                    Background="{DynamicResource App.BackgroundBrush}"
                     BorderThickness="0"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
+                    CanUserSortColumns="True"
+                    Foreground="{DynamicResource App.ForegroundBrush}"
                     GridLinesVisibility="Horizontal"
                     HeadersVisibility="Column"
                     IsReadOnly="True"
@@ -165,289 +242,683 @@
                             Width="80"
                             Binding="{Binding Category}"
                             Header="Category" />
-                        <DataGridTemplateColumn
-                            Width="70"
-                            Header="Noted">
+                        <DataGridTemplateColumn Width="170" Header="Flags">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsNoted, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsNoted, Converter={StaticResource BoolToIconConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="80"
-                            Header="Stackable">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsStackable, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsStackable, Converter={StaticResource BoolToIconConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="85"
-                            Header="Tradeable">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsTradeable, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsTradeable, Converter={StaticResource BoolToIconConverter}}" />
+                                    <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemFlagBadgesTemplate}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
-
-            <!--  Status Bar  -->
-            <Border
-                Grid.Row="3"
-                Padding="10"
-                Background="{DynamicResource App.CardBrush}"
-                CornerRadius="5">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel
-                        Grid.Column="0"
-                        Margin="0,0,20,0"
-                        Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Margin="0,0,5,0"
-                            VerticalAlignment="Center"
-                            Foreground="{DynamicResource PrimaryBrush}"
-                            Kind="ViewList" />
-                        <TextBlock VerticalAlignment="Center" Text="Items: " />
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Foreground="{DynamicResource PrimaryBrush}"
-                            Text="{Binding ItemCount, Mode=OneWay}" />
-                    </StackPanel>
-
-                    <TextBlock
-                        Grid.Column="1"
-                        VerticalAlignment="Center"
-                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                        Text="{Binding StatusMessage}" />
-                </Grid>
-            </Border>
         </Grid>
 
-        <!--  Flyout Panel  -->
+        <!--  Side Panel with integrated toggle  -->
         <Border
             Grid.Column="1"
-            Width="320"
-            Margin="0"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="5">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10">
-                    <!--  Panel Header  -->
-                    <TextBlock
-                        Margin="0,0,0,10"
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Container Actions" />
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Width" Value="320" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
+                            <Setter Property="Width" Value="48" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
 
-                    <!--  Inventory-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="5"
-                        Visibility="{Binding IsInventorySelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Inventory Actions" />
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="11"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Inventory-specific operations"
-                                TextWrapping="Wrap" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                            <!--  Placeholder for inventory-specific controls  -->
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding InventoryRefreshCommand}"
-                                Content="Refresh Inventory" />
-                        </StackPanel>
-                    </Border>
+                <!--  Panel Header with Toggle Button  -->
+                <!--<Border
+                    Grid.Row="0"
+                    Padding="10"
+                    Background="{DynamicResource PrimarySoftBrush}"
+                    BorderBrush="{DynamicResource PrimaryBrush}"
+                    BorderThickness="0,0,0,2"
+                    CornerRadius="5,5,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <!--  Bank-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="5"
-                        Visibility="{Binding IsBankSelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Bank Actions" />
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="11"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Bank-specific operations like deposits"
-                                TextWrapping="Wrap" />
+                -->
+                <!--  Title (hidden when collapsed)  -->
+                <!--
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource PrimaryForegroundBrush}"
+                            Text="Container Actions">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
 
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding BankDepositAllCommand}"
-                                Content="Deposit All" />
+                -->
+                <!--  Toggle Button  -->
+                <!--
+                        <ToggleButton
+                            Grid.Column="1"
+                            Width="28"
+                            Height="28"
+                            IsChecked="{Binding IsSidePanelCollapsed, Mode=TwoWay}"
+                            Style="{StaticResource PanelToggleButton}"
+                            ToolTip="Toggle Side Panel">
+                            <iconPacks:PackIconMaterial Width="16" Height="16">
+                                <iconPacks:PackIconMaterial.Style>
+                                    <Style TargetType="iconPacks:PackIconMaterial">
+                                        <Setter Property="Kind" Value="ChevronRight" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
+                                                <Setter Property="Kind" Value="ChevronLeft" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </iconPacks:PackIconMaterial.Style>
+                            </iconPacks:PackIconMaterial>
+                        </ToggleButton>
+                    </Grid>
+                </Border>-->
 
-                            <TextBlock
-                                Margin="0,8,0,4"
-                                FontSize="12"
-                                Text="Keep IDs:" />
-                            <TextBox Margin="0,0,0,5" Text="{Binding BankKeepIds}" />
+                <!--  Panel Content  -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
 
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding BankDepositExceptIdsCommand}"
-                                Content="Deposit Except IDs" />
-                        </StackPanel>
-                    </Border>
+                    <StackPanel Margin="10">
 
-                    <!--  Equipment-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="5"
-                        Visibility="{Binding IsEquipmentSelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Equipment Actions" />
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="11"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Equipment-specific operations"
-                                TextWrapping="Wrap" />
+                        <!--  Inventory-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsInventorySelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Inventory Status" />
 
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding EquipmentRefreshCommand}"
-                                Content="Refresh Equipment" />
-                        </StackPanel>
-                    </Border>
+                                <!--  Status Display  -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
 
-                    <!--  Loot-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="5"
-                        Visibility="{Binding IsLootSelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Loot Actions" />
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="11"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Loot-specific operations"
-                                TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        FontSize="11"
+                                        Text="Is Open:" />
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding InventoryIsOpen}" />
 
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding LootRefreshCommand}"
-                                Content="Refresh Loot" />
-                        </StackPanel>
-                    </Border>
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        Text="Is Full:" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding InventoryIsFull}" />
 
-                    <!--  MaterialCache-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="5"
-                        Visibility="{Binding IsMaterialCacheSelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Material Cache Actions" />
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="11"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Material cache-specific operations"
-                                TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        Text="Is Empty:" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding InventoryIsEmpty}" />
 
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding MaterialCacheRefreshCommand}"
-                                Content="Refresh Materials" />
-                        </StackPanel>
-                    </Border>
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        Text="Item Selected:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding InventoryItemSelected}" />
 
-                    <!--  TradeWindow-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="10"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="5"
-                        Visibility="{Binding IsTradeWindowSelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Trade Window Actions" />
-                            <TextBlock
-                                Margin="0,0,0,8"
-                                FontSize="11"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Trade window-specific operations"
-                                TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        Text="Free Slots:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding InventoryFreeSlots}" />
+                                </Grid>
 
-                            <Button
-                                Margin="0,0,0,5"
-                                Padding="10,5"
-                                Command="{Binding TradeWindowRefreshCommand}"
-                                Content="Refresh Trade" />
-                        </StackPanel>
-                    </Border>
+                                <Separator Margin="0,5,0,10" />
 
-                </StackPanel>
-            </ScrollViewer>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Actions" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding InventoryRefreshCommand}"
+                                    Content="Refresh Status" />
+
+                                <!--  Item Actions (requires selection)  -->
+                                <TextBlock
+                                    Margin="0,10,0,5"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="Item Actions (select item):" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemEatCommand}"
+                                    Content="Eat Item" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemDropCommand}"
+                                    Content="Drop Item" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemUseCommand}"
+                                    Content="Use Item" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemEquipCommand}"
+                                    Content="Equip Item" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemNoteCommand}"
+                                    Content="Note Item" />
+
+                                <!--  Use Item On Item (requires two selections)  -->
+                                <Separator Margin="0,10,0,10" />
+                                <TextBlock
+                                    Margin="0,0,0,5"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="Use Item On Item:" />
+
+                                <TextBlock
+                                    Margin="0,0,0,5"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.MutedBrush}"
+                                    Text="Source item (from main list):"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    Margin="5,0,0,10"
+                                    FontSize="11"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource PrimaryBrush}"
+                                    Text="{Binding SelectedItem.Name, FallbackValue='(none selected)'}" />
+
+                                <TextBlock
+                                    Margin="0,0,0,5"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.MutedBrush}"
+                                    Text="Target item (select below):"
+                                    TextWrapping="Wrap" />
+                                <ComboBox
+                                    Margin="0,0,0,5"
+                                    ItemsSource="{Binding Items}"
+                                    SelectedItem="{Binding TargetItem}"
+                                    Style="{StaticResource AppComboBox}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Run Text="{Binding Name, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource App.MutedBrush}" Text="{Binding Stack, StringFormat=' (x{0})', Mode=OneWay}" />
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemUseOnItemCommand}"
+                                    Content="Use Item On Item"
+                                    Style="{StaticResource AccentButton}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!--  Bank-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsBankSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Bank Status" />
+
+                                <!--  Status Display  -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        FontSize="11"
+                                        Text="Is Open:" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding BankIsOpen}" />
+                                </Grid>
+
+                                <Separator Margin="0,5,0,10" />
+
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Bank Actions" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding BankCloseCommand}"
+                                    Content="Close Bank" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding BankDepositAllCommand}"
+                                    Content="Deposit All" />
+
+                                <TextBlock
+                                    Margin="0,8,0,4"
+                                    FontSize="12"
+                                    Text="Keep IDs:" />
+                                <TextBox Margin="0,0,0,5" Text="{Binding BankKeepIds}" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding BankDepositExceptIdsCommand}"
+                                    Content="Deposit Except IDs" />
+                            </StackPanel>
+                        </Border>
+
+                        <!--  Equipment-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsEquipmentSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Equipment Status" />
+
+                                <!--  Status Display  -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        FontSize="11"
+                                        Text="Is Open:" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding EquipmentIsOpen}" />
+                                </Grid>
+
+                                <Separator Margin="0,5,0,10" />
+
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Equipment Actions" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding EquipmentOpenCommand}"
+                                    Content="Open Equipment" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding EquipmentRefreshCommand}"
+                                    Content="Refresh Status" />
+
+                                <!--  Item Actions (requires selection)  -->
+                                <TextBlock
+                                    Margin="0,10,0,5"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="Item Actions (select item):" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding ItemUnequipCommand}"
+                                    Content="Unequip Item" />
+                            </StackPanel>
+                        </Border>
+
+                        <!--  Loot-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsLootSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Loot Actions" />
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                    Text="Loot-specific operations"
+                                    TextWrapping="Wrap" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding LootRefreshCommand}"
+                                    Content="Refresh Loot" />
+                            </StackPanel>
+                        </Border>
+
+                        <!--  MaterialCache-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsMaterialCacheSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Material Cache Actions" />
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                    Text="Material cache-specific operations"
+                                    TextWrapping="Wrap" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding MaterialCacheRefreshCommand}"
+                                    Content="Refresh Materials" />
+                            </StackPanel>
+                        </Border>
+
+                        <!--  TradeWindow-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsTradeWindowSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Trade Window Actions" />
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                    Text="Trade window-specific operations"
+                                    TextWrapping="Wrap" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding TradeWindowRefreshCommand}"
+                                    Content="Refresh Trade" />
+                            </StackPanel>
+                        </Border>
+
+                        <!--  Familiar-specific Controls  -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsFamiliarSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Familiar Status" />
+
+                                <!--  Status Display  -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Margin="0,0,10,0"
+                                        FontSize="11"
+                                        Text="Has Familiar:" />
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding HasFamiliar}" />
+
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Margin="0,3,10,0"
+                                        FontSize="11"
+                                        Text="Name:" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding FamiliarName}" />
+
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Margin="0,3,10,0"
+                                        FontSize="11"
+                                        Text="Time Left:" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}s">
+                                                <Binding Path="FamiliarTimeRemaining" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Margin="0,3,10,0"
+                                        FontSize="11"
+                                        Text="Health:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding FamiliarHealth}" />
+
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Margin="0,3,10,0"
+                                        FontSize="11"
+                                        Text="Spell Points:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding FamiliarSpellPoints}" />
+
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="0"
+                                        Margin="0,3,10,0"
+                                        FontSize="11"
+                                        Text="Can Renew:" />
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding FamiliarCanRenew}" />
+                                </Grid>
+
+                                <Separator Margin="0,5,0,10" />
+
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Familiar Actions" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding FamiliarRefreshCommand}"
+                                    Content="Refresh Status" />
+
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding FamiliarCastSpecialCommand}"
+                                    Content="Cast Special Attack" />
+
+                                <TextBlock
+                                    Margin="0,10,0,5"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                    Text="Note: Familiar storage items appear in the main grid when Familiar container is selected."
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

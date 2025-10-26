@@ -10,18 +10,35 @@
         <StackPanel Margin="24">
 
             <!--  Header  -->
-            <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
-                <iconPacks:PackIconMaterial
-                    Width="24"
-                    Height="24"
-                    Margin="0,0,8,0"
-                    Foreground="{DynamicResource PrimaryBrush}"
-                    Kind="Cube" />
-                <TextBlock
-                    FontSize="20"
-                    FontWeight="SemiBold"
-                    Text="Objects" />
-            </StackPanel>
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="24"
+                        Height="24"
+                        Margin="0,0,8,0"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Kind="Cube" />
+                    <TextBlock
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Text="Objects" />
+                </StackPanel>
+                <Button
+                    Grid.Column="1"
+                    Style="{StaticResource HeaderHelpButton}"
+                    ToolTip="Open API docs"
+                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                    <iconPacks:PackIconMaterial
+                        Width="18"
+                        Height="18"
+                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Kind="HelpCircleOutline" />
+                </Button>
+            </Grid>
 
             <!--  Object Type Selection Card  -->
             <Border

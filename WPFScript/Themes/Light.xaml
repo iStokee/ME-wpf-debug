@@ -34,11 +34,12 @@
         <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
         <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -47,7 +48,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="6">
+                        CornerRadius="8">
                         <ContentPresenter
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -55,20 +56,20 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#FFF0F0F8" />
-                            <Setter TargetName="border" Property="BorderBrush" Value="#FFB0B0C0" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#FFE8E8F0" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="#88000000" />
                             <Setter TargetName="border" Property="Background" Value="#FFF5F5F8" />
                             <Setter TargetName="border" Property="BorderBrush" Value="#FFE0E0E0" />
+                            <Setter Property="Foreground" Value="#88000000" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -81,11 +82,12 @@
         <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
         <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="14,8" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
@@ -95,7 +97,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="6">
+                        CornerRadius="8">
                         <ContentPresenter
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -103,25 +105,96 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#FFF0F0F8" />
-                            <Setter TargetName="border" Property="BorderBrush" Value="#FFB0B0C0" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#FFE8E8F0" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
-                            <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                            <Setter Property="BorderThickness" Value="2" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                        </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="#88000000" />
                             <Setter TargetName="border" Property="Background" Value="#FFF5F5F8" />
                             <Setter TargetName="border" Property="BorderBrush" Value="#FFE0E0E0" />
+                            <Setter Property="Foreground" Value="#88000000" />
+                            <Setter Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Themed checkbox -->
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border
+                            x:Name="CheckBorder"
+                            Width="18"
+                            Height="18"
+                            Margin="0,0,8,0"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            BorderBrush="{DynamicResource App.BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <Path
+                                x:Name="CheckGlyph"
+                                Data="M4,9 L8,13 L14,5"
+                                StrokeThickness="2"
+                                Stroke="{DynamicResource PrimaryBrush}"
+                                StrokeLineJoin="Round"
+                                StrokeStartLineCap="Round"
+                                StrokeEndLineCap="Round"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Stretch="None"
+                                Visibility="Collapsed" />
+                        </Border>
+                        <ContentPresenter
+                            Margin="0"
+                            VerticalAlignment="Center"
+                            RecognizesAccessKey="True" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="CheckBorder" Property="Opacity" Value="0.55" />
+                            <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -134,17 +207,64 @@
         x:Key="AccentButton"
         BasedOn="{StaticResource {x:Type Button}}"
         TargetType="Button">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Opacity" Value="0.98" />
+                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Opacity" Value="0.95" />
+                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                <Setter Property="Opacity" Value="0.9" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.55" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="HeaderHelpButton" TargetType="Button">
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="ToolTipService.ShowDuration" Value="60000" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="15">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border" Property="Background" Value="Transparent" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!--  Reusable combo box styling for DoAction selectors and other drop-downs  -->
@@ -166,9 +286,9 @@
                         <ToggleButton
                             x:Name="ToggleButton"
                             Grid.Column="0"
+                            ClickMode="Press"
                             Focusable="False"
-                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                            ClickMode="Press">
+                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
                                     <Border
@@ -225,8 +345,8 @@
                                     MaxHeight="200"
                                     Foreground="{TemplateBinding Foreground}"
                                     HorizontalScrollBarVisibility="Disabled"
-                                    VerticalScrollBarVisibility="Auto"
-                                    SnapsToDevicePixels="True">
+                                    SnapsToDevicePixels="True"
+                                    VerticalScrollBarVisibility="Auto">
                                     <ItemsPresenter SnapsToDevicePixels="True" />
                                 </ScrollViewer>
                             </Border>
@@ -539,7 +659,49 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style TargetType="ComboBox" BasedOn="{StaticResource AppComboBox}">
+
+    <!--  Panel Toggle Button style  -->
+    <Style x:Key="PanelToggleButton" TargetType="ToggleButton">
+        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        x:Name="border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="6">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                            <Setter TargetName="border" Property="Opacity" Value="0.9" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource App.BorderBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style BasedOn="{StaticResource AppComboBox}" TargetType="ComboBox">
         <Setter Property="ItemContainerStyle" Value="{StaticResource AppComboBoxItem}" />
     </Style>
 
@@ -594,21 +756,15 @@
                             Background="{TemplateBinding Background}"
                             CornerRadius="6"
                             Opacity="0.3" />
-                        <Track
-                            x:Name="PART_Track"
-                            IsDirectionReversed="True">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
                             <Track.DecreaseRepeatButton>
-                                <RepeatButton
-                                    Command="ScrollBar.PageUpCommand"
-                                    Style="{StaticResource ScrollBarPageButton}" />
+                                <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButton}" />
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
                                 <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
                             </Track.Thumb>
                             <Track.IncreaseRepeatButton>
-                                <RepeatButton
-                                    Command="ScrollBar.PageDownCommand"
-                                    Style="{StaticResource ScrollBarPageButton}" />
+                                <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButton}" />
                             </Track.IncreaseRepeatButton>
                         </Track>
                     </Grid>
@@ -631,17 +787,13 @@
                             Opacity="0.3" />
                         <Track x:Name="PART_Track" IsDirectionReversed="False">
                             <Track.DecreaseRepeatButton>
-                                <RepeatButton
-                                    Command="ScrollBar.PageLeftCommand"
-                                    Style="{StaticResource ScrollBarPageButton}" />
+                                <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButton}" />
                             </Track.DecreaseRepeatButton>
                             <Track.Thumb>
                                 <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
                             </Track.Thumb>
                             <Track.IncreaseRepeatButton>
-                                <RepeatButton
-                                    Command="ScrollBar.PageRightCommand"
-                                    Style="{StaticResource ScrollBarPageButton}" />
+                                <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButton}" />
                             </Track.IncreaseRepeatButton>
                         </Track>
                     </Grid>
@@ -651,7 +803,10 @@
     </Style>
 
     <!--  Apply ScrollBar styles globally  -->
-    <Style TargetType="ScrollBar" BasedOn="{StaticResource {x:Type ScrollBar}}">
+    <Style
+        x:Key="ScrollBar"
+        BasedOn="{StaticResource {x:Type ScrollBar}}"
+        TargetType="ScrollBar">
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">
                 <Setter Property="Width" Value="12" />
@@ -664,21 +819,15 @@
                                     Background="{TemplateBinding Background}"
                                     CornerRadius="6"
                                     Opacity="0.3" />
-                                <Track
-                                    x:Name="PART_Track"
-                                    IsDirectionReversed="True">
+                                <Track x:Name="PART_Track" IsDirectionReversed="True">
                                     <Track.DecreaseRepeatButton>
-                                        <RepeatButton
-                                            Command="ScrollBar.PageUpCommand"
-                                            Style="{StaticResource ScrollBarPageButton}" />
+                                        <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButton}" />
                                     </Track.DecreaseRepeatButton>
                                     <Track.Thumb>
                                         <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
                                     </Track.Thumb>
                                     <Track.IncreaseRepeatButton>
-                                        <RepeatButton
-                                            Command="ScrollBar.PageDownCommand"
-                                            Style="{StaticResource ScrollBarPageButton}" />
+                                        <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButton}" />
                                     </Track.IncreaseRepeatButton>
                                 </Track>
                             </Grid>
@@ -699,17 +848,13 @@
                                     Opacity="0.3" />
                                 <Track x:Name="PART_Track" IsDirectionReversed="False">
                                     <Track.DecreaseRepeatButton>
-                                        <RepeatButton
-                                            Command="ScrollBar.PageLeftCommand"
-                                            Style="{StaticResource ScrollBarPageButton}" />
+                                        <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButton}" />
                                     </Track.DecreaseRepeatButton>
                                     <Track.Thumb>
                                         <Thumb Margin="2" Style="{StaticResource ScrollBarThumb}" />
                                     </Track.Thumb>
                                     <Track.IncreaseRepeatButton>
-                                        <RepeatButton
-                                            Command="ScrollBar.PageRightCommand"
-                                            Style="{StaticResource ScrollBarPageButton}" />
+                                        <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButton}" />
                                     </Track.IncreaseRepeatButton>
                                 </Track>
                             </Grid>

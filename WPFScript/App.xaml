@@ -3,13 +3,26 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:MESharp"
-    StartupUri="MainWindow.xaml">
+    xmlns:conv="clr-namespace:MESharp.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!--  MahApps.Metro base resources for accent brushes/styles  -->
+                <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />-->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.Buttons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+
                 <!--  Default to Light theme; ThemeManager can swap at runtime  -->
                 <ResourceDictionary Source="Themes/Light.xaml" />
+                <ResourceDictionary Source="Themes/ItemFlagResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!--  Global Converters  -->
+            <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <!--  Acrylic "glass" brush  -->
             <Color x:Key="AcrylicBackgroundColor">#CCFFFFFF</Color>

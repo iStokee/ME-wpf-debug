@@ -5,11 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
 using System.Linq;
-using MESharp.Commands;
 using System.Windows.Input;
 using MESharp.Views;
-using System.Windows.Input;
 using System.Windows;
+using MESharp.Commands;
 
 namespace MESharp.ViewModels
 {
@@ -122,6 +121,12 @@ namespace MESharp.ViewModels
 
             MESharp.Services.ThemeManager.ApplyTheme(settings);
             MESharp.Services.ThemeManager.SaveSettings(settings);
+
+            // Force UI refresh to ensure theme applies instantly
+            Application.Current?.Dispatcher.InvokeAsync(() =>
+            {
+                CommandManager.InvalidateRequerySuggested();
+            }, System.Windows.Threading.DispatcherPriority.Render);
         }
 
         private void PickCustomColor()

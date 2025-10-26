@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using MESharp.Commands;
 
 namespace MESharp.ViewModels
 {

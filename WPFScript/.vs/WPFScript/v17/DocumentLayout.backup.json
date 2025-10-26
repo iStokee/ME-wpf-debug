@@ -3,76 +3,151 @@
   "WorkspaceRootPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\objectsunifiedviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\objectsunifiedviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\services\\apidocumentationprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:services\\apidocumentationprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\playersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\playersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\varbitviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\varbitviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\tradewindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\tradewindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\settingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\settingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\objectsunifiedviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\objectsunifiedviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\objectsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\objectsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\npcviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\npcviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\chatviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\chatviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\playersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\playersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\materialcacheviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\materialcacheviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\lootviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\lootviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\itemsunifiedviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\itemsunifiedviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\converters\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:converters\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\itemcontainersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\itemcontainersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\itemcontainersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\itemcontainersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\inventoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\inventoryviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\classes\\objectequalsmulticonverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:classes\\objectequalsmulticonverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\equipmentviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\equipmentviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\bankviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\bankviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\bankview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\bankview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\Debug\\net8.0-windows\\MainWindow.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:obj\\Debug\\net8.0-windows\\MainWindow.g.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\chatview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\chatview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\equipmentview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\equipmentview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\converters\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:converters\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\gameview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\gameview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\inventoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\inventoryview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\itemsunifiedview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\itemsunifiedview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\npcsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\npcsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\themes\\dark.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:themes\\dark.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\apidocsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\apidocsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\skillsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\skillsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\apidocsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\apidocsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\objectsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\objectsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\viewmodels\\interfacesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:viewmodels\\interfacesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\settingsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\settingsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\9.0.305\\Sdks\\Microsoft.NET.Sdk.WindowsDesktop\\targets\\Microsoft.WinFX.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\models\\skillmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:models\\skillmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\scriptentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:scriptentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\services\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:services\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\varbitview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\varbitview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\interfacesview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\interfacesview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\interfacesdebug.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\interfacesdebug.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\interfacesdebug.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\interfacesdebug.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|c:\\development\\memoryerror\\c#\\me_csharp_scripts\\me-wpf-debug\\wpfscript\\views\\bankview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{109DC18C-42CD-B405-F1FB-287D408B6BF3}|WPFScript.csproj|solutionrelative:views\\bankview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -81,8 +156,8 @@
       "VerticalTabListWidth": 172,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "DockedWidth": 723,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -105,171 +180,291 @@
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ObjectsUnifiedViewModel.cs",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ObjectsUnifiedViewModel.cs",
-              "RelativeDocumentMoniker": "ViewModels\\ObjectsUnifiedViewModel.cs",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ObjectsUnifiedViewModel.cs",
-              "RelativeToolTip": "ViewModels\\ObjectsUnifiedViewModel.cs",
-              "ViewState": "AgIAAJsAAAAAAAAAAAA2wLoAAAAAAAAAAAAAAA==",
+              "Title": "ApiDocumentationProvider.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Services\\ApiDocumentationProvider.cs",
+              "RelativeDocumentMoniker": "Services\\ApiDocumentationProvider.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Services\\ApiDocumentationProvider.cs",
+              "RelativeToolTip": "Services\\ApiDocumentationProvider.cs",
+              "ViewState": "AgIAAM8AAAAAAAAAAAAAAI0BAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-17T19:01:23.013Z",
+              "WhenOpened": "2025-10-23T22:37:05.798Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ItemsUnifiedViewModel.cs",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ItemsUnifiedViewModel.cs",
-              "RelativeDocumentMoniker": "ViewModels\\ItemsUnifiedViewModel.cs",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ItemsUnifiedViewModel.cs",
-              "RelativeToolTip": "ViewModels\\ItemsUnifiedViewModel.cs",
-              "ViewState": "AgIAAKYAAAAAAAAAAAAiwNoAAAAZAAAAAAAAAA==",
+              "DocumentIndex": 18,
+              "Title": "MainWindow.g.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\Debug\\net8.0-windows\\MainWindow.g.cs",
+              "RelativeDocumentMoniker": "obj\\Debug\\net8.0-windows\\MainWindow.g.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\Debug\\net8.0-windows\\MainWindow.g.cs",
+              "RelativeToolTip": "obj\\Debug\\net8.0-windows\\MainWindow.g.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-17T18:54:11.626Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-23T22:33:11.827Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "BoolToVisibilityConverter.cs",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Converters\\BoolToVisibilityConverter.cs",
-              "RelativeDocumentMoniker": "Converters\\BoolToVisibilityConverter.cs",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Converters\\BoolToVisibilityConverter.cs",
-              "RelativeToolTip": "Converters\\BoolToVisibilityConverter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwB0AAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-17T18:53:19.313Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ObjectEqualsMultiConverter.cs",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Classes\\ObjectEqualsMultiConverter.cs",
-              "RelativeDocumentMoniker": "Classes\\ObjectEqualsMultiConverter.cs",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Classes\\ObjectEqualsMultiConverter.cs",
-              "RelativeToolTip": "Classes\\ObjectEqualsMultiConverter.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-17T13:59:13.243Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "EquipmentView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\EquipmentView.xaml",
-              "RelativeDocumentMoniker": "Views\\EquipmentView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\EquipmentView.xaml",
-              "RelativeToolTip": "Views\\EquipmentView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T23:02:18.006Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "SettingsView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\SettingsView.xaml",
-              "RelativeDocumentMoniker": "Views\\SettingsView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\SettingsView.xaml",
-              "RelativeToolTip": "Views\\SettingsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T19:47:44.43Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "ObjectsView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ObjectsView.xaml",
-              "RelativeDocumentMoniker": "Views\\ObjectsView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ObjectsView.xaml",
-              "RelativeToolTip": "Views\\ObjectsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T19:47:19.042Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "NPCsView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\NPCsView.xaml",
-              "RelativeDocumentMoniker": "Views\\NPCsView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\NPCsView.xaml",
-              "RelativeToolTip": "Views\\NPCsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T19:46:57.653Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "InventoryView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InventoryView.xaml",
-              "RelativeDocumentMoniker": "Views\\InventoryView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InventoryView.xaml",
-              "RelativeToolTip": "Views\\InventoryView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T19:46:29.092Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "SkillsView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\SkillsView.xaml",
-              "RelativeDocumentMoniker": "Views\\SkillsView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\SkillsView.xaml",
-              "RelativeToolTip": "Views\\SkillsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T19:46:20.753Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "GameView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\GameView.xaml",
-              "RelativeDocumentMoniker": "Views\\GameView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\GameView.xaml",
-              "RelativeToolTip": "Views\\GameView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T19:46:07.442Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 20,
               "Title": "ChatView.xaml",
               "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ChatView.xaml",
               "RelativeDocumentMoniker": "Views\\ChatView.xaml",
               "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ChatView.xaml",
               "RelativeToolTip": "Views\\ChatView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T18:09:48.837Z"
+              "WhenOpened": "2025-10-23T19:10:39.107Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:20:51.039Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "BoolToVisibilityConverter.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Converters\\BoolToVisibilityConverter.cs",
+              "RelativeDocumentMoniker": "Converters\\BoolToVisibilityConverter.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Converters\\BoolToVisibilityConverter.cs",
+              "RelativeToolTip": "Converters\\BoolToVisibilityConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:20:12.27Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "MainWindowViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\MainWindowViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\MainWindowViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\MainWindowViewModel.cs",
+              "RelativeToolTip": "ViewModels\\MainWindowViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:19:24.007Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ItemContainersViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ItemContainersViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ItemContainersViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ItemContainersViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ItemContainersViewModel.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAD4v0AAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:19:07.108Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "EquipmentViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\EquipmentViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\EquipmentViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\EquipmentViewModel.cs",
+              "RelativeToolTip": "ViewModels\\EquipmentViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:18:39.54Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "LootViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\LootViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\LootViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\LootViewModel.cs",
+              "RelativeToolTip": "ViewModels\\LootViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:18:29.495Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ObjectsUnifiedViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ObjectsUnifiedViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ObjectsUnifiedViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ObjectsUnifiedViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ObjectsUnifiedViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:18:18.081Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "BankView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\BankView.xaml",
-              "RelativeDocumentMoniker": "Views\\BankView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\BankView.xaml",
-              "RelativeToolTip": "Views\\BankView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T18:03:20.08Z"
+              "Title": "ObjectsViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ObjectsViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ObjectsViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ObjectsViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ObjectsViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:18:13.997Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "SkillModel.cs",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Models\\SkillModel.cs",
-              "RelativeDocumentMoniker": "Models\\SkillModel.cs",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Models\\SkillModel.cs",
-              "RelativeToolTip": "Models\\SkillModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAOAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "NpcViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\NpcViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\NpcViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\NpcViewModel.cs",
+              "RelativeToolTip": "ViewModels\\NpcViewModel.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAwwHgAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-16T01:00:07.407Z"
+              "WhenOpened": "2025-10-23T18:18:10.203Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MaterialCacheViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\MaterialCacheViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\MaterialCacheViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\MaterialCacheViewModel.cs",
+              "RelativeToolTip": "ViewModels\\MaterialCacheViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:18:05.245Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TradeWindowViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\TradeWindowViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\TradeWindowViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\TradeWindowViewModel.cs",
+              "RelativeToolTip": "ViewModels\\TradeWindowViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:17:58.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SettingsViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\SettingsViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\SettingsViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\SettingsViewModel.cs",
+              "RelativeToolTip": "ViewModels\\SettingsViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:17:53.342Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "PlayersViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\PlayersViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\PlayersViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\PlayersViewModel.cs",
+              "RelativeToolTip": "ViewModels\\PlayersViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:17:48.685Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ItemsUnifiedViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ItemsUnifiedViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ItemsUnifiedViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ItemsUnifiedViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ItemsUnifiedViewModel.cs",
+              "ViewState": "AgIAAN4AAAAAAAAAAIA6wA4BAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:17:24.891Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "InventoryViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\InventoryViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\InventoryViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\InventoryViewModel.cs",
+              "RelativeToolTip": "ViewModels\\InventoryViewModel.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAIA6wGYAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:17:08.265Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ChatViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ChatViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ChatViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ChatViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ChatViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:16:53.742Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ApiDocsViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ApiDocsViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ApiDocsViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\ApiDocsViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ApiDocsViewModel.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T18:16:29.218Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "ApiDocsView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ApiDocsView.xaml",
+              "RelativeDocumentMoniker": "Views\\ApiDocsView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ApiDocsView.xaml",
+              "RelativeToolTip": "Views\\ApiDocsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-23T17:53:12.173Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Microsoft.WinFX.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\9.0.305\\Sdks\\Microsoft.NET.Sdk.WindowsDesktop\\targets\\Microsoft.WinFX.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\9.0.305\\Sdks\\Microsoft.NET.Sdk.WindowsDesktop\\targets\\Microsoft.WinFX.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\9.0.305\\Sdks\\Microsoft.NET.Sdk.WindowsDesktop\\targets\\Microsoft.WinFX.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files\\dotnet\\sdk\\9.0.305\\Sdks\\Microsoft.NET.Sdk.WindowsDesktop\\targets\\Microsoft.WinFX.targets",
+              "ViewState": "AgIAAJ0AAAAAAAAAAAAuwNIAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-10-23T17:29:47.84Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "ScriptEntry.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ScriptEntry.cs",
+              "RelativeDocumentMoniker": "ScriptEntry.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ScriptEntry.cs",
+              "RelativeToolTip": "ScriptEntry.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAmwK8AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T17:29:18.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ThemeManager.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Services\\ThemeManager.cs",
+              "RelativeDocumentMoniker": "Services\\ThemeManager.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Services\\ThemeManager.cs",
+              "RelativeToolTip": "Services\\ThemeManager.cs",
+              "ViewState": "AgIAAJcAAAAAAAAAAAAmwNgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T17:16:03.171Z"
             },
             {
               "$type": "Document",
@@ -280,49 +475,143 @@
               "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\MainWindow.xaml",
               "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-14T18:42:42.618Z",
-              "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ItemContainersView.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ItemContainersView.xaml",
-              "RelativeDocumentMoniker": "Views\\ItemContainersView.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ItemContainersView.xaml",
-              "RelativeToolTip": "Views\\ItemContainersView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-17T12:08:17.617Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-23T17:15:00.192Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Dark.xaml",
-              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Themes\\Dark.xaml",
-              "RelativeDocumentMoniker": "Themes\\Dark.xaml",
-              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Themes\\Dark.xaml",
-              "RelativeToolTip": "Themes\\Dark.xaml",
+              "DocumentIndex": 2,
+              "Title": "PlayersView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\PlayersView.xaml",
+              "RelativeDocumentMoniker": "Views\\PlayersView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\PlayersView.xaml",
+              "RelativeToolTip": "Views\\PlayersView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T18:03:57.858Z"
+              "WhenOpened": "2025-10-23T17:14:43.199Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 31,
               "Title": "Light.xaml",
               "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Themes\\Light.xaml",
               "RelativeDocumentMoniker": "Themes\\Light.xaml",
               "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Themes\\Light.xaml",
               "RelativeToolTip": "Themes\\Light.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-10-16T18:04:26.66Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-23T13:36:47.209Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\App.xaml",
+              "RelativeDocumentMoniker": "App.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\App.xaml",
+              "RelativeToolTip": "App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-23T13:22:59.838Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ItemsUnifiedView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ItemsUnifiedView.xaml",
+              "RelativeDocumentMoniker": "Views\\ItemsUnifiedView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\ItemsUnifiedView.xaml",
+              "RelativeToolTip": "Views\\ItemsUnifiedView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-23T00:52:15.112Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "InterfacesDebug.xaml.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InterfacesDebug.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\InterfacesDebug.xaml.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InterfacesDebug.xaml.cs",
+              "RelativeToolTip": "Views\\InterfacesDebug.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T23:47:51.865Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "InterfacesViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\InterfacesViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\InterfacesViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\InterfacesViewModel.cs",
+              "RelativeToolTip": "ViewModels\\InterfacesViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T23:45:22.219Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "InterfacesView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InterfacesView.xaml",
+              "RelativeDocumentMoniker": "Views\\InterfacesView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InterfacesView.xaml",
+              "RelativeToolTip": "Views\\InterfacesView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-22T23:44:40.926Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "InterfacesDebug.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InterfacesDebug.xaml",
+              "RelativeDocumentMoniker": "Views\\InterfacesDebug.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\InterfacesDebug.xaml",
+              "RelativeToolTip": "Views\\InterfacesDebug.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-22T23:44:20.753Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "VarbitViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\VarbitViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\VarbitViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\VarbitViewModel.cs",
+              "RelativeToolTip": "ViewModels\\VarbitViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T22:52:41.017Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "VarbitView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\VarbitView.xaml",
+              "RelativeDocumentMoniker": "Views\\VarbitView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\VarbitView.xaml",
+              "RelativeToolTip": "Views\\VarbitView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-22T22:47:04.39Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "BankView.xaml",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\BankView.xaml",
+              "RelativeDocumentMoniker": "Views\\BankView.xaml",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\Views\\BankView.xaml",
+              "RelativeToolTip": "Views\\BankView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-10-22T22:39:25.298Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "BankViewModel.cs",
+              "DocumentMoniker": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\BankViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\BankViewModel.cs",
+              "ToolTip": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\ViewModels\\BankViewModel.cs",
+              "RelativeToolTip": "ViewModels\\BankViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T22:39:16.079Z"
             }
           ]
         }

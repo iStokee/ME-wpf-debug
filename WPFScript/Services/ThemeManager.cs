@@ -9,7 +9,13 @@ namespace MESharp.Services
 {
     public static class ThemeManager
     {
-        private static readonly string SettingsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+        private static readonly string SettingsFileName = "settings.json";
+        private static readonly string LegacySettingsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SettingsFileName);
+        private static readonly string SettingsDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "MESharp",
+            "WPFScript");
+        private static readonly string SettingsFilePath = Path.Combine(SettingsDirectory, SettingsFileName);
 
         private static Uri GetThemePackUri(string relative)
         {
@@ -27,7 +33,10 @@ namespace MESharp.Services
 
             // 1) Swap base theme dictionary (Light/Dark)
             var merged = app.Resources.MergedDictionaries;
-            // Remove any existing theme dicts
+            ResourceDictionary? themeDictionary = null;
+            int themeIndex = -1;
+
+            // Remove duplicate theme dictionaries while keeping the first instance to reuse.
             for (int i = merged.Count - 1; i >= 0; i--)
             {
                 var src = merged[i].Source?.ToString() ?? string.Empty;
@@ -36,11 +45,45 @@ namespace MESharp.Services
                     src.Contains("/Themes/Light.xaml", StringComparison.OrdinalIgnoreCase) ||
                     src.Contains("/Themes/Dark.xaml", StringComparison.OrdinalIgnoreCase))
                 {
-                    merged.RemoveAt(i);
+                    if (themeDictionary == null)
+                    {
+                        themeDictionary = merged[i];
+                        themeIndex = i;
+                    }
+                    else
+                    {
+                        merged.RemoveAt(i);
+                    }
                 }
             }
+
             var baseThemePath = settings.IsDark ? "Themes/Dark.xaml" : "Themes/Light.xaml";
-            merged.Add(new ResourceDictionary { Source = GetThemePackUri(baseThemePath) });
+            var baseThemeUri = GetThemePackUri(baseThemePath);
+
+            if (themeDictionary != null)
+            {
+                // Ensure the base theme stays ahead of resource dictionaries that depend on it.
+                var itemFlagIndex = FindDictionaryIndex(merged, "Themes/ItemFlagResources.xaml");
+                if (itemFlagIndex >= 0 && themeIndex > itemFlagIndex)
+                {
+                    merged.Remove(themeDictionary);
+                    themeIndex = itemFlagIndex;
+                    merged.Insert(themeIndex, themeDictionary);
+                }
+
+                themeDictionary.Source = baseThemeUri;
+            }
+            else
+            {
+                var insertIndex = FindDictionaryIndex(merged, "Themes/ItemFlagResources.xaml");
+                if (insertIndex < 0)
+                {
+                    insertIndex = merged.Count;
+                }
+
+                themeDictionary = new ResourceDictionary { Source = baseThemeUri };
+                merged.Insert(insertIndex, themeDictionary);
+            }
 
             // 2) Apply Primary color (will override the defaults from theme)
             var primary = ParseColor(settings.PrimaryColor) ?? (settings.IsDark ? (Color)ColorConverter.ConvertFromString("#FF7AA2FF") : (Color)ColorConverter.ConvertFromString("#FF3F51B5"));
@@ -56,6 +99,8 @@ namespace MESharp.Services
             var primarySoftBrush = new SolidColorBrush(primarySoft);
             primarySoftBrush.Freeze();
 
+            // also expose the raw color so elements using Color resources (drop shadows, etc.) update immediately
+            app.Resources["PrimaryColor"] = primary;
             app.Resources["PrimaryBrush"] = primaryBrush;
             app.Resources["PrimaryForegroundBrush"] = primaryFg;
             app.Resources["PrimarySoftBrush"] = primarySoftBrush;
@@ -68,30 +113,31 @@ namespace MESharp.Services
 			try
 			{
 				string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                Directory.CreateDirectory(SettingsDirectory);
 				File.WriteAllText(SettingsFilePath, json);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				// Handle exceptions (e.g., logging)  
+				Console.WriteLine($"[Managed] Failed to persist theme settings to '{SettingsFilePath}': {ex.Message}");
+                TryWriteLegacySettings(settings);
 			}
 		}
 
         public static ThemeSettings LoadSettings()
         {
-            if (!File.Exists(SettingsFilePath))
+            if (TryLoad(SettingsFilePath, out var settings))
             {
-                return new ThemeSettings { IsDark = false, PrimaryColor = "#3F51B5" };
+                return settings;
             }
 
-			try
-			{
-				string json = File.ReadAllText(SettingsFilePath);
-				return JsonSerializer.Deserialize<ThemeSettings>(json);
-			}
-            catch (Exception)
+            if (TryLoad(LegacySettingsFilePath, out settings))
             {
-                return new ThemeSettings { IsDark = false, PrimaryColor = "#3F51B5" };
+                // migrate to new path for future runs
+                SaveSettings(settings);
+                return settings;
             }
+
+            return CreateDefaultSettings();
         }
 
         private static Color GetIdealForeground(Color bg)
@@ -111,6 +157,60 @@ namespace MESharp.Services
             }
             catch { }
             return null;
+        }
+
+        private static bool TryLoad(string path, out ThemeSettings settings)
+        {
+            settings = null;
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            {
+                return false;
+            }
+
+            try
+            {
+                string json = File.ReadAllText(path);
+                settings = JsonSerializer.Deserialize<ThemeSettings>(json) ?? CreateDefaultSettings();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Managed] Failed to load theme settings from '{path}': {ex.Message}");
+                return false;
+            }
+        }
+
+        private static void TryWriteLegacySettings(ThemeSettings settings)
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(LegacySettingsFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Managed] Legacy theme settings fallback failed: {ex.Message}");
+            }
+        }
+
+        private static ThemeSettings CreateDefaultSettings()
+        {
+            return new ThemeSettings { IsDark = false, PrimaryColor = "#3F51B5" };
+        }
+
+        private static int FindDictionaryIndex(System.Collections.ObjectModel.Collection<ResourceDictionary> dictionaries, string resourceName)
+        {
+            for (int i = 0; i < dictionaries.Count; i++)
+            {
+                var source = dictionaries[i].Source?.ToString() ?? string.Empty;
+                if (source.EndsWith(resourceName, StringComparison.OrdinalIgnoreCase) ||
+                    source.Contains("/" + resourceName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
     }
 }

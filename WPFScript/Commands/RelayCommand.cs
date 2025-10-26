@@ -20,13 +20,13 @@ namespace MESharp.Commands
 			remove => CommandManager.RequerySuggested -= value;
 		}
 
-		/// <summary>
-		/// Creates a new RelayCommand which is always enabled.
-		/// </summary>
-		public RelayCommand(Action<object> execute)
-			: this(execute, _ => true)
-		{
-		}
+		///// <summary>
+		///// Creates a new RelayCommand which is always enabled.
+		///// </summary>
+		//public RelayCommand(Action<object> execute, Func<object, bool> value)
+		//	: this(execute, _ => true)
+		//{
+		//}
 
 		/// <summary>
 		/// Creates a new RelayCommand.
@@ -37,6 +37,14 @@ namespace MESharp.Commands
 		{
 			_execute    = execute  ?? throw new ArgumentNullException(nameof(execute));
 			_canExecute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
+		}
+
+		/// <summary>
+		/// Creates a new RelayCommand that is always executable.
+		/// </summary>
+		public RelayCommand(Action<object> execute)
+			: this(execute, _ => true)
+		{
 		}
 
 		/// <summary>

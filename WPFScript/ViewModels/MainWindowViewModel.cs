@@ -1,266 +1,143 @@
+using MESharp.Commands;
+using MESharp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
-using MESharp.Commands;
 
 namespace MESharp.ViewModels
 {
-	public enum AppPage
-	{
-		Game,
-		Chat,
-		Skills,
-		Inventory,
-		Equipment,
-		Npcs,
-		Objects,
-		Bank,
-		Loot,
-		MaterialCache,
-		TradeWindow,
-		ItemContainers,
-		ItemsUnified,
-		ObjectsUnified,
-		Settings
-	}
+    public enum AppPage
+    {
+        Game,
+        Chat,
+        Skills,
+        Players,
+        ItemsUnified,
+        ObjectsUnified,
+        Interfaces,
+        Varbit,
+        Settings,
+        ApiDocs
+    }
 
-	public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
-	{
-		private readonly DateTime _sessionStart;
-		private readonly DispatcherTimer _updateTimer;
+    public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
+    {
+        private readonly DateTime _sessionStart;
+        private readonly DispatcherTimer _updateTimer;
         private readonly EventHandler _sessionTimerHandler;
         private readonly Dictionary<AppPage, object> _viewModelCache = new();
 
-		private object _currentViewModel;
-		public object CurrentViewModel
-		{
-			get => _currentViewModel;
-			private set => SetProperty(ref _currentViewModel, value);
-		}
+        private object? _currentViewModel;
+        public object? CurrentViewModel
+        {
+            get => _currentViewModel;
+            private set => SetProperty(ref _currentViewModel, value);
+        }
 
-		private AppPage _currentPage;
-		public AppPage CurrentPage
-		{
-			get => _currentPage;
-			private set
-			{
-				if (SetProperty(ref _currentPage, value))
-				{
-					OnPropertyChanged(nameof(IsGameSelected));
-					OnPropertyChanged(nameof(IsChatSelected));
-					OnPropertyChanged(nameof(IsSkillsSelected));
-					OnPropertyChanged(nameof(IsInventorySelected));
-					OnPropertyChanged(nameof(IsEquipmentSelected));
-					OnPropertyChanged(nameof(IsNpcsSelected));
-					OnPropertyChanged(nameof(IsObjectsSelected));
-					OnPropertyChanged(nameof(IsBankSelected));
-					OnPropertyChanged(nameof(IsLootSelected));
-					OnPropertyChanged(nameof(IsMaterialCacheSelected));
-					OnPropertyChanged(nameof(IsTradeWindowSelected));
-					OnPropertyChanged(nameof(IsItemContainersSelected));
-					OnPropertyChanged(nameof(IsItemsUnifiedSelected));
-					OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
-					OnPropertyChanged(nameof(IsSettingsSelected));
-					OnPropertyChanged(nameof(CurrentPageName)); // Notify that the name has changed
-					OnPropertyChanged(nameof(IsItemsGroupActive));
-					OnPropertyChanged(nameof(IsObjectsGroupActive));
-					OnPropertyChanged(nameof(IsSidePanelVisible));
-				}
-			}
-		}
+        private AppPage _currentPage;
+        public AppPage CurrentPage
+        {
+            get => _currentPage;
+            private set
+            {
+                if (SetProperty(ref _currentPage, value))
+                {
+                    OnPropertyChanged(nameof(IsGameSelected));
+                    OnPropertyChanged(nameof(IsChatSelected));
+                    OnPropertyChanged(nameof(IsSkillsSelected));
+                    OnPropertyChanged(nameof(IsPlayersSelected));
+                    OnPropertyChanged(nameof(IsItemsUnifiedSelected));
+                    OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
+                    OnPropertyChanged(nameof(IsInterfacesSelected));
+                    OnPropertyChanged(nameof(IsVarbitSelected));
+                    OnPropertyChanged(nameof(IsSettingsSelected));
+                    OnPropertyChanged(nameof(IsApiDocsSelected));
+                    OnPropertyChanged(nameof(CurrentPageName));
+                    OnPropertyChanged(nameof(IsSidePanelVisible));
+                }
+            }
+        }
 
+        public bool IsSidePanelVisible => CurrentPage == AppPage.ItemsUnified || CurrentPage == AppPage.ObjectsUnified;
+        public string CurrentPageName => $"Active Page:      {CurrentPage}";
 
-		// Group tracking
-		public bool IsItemsGroupActive => CurrentPage == AppPage.Inventory || CurrentPage == AppPage.Equipment ||
-		                                   CurrentPage == AppPage.Bank || CurrentPage == AppPage.Loot ||
-		                                   CurrentPage == AppPage.MaterialCache || CurrentPage == AppPage.TradeWindow ||
-		                                   CurrentPage == AppPage.ItemContainers ||
-		                                   CurrentPage == AppPage.ItemsUnified;
+        public bool IsGameSelected => CurrentPage == AppPage.Game;
+        public bool IsChatSelected => CurrentPage == AppPage.Chat;
+        public bool IsSkillsSelected => CurrentPage == AppPage.Skills;
+        public bool IsPlayersSelected => CurrentPage == AppPage.Players;
+        public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
+        public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
+        public bool IsInterfacesSelected => CurrentPage == AppPage.Interfaces;
+        public bool IsVarbitSelected => CurrentPage == AppPage.Varbit;
+        public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
+        public bool IsApiDocsSelected => CurrentPage == AppPage.ApiDocs;
 
-		public bool IsObjectsGroupActive => CurrentPage == AppPage.Objects || CurrentPage == AppPage.Npcs ||
-		                                     CurrentPage == AppPage.ObjectsUnified;
+        public ICommand ShowGameCommand { get; }
+        public ICommand ShowChatCommand { get; }
+        public ICommand ShowSkillsCommand { get; }
+        public ICommand ShowPlayersCommand { get; }
+        public ICommand ShowItemsUnifiedCommand { get; }
+        public ICommand ShowObjectsUnifiedCommand { get; }
+        public ICommand ShowInterfacesCommand { get; }
+        public ICommand ShowVarbitCommand { get; }
+        public ICommand ShowSettingsCommand { get; }
+        public ICommand ShowApiDocsCommand { get; }
 
-		public bool IsSidePanelVisible => IsItemsGroupActive || IsObjectsGroupActive;
-		public string CurrentPageName => $"Active Page:      {CurrentPage}";
+        private string _sessionRuntimeString = "--:--:--";
+        public string SessionRuntimeString
+        {
+            get => _sessionRuntimeString;
+            private set => SetProperty(ref _sessionRuntimeString, value);
+        }
 
-		// one bool per view, bound to each ToggleButton.IsChecked
-		public bool IsGameSelected => CurrentPage == AppPage.Game;
-		public bool IsChatSelected => CurrentPage == AppPage.Chat;
-		public bool IsSkillsSelected => CurrentPage == AppPage.Skills;
-		public bool IsInventorySelected => CurrentPage == AppPage.Inventory;
-		public bool IsEquipmentSelected => CurrentPage == AppPage.Equipment;
-		public bool IsNpcsSelected => CurrentPage == AppPage.Npcs;
-		public bool IsObjectsSelected => CurrentPage == AppPage.Objects;
-		public bool IsBankSelected => CurrentPage == AppPage.Bank;
-		public bool IsLootSelected => CurrentPage == AppPage.Loot;
-		public bool IsMaterialCacheSelected => CurrentPage == AppPage.MaterialCache;
-		public bool IsTradeWindowSelected => CurrentPage == AppPage.TradeWindow;
-		public bool IsItemContainersSelected => CurrentPage == AppPage.ItemContainers;
-		public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
-		public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
-		public bool IsSettingsSelected => CurrentPage == AppPage.Settings;
+        public MainWindowViewModel()
+        {
+            _sessionStart = DateTime.UtcNow;
 
-		// Declare your commands
-		public ICommand ShowGameCommand { get; }
-		public ICommand ShowChatCommand { get; }
-		public ICommand ShowSkillsCommand { get; }
-		public ICommand ShowInventoryCommand { get; }
-		public ICommand ShowEquipmentCommand { get; }
-		public ICommand ShowNpcsCommand { get; }
-		public ICommand ShowObjectsCommand { get; }
-		public ICommand ShowBankCommand { get; }
-		public ICommand ShowLootCommand { get; }
-		public ICommand ShowMaterialCacheCommand { get; }
-		public ICommand ShowTradeWindowCommand { get; }
-		public ICommand ShowItemContainersCommand { get; }
-		public ICommand ShowItemsUnifiedCommand { get; }
-		public ICommand ShowObjectsUnifiedCommand { get; }
-		public ICommand ShowSettingsCommand { get; }
+            ShowGameCommand           = new RelayCommand(_ => ShowGame());
+            ShowChatCommand           = new RelayCommand(_ => ShowChat());
+            ShowSkillsCommand         = new RelayCommand(_ => ShowSkills());
+            ShowPlayersCommand        = new RelayCommand(_ => ShowPlayers());
+            ShowItemsUnifiedCommand   = new RelayCommand(_ => ShowItemsUnified());
+            ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
+            ShowInterfacesCommand     = new RelayCommand(_ => ShowInterfaces());
+            ShowVarbitCommand         = new RelayCommand(_ => ShowVarbit());
+            ShowSettingsCommand       = new RelayCommand(_ => ShowSettings());
+            ShowApiDocsCommand        = new RelayCommand(_ => ShowApiDocs());
 
-		private string _sessionRuntimeString = "--:--:--";
-		public string SessionRuntimeString
-		{
-			get => _sessionRuntimeString;
-			private set => SetProperty(ref _sessionRuntimeString, value);
-		}
-
-		public MainWindowViewModel()
-		{
-			_sessionStart = DateTime.UtcNow;
-
-			// Wire up commands to methods
-			ShowGameCommand      = new RelayCommand(_ => ShowGame());
-			ShowChatCommand      = new RelayCommand(_ => ShowChat());
-			ShowSkillsCommand    = new RelayCommand(_ => ShowSkills());
-			ShowInventoryCommand = new RelayCommand(_ => ShowInventory());
-			ShowEquipmentCommand = new RelayCommand(_ => ShowEquipment());
-			ShowNpcsCommand      = new RelayCommand(_ => ShowNpcs());
-			ShowObjectsCommand   = new RelayCommand(_ => ShowObjects());
-			ShowBankCommand      = new RelayCommand(_ => ShowBank());
-			ShowLootCommand      = new RelayCommand(_ => ShowLoot());
-			ShowMaterialCacheCommand = new RelayCommand(_ => ShowMaterialCache());
-			ShowTradeWindowCommand = new RelayCommand(_ => ShowTradeWindow());
-			ShowItemContainersCommand = new RelayCommand(_ => ShowItemContainers());
-			ShowItemsUnifiedCommand = new RelayCommand(_ => ShowItemsUnified());
-			ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
-			ShowSettingsCommand  = new RelayCommand(_ => ShowSettings());
-
-			// Timer for session runtime clock
             _sessionTimerHandler = (_, __) => UpdateSessionTime();
-			_updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
+            _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
             _updateTimer.Tick += _sessionTimerHandler;
-			_updateTimer.Start();
+            _updateTimer.Start();
 
-			// Pick a default view
-			ShowGame();
-		}
+            ShowGame();
+        }
 
-		private void UpdateSessionTime()
-		{
-			var elapsed = DateTime.UtcNow - _sessionStart;
-			SessionRuntimeString = elapsed.ToString(@"hh\:mm\:ss");
-		}
+        private void UpdateSessionTime()
+        {
+            var elapsed = DateTime.UtcNow - _sessionStart;
+            SessionRuntimeString = elapsed.ToString(@"hh\:mm\:ss");
+        }
 
-		private void ShowSkills()
-		{
-			SwitchView(AppPage.Skills, () => new SkillsViewModel());
-		}
+        private void ShowGame() => SwitchView(AppPage.Game, () => new GameViewModel());
+        private void ShowChat() => SwitchView(AppPage.Chat, () => new ChatViewModel());
+        private void ShowSkills() => SwitchView(AppPage.Skills, () => new SkillsViewModel());
+        private void ShowPlayers() => SwitchView(AppPage.Players, () => new PlayersViewModel());
+        private void ShowItemsUnified() => SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
+        private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
+        private void ShowInterfaces() => SwitchView(AppPage.Interfaces, () => new InterfacesViewModel());
+        private void ShowVarbit() => SwitchView(AppPage.Varbit, () => new VarbitViewModel());
+        private void ShowSettings() => SwitchView(AppPage.Settings, () => new SettingsViewModel());
+        private void ShowApiDocs() => SwitchView(AppPage.ApiDocs, () => new ApiDocsViewModel());
 
-		private void ShowInventory()
-		{
-			SwitchView(AppPage.Inventory, () => new InventoryViewModel());
-		}
-
-		private void ShowEquipment()
-		{
-			SwitchView(AppPage.Equipment, () => new EquipmentViewModel());
-		}
-
-		private void ShowNpcs()
-		{
-			SwitchView(AppPage.Npcs, () => new NpcViewModel());
-		}
-
-		private void ShowObjects()
-		{
-			SwitchView(AppPage.Objects, () => new ObjectsViewModel());
-		}
-
-		private void ShowBank()
-		{
-			SwitchView(AppPage.Bank, () => new BankViewModel());
-		}
-
-		private void ShowLoot()
-		{
-			SwitchView(AppPage.Loot, () => new LootViewModel());
-		}
-
-		private void ShowMaterialCache()
-		{
-			SwitchView(AppPage.MaterialCache, () => new MaterialCacheViewModel());
-		}
-
-		private void ShowTradeWindow()
-		{
-			SwitchView(AppPage.TradeWindow, () => new TradeWindowViewModel());
-		}
-
-		private void ShowItemContainers()
-		{
-			SwitchView(AppPage.ItemContainers, () => new ItemContainersViewModel());
-		}
-
-		private void ShowSettings()
-		{
-			SwitchView(AppPage.Settings, () => new SettingsViewModel());
-		}
-
-	private void ShowItemsUnified()
-	{
-		SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
-	}
-
-	private void ShowObjectsUnified()
-	{
-		SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
-	}
-
-		#region INotifyPropertyChanged boilerplate
-		public event PropertyChangedEventHandler PropertyChanged;
-		bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propName = null)
-		{
-			if (!Equals(field, newValue))
-			{
-				field = newValue;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-				return true;
-			}
-			return false;
-		}
-		protected void OnPropertyChanged([CallerMemberName] string name = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		#endregion
-
-
-		private void ShowGame()
-		{
-			SwitchView(AppPage.Game, () => new GameViewModel());
-		}
-
-		private void ShowChat()
-		{
-			SwitchView(AppPage.Chat, () => new ChatViewModel());
-		}
-
-		private void SwitchView(AppPage page, Func<object> factory)
-		{
+        private void SwitchView(AppPage page, Func<object> factory)
+        {
             if (page == CurrentPage && CurrentViewModel != null)
             {
                 if (CurrentViewModel is IActivatableViewModel alreadyActive)
@@ -283,7 +160,7 @@ namespace MESharp.ViewModels
             {
                 try { toActivate.OnActivated(); } catch { /* ignore */ }
             }
-		}
+        }
 
         private object GetOrCreateViewModel(AppPage page, Func<object> factory)
         {
@@ -296,6 +173,22 @@ namespace MESharp.ViewModels
             }
             return vm;
         }
+
+        #region INotifyPropertyChanged boilerplate
+        public event PropertyChangedEventHandler? PropertyChanged;
+        bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string? propName = null)
+        {
+            if (!Equals(field, newValue))
+            {
+                field = newValue;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName ?? string.Empty));
+                return true;
+            }
+            return false;
+        }
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
+        #endregion
 
         public void Dispose()
         {
@@ -318,5 +211,5 @@ namespace MESharp.ViewModels
             _viewModelCache.Clear();
             CurrentViewModel = null;
         }
-	}
+    }
 }

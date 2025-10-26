@@ -77,11 +77,65 @@ namespace MESharp.ViewModels
         }
 
         public ICommand ClearEventsCommand { get; }
+        public ICommand GetMessagesCommand { get; }
+        public ICommand TryFindMessageCommand { get; }
+        public ICommand GetFriendChatCommand { get; }
+        public ICommand GetPortableTimeCommand { get; }
+
+        // ─── GetMessages Support ─────────────────────────────────────────────
+        public ObservableCollection<MessageItem> Messages { get; } = new();
+        public bool HasMessages => Messages.Count > 0;
+
+        public class MessageItem
+        {
+            public string Name { get; set; } = "";
+            public string Text { get; set; } = "";
+            public string Extra1 { get; set; } = "";
+            public string Extra2 { get; set; } = "";
+            public string Timestamp { get; set; } = "";
+            public string TimeTotal { get; set; } = "";
+        }
+
+        // ─── TryFind Support ─────────────────────────────────────────────────
+        private string _findMessageText = "";
+        public string FindMessageText
+        {
+            get => _findMessageText;
+            set => Set(ref _findMessageText, value);
+        }
+
+        private int _findMessageLimit = 100;
+        public int FindMessageLimit
+        {
+            get => _findMessageLimit;
+            set => Set(ref _findMessageLimit, value);
+        }
+
+        private string _foundMessageResult = "";
+        public string FoundMessageResult
+        {
+            get => _foundMessageResult;
+            private set => Set(ref _foundMessageResult, value);
+        }
+
+        // ─── FriendChat Support ──────────────────────────────────────────────
+        public ObservableCollection<string> FriendChatMembers { get; } = new();
+        public bool HasFriendChatMembers => FriendChatMembers.Count > 0;
+
+        // ─── Portable Time Support ───────────────────────────────────────────
+        private string _portableTimeRemaining = "Not checked";
+        public string PortableTimeRemaining
+        {
+            get => _portableTimeRemaining;
+            private set => Set(ref _portableTimeRemaining, value);
+        }
 
         public ChatViewModel()
         {
             _liveEventsChangedHandler = (_, __) => OnPropertyChanged(nameof(HasEvents));
             LiveEvents.CollectionChanged += _liveEventsChangedHandler;
+            Messages.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasMessages));
+            FriendChatMembers.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasFriendChatMembers));
 
             RefreshEventSupport();
 
@@ -97,6 +151,11 @@ namespace MESharp.ViewModels
                 LiveEvents.Clear();
                 _eventSequence = 0;
             });
+
+            GetMessagesCommand = new RelayCommand(_ => LoadMessages());
+            TryFindMessageCommand = new RelayCommand(_ => TryFindMessage());
+            GetFriendChatCommand = new RelayCommand(_ => LoadFriendChat());
+            GetPortableTimeCommand = new RelayCommand(_ => LoadPortableTime());
 
             OnActivated();
         }
@@ -239,6 +298,99 @@ namespace MESharp.ViewModels
                 .ToArray();
 
             return parts.Length > 0 ? string.Join(" | ", parts) : "(n/a)";
+        }
+
+        private void LoadMessages()
+        {
+            if (_disposed)
+                return;
+
+            try
+            {
+                Messages.Clear();
+                var messages = Chat.GetMessages();
+
+                foreach (var msg in messages)
+                {
+                    Messages.Add(new MessageItem
+                    {
+                        Name = msg.Name,
+                        Text = CleanChatText(msg.Text),
+                        Extra1 = msg.Extra1,
+                        Extra2 = msg.Extra2,
+                        Timestamp = msg.Timestamp.ToString(),
+                        TimeTotal = msg.TimeTotal.ToString()
+                    });
+                }
+
+                EventsStatusMessage = $"Loaded {Messages.Count} messages.";
+            }
+            catch (Exception ex)
+            {
+                EventsStatusMessage = $"Error loading messages: {ex.Message}";
+            }
+        }
+
+        private void TryFindMessage()
+        {
+            if (_disposed || string.IsNullOrWhiteSpace(FindMessageText))
+                return;
+
+            try
+            {
+                if (Chat.TryFind(FindMessageText, FindMessageLimit, out var found))
+                {
+                    FoundMessageResult = $"Found: [{found.Name}] {CleanChatText(found.Text)}";
+                }
+                else
+                {
+                    FoundMessageResult = "Message not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                FoundMessageResult = $"Error: {ex.Message}";
+            }
+        }
+
+        private void LoadFriendChat()
+        {
+            if (_disposed)
+                return;
+
+            try
+            {
+                FriendChatMembers.Clear();
+                var members = Chat.GetFriendChatList();
+
+                foreach (var member in members)
+                {
+                    if (!string.IsNullOrWhiteSpace(member))
+                        FriendChatMembers.Add(member);
+                }
+
+                EventsStatusMessage = $"Loaded {FriendChatMembers.Count} friend chat members.";
+            }
+            catch (Exception ex)
+            {
+                EventsStatusMessage = $"Error loading friend chat: {ex.Message}";
+            }
+        }
+
+        private void LoadPortableTime()
+        {
+            if (_disposed)
+                return;
+
+            try
+            {
+                var time = Chat.PortableTime();
+                PortableTimeRemaining = time > 0 ? $"{time} seconds remaining" : "No portable active";
+            }
+            catch (Exception ex)
+            {
+                PortableTimeRemaining = $"Error: {ex.Message}";
+            }
         }
 
         public void Dispose()

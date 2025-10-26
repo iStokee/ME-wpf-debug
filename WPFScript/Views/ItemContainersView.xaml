@@ -16,8 +16,6 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-            <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
-            <conv:BoolToColorConverter x:Key="BoolToColorConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -36,17 +34,35 @@
             Padding="10"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="5">
-            <StackPanel>
-                <TextBlock
-                    Margin="0,0,0,5"
-                    FontSize="18"
-                    FontWeight="SemiBold"
-                    Text="Item Container Inspector" />
-                <TextBlock
-                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                    Text="View detailed metadata for all item containers (Inventory, Bank, Equipment, Loot, Familiar, Trade, Material Cache)"
-                    TextWrapping="Wrap" />
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Text="Item Container Inspector" />
+                    <TextBlock
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="View detailed metadata for all item containers (Inventory, Bank, Equipment, Loot, Familiar, Trade, Material Cache)"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <Button
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource HeaderHelpButton}"
+                    ToolTip="Open API docs"
+                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                    <iconPacks:PackIconMaterial
+                        Width="18"
+                        Height="18"
+                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Kind="HelpCircleOutline" />
+                </Button>
+            </Grid>
         </Border>
 
         <!--  Controls  -->
@@ -130,9 +146,12 @@
                     Grid.Row="0"
                     Margin="5"
                     AutoGenerateColumns="False"
+                    Background="{DynamicResource App.BackgroundBrush}"
                     BorderThickness="0"
                     CanUserAddRows="False"
                     CanUserDeleteRows="False"
+                    CanUserSortColumns="True"
+                    Foreground="{DynamicResource App.ForegroundBrush}"
                     GridLinesVisibility="Horizontal"
                     HeadersVisibility="Column"
                     IsReadOnly="True"
@@ -170,72 +189,11 @@
                             Binding="{Binding HighAlch}"
                             Header="High Alch" />
                         <DataGridTemplateColumn
-                            Width="70"
-                            Header="Noted">
+                            Width="170"
+                            Header="Flags">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsNoted, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsNoted, Converter={StaticResource BoolToIconConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="80"
-                            Header="Stackable">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsStackable, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsStackable, Converter={StaticResource BoolToIconConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="85"
-                            Header="Tradeable">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsTradeable, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsTradeable, Converter={StaticResource BoolToIconConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="85"
-                            Header="Bankable">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsBankable, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsBankable, Converter={StaticResource BoolToIconConverter}}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="80"
-                            Header="Alchable">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        FontSize="16"
-                                        FontWeight="Bold"
-                                        Foreground="{Binding IsAlchable, Converter={StaticResource BoolToColorConverter}}"
-                                        Text="{Binding IsAlchable, Converter={StaticResource BoolToIconConverter}}" />
+                                    <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemFlagBadgesTemplate}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

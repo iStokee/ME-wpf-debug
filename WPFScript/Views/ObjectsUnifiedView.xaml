@@ -25,7 +25,7 @@
         </Grid.ColumnDefinitions>
 
         <!--  Main Content Area  -->
-        <Grid Grid.Column="0" Margin="0,0,5,0">
+        <Grid Grid.Column="0" Margin="0,0,10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -34,12 +34,17 @@
             </Grid.RowDefinitions>
 
             <!--  Header  -->
-            <Border
-                Grid.Row="0"
-                Margin="0,0,0,10"
-                Padding="10"
-                Background="{DynamicResource App.CardBrush}"
-                CornerRadius="5">
+        <Border
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Padding="10"
+            Background="{DynamicResource App.CardBrush}"
+            CornerRadius="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock
                         Margin="0,0,0,5"
@@ -51,7 +56,20 @@
                         Text="View NPCs and Objects with type-specific controls in the side panel"
                         TextWrapping="Wrap" />
                 </StackPanel>
-            </Border>
+                <Button
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource HeaderHelpButton}"
+                    ToolTip="Open API docs"
+                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                    <iconPacks:PackIconMaterial
+                        Width="18"
+                        Height="18"
+                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Kind="HelpCircleOutline" />
+                </Button>
+            </Grid>
+        </Border>
 
             <!--  Object Type Selection and Actions  -->
             <Border
@@ -62,62 +80,89 @@
                 CornerRadius="5">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock
-                        Grid.Column="0"
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="Type:" />
+                    <StackPanel Grid.Column="0">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            FontWeight="SemiBold"
+                            Text="Types:" />
+                        <ItemsControl ItemsSource="{Binding ObjectTypeOptions}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        Margin="0,0,8,4"
+                                        Content="{Binding DisplayName}"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
 
-                    <ComboBox
+                    <StackPanel
                         Grid.Column="1"
-                        Width="150"
-                        Margin="0,0,15,0"
-                        ItemContainerStyle="{StaticResource AppComboBoxItem}"
-                        ItemsSource="{Binding AvailableObjectTypes}"
-                        SelectedItem="{Binding SelectedObjectType}"
-                        Style="{StaticResource AppComboBox}" />
+                        Margin="15,0"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="Filter:" />
+                        <TextBox
+                            Width="220"
+                            Margin="0,6,0,0"
+                            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
 
-                    <TextBox
+                    <StackPanel
                         Grid.Column="2"
-                        Width="220"
-                        Margin="0,0,15,0"
-                        Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                        <Button
+                            Margin="0,0,10,0"
+                            Padding="15,5"
+                            Command="{Binding LoadObjectsCommand}"
+                            Style="{StaticResource AccentButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,5,0"
+                                    VerticalAlignment="Center"
+                                    Kind="Refresh" />
+                                <TextBlock Text="Load" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button
-                        Grid.Column="3"
-                        Margin="0,0,10,0"
-                        Padding="15,5"
-                        Command="{Binding LoadObjectsCommand}"
-                        Style="{StaticResource AccentButton}">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial
-                                Margin="0,0,5,0"
-                                VerticalAlignment="Center"
-                                Kind="Refresh" />
-                            <TextBlock Text="Load" />
-                        </StackPanel>
-                    </Button>
+                        <Button
+                            Margin="0,0,10,0"
+                            Padding="15,5"
+                            Command="{Binding SearchByNameCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,5,0"
+                                    VerticalAlignment="Center"
+                                    Kind="Magnify" />
+                                <TextBlock Text="Search" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button
-                        Grid.Column="4"
-                        Padding="15,5"
-                        Command="{Binding ClearCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial
-                                Margin="0,0,5,0"
-                                VerticalAlignment="Center"
-                                Kind="Close" />
-                            <TextBlock Text="Clear" />
-                        </StackPanel>
-                    </Button>
+                        <Button
+                            Padding="15,5"
+                            Command="{Binding ClearCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,5,0"
+                                    VerticalAlignment="Center"
+                                    Kind="Close" />
+                                <TextBlock Text="Clear" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </Grid>
             </Border>
 
@@ -161,30 +206,50 @@
                                 Header="Type"
                                 SortMemberPath="Type" />
                             <DataGridTextColumn
+                                Width="150"
+                                Binding="{Binding Action}"
+                                Header="Action"
+                                SortMemberPath="Action" />
+                            <DataGridTextColumn
                                 Width="90"
                                 Binding="{Binding Distance, StringFormat={}{0:F1}}"
                                 Header="Distance"
                                 SortMemberPath="Distance" />
                             <DataGridTextColumn
                                 Width="80"
-                                Binding="{Binding Health}"
-                                Header="Health"
-                                SortMemberPath="Health" />
+                                Binding="{Binding Life}"
+                                Header="Life"
+                                SortMemberPath="Life" />
                             <DataGridTextColumn
                                 Width="80"
+                                Binding="{Binding CombatLevel}"
+                                Header="Combat"
+                                SortMemberPath="CombatLevel" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding Floor}"
+                                Header="Floor"
+                                SortMemberPath="Floor" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding TileX}"
+                                Header="Tile X"
+                                SortMemberPath="TileX" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding TileY}"
+                                Header="Tile Y"
+                                SortMemberPath="TileY" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding TileZ}"
+                                Header="Tile Z"
+                                SortMemberPath="TileZ" />
+                            <DataGridTextColumn
+                                Width="90"
                                 Binding="{Binding Animation}"
                                 Header="Anim"
                                 SortMemberPath="Animation" />
-                            <DataGridTextColumn
-                                Width="70"
-                                Binding="{Binding X}"
-                                Header="X"
-                                SortMemberPath="X" />
-                            <DataGridTextColumn
-                                Width="70"
-                                Binding="{Binding Y}"
-                                Header="Y"
-                                SortMemberPath="Y" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -236,6 +301,33 @@
                             FontWeight="SemiBold"
                             Foreground="{DynamicResource PrimaryBrush}"
                             Text="{Binding ObjectCount, Mode=OneWay}" />
+                        <StackPanel
+                            Margin="12,0,0,0"
+                            Orientation="Horizontal">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding NpcSnapshotCount}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Kind="AccountGroup" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="NPC Snapshot: " />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Text="{Binding NpcSnapshotCount, Mode=OneWay}" />
+                        </StackPanel>
                     </StackPanel>
 
                     <TextBlock
@@ -247,13 +339,46 @@
             </Border>
         </Grid>
 
+        <!--  Toggle Button  -->
+        <ToggleButton
+            Grid.Column="1"
+            Width="24"
+            Height="60"
+            Margin="5,0,0,0"
+            VerticalAlignment="Top"
+            IsChecked="{Binding IsSidePanelCollapsed, Mode=TwoWay}"
+            Style="{StaticResource {x:Type ToggleButton}}"
+            ToolTip="Toggle Side Panel">
+            <iconPacks:PackIconMaterial Kind="ChevronLeft">
+                <iconPacks:PackIconMaterial.Style>
+                    <Style TargetType="iconPacks:PackIconMaterial">
+                        <Setter Property="Kind" Value="ChevronLeft" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
+                                <Setter Property="Kind" Value="ChevronRight" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </iconPacks:PackIconMaterial.Style>
+            </iconPacks:PackIconMaterial>
+        </ToggleButton>
+
         <!--  Flyout Panel  -->
         <Border
-            Grid.Column="1"
-            Width="320"
-            Margin="0"
+            Grid.Column="2"
+            Margin="5,0,0,0"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="5">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Width" Value="320" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
+                            <Setter Property="Width" Value="0" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="10">
                     <!--  Panel Header  -->
@@ -304,12 +429,124 @@
                                 SelectedItem="{Binding SelectedActionIndex}"
                                 Style="{StaticResource AppComboBox}" />
 
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontSize="12"
+                                Text="Offset:" />
+                            <ComboBox
+                                Margin="0,0,0,5"
+                                ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                                ItemsSource="{Binding OffsetOptions}"
+                                SelectedItem="{Binding SelectedOffset}"
+                                Style="{StaticResource AppComboBox}"
+                                DisplayMemberPath="DisplayName" />
+                            <TextBlock
+                                FontSize="11"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="{Binding SelectedOffset.Description}" />
+
                             <Button
                                 Margin="0,5,0,0"
                                 Padding="10,5"
                                 Command="{Binding DoActionCommand}"
                                 Content="Perform Action"
                                 Style="{StaticResource AccentButton}" />
+
+                            <Separator Margin="0,12,0,12" />
+
+                            <TextBlock
+                                Margin="0,0,0,4"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="Lookup &amp; Snapshot" />
+                            <TextBlock
+                                FontSize="11"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="{Binding NpcSnapshotCount, StringFormat=Latest snapshot captured {0} NPC(s).}"
+                                TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding NpcSnapshotCount}" Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <Button
+                                Margin="0,8,0,0"
+                                Padding="10,5"
+                                Command="{Binding LookupNpcByIdCommand}"
+                                Content="Lookup NPC by ID (uses Filter)" />
+
+                            <TextBlock
+                                Margin="0,6,0,6"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="{Binding NpcLookupStatus}"
+                                TextWrapping="Wrap" />
+
+                            <TextBlock
+                                Margin="0,0,0,4"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="NPC Search Results" />
+
+                            <TextBlock
+                                Margin="0,0,0,6"
+                                FontSize="11"
+                                Foreground="{DynamicResource App.MutedBrush}"
+                                Text="Use the Search button with a name filter to populate results."
+                                TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasNpcSearchResults}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <DataGrid
+                                Height="150"
+                                AutoGenerateColumns="False"
+                                Background="{DynamicResource App.BackgroundBrush}"
+                                BorderThickness="0"
+                                CanUserAddRows="False"
+                                CanUserDeleteRows="False"
+                                CanUserSortColumns="True"
+                                Foreground="{DynamicResource App.ForegroundBrush}"
+                                GridLinesVisibility="Horizontal"
+                                HeadersVisibility="Column"
+                                IsReadOnly="True"
+                                ItemsSource="{Binding NpcSearchResults}"
+                                RowBackground="{DynamicResource App.CardBrush}"
+                                SelectedItem="{Binding SelectedNpcSearchResult}"
+                                Visibility="{Binding HasNpcSearchResults, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn
+                                        Width="*"
+                                        Binding="{Binding Name}"
+                                        Header="Name" />
+                                    <DataGridTextColumn
+                                        Width="60"
+                                        Binding="{Binding Id}"
+                                        Header="ID" />
+                                    <DataGridTextColumn
+                                        Width="60"
+                                        Binding="{Binding Health}"
+                                        Header="HP" />
+                                    <DataGridTextColumn
+                                        Width="60"
+                                        Binding="{Binding Distance, StringFormat={}{0:F1}}"
+                                        Header="Dist" />
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </StackPanel>
                     </Border>
 
@@ -348,6 +585,22 @@
                                 ItemsSource="{Binding ActionIndices}"
                                 SelectedItem="{Binding SelectedActionIndex}"
                                 Style="{StaticResource AppComboBox}" />
+
+                            <TextBlock
+                                Margin="0,8,0,4"
+                                FontSize="12"
+                                Text="Offset:" />
+                            <ComboBox
+                                Margin="0,0,0,5"
+                                ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                                ItemsSource="{Binding OffsetOptions}"
+                                SelectedItem="{Binding SelectedOffset}"
+                                Style="{StaticResource AppComboBox}"
+                                DisplayMemberPath="DisplayName" />
+                            <TextBlock
+                                FontSize="11"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="{Binding SelectedOffset.Description}" />
 
                             <Button
                                 Margin="0,5,0,0"

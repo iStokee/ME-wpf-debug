@@ -1,0 +1,635 @@
+<UserControl
+    x:Class="MESharp.Views.ApiDocsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:MESharp.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:MESharp.Models"
+    xmlns:vm="clr-namespace:MESharp.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:ApiDocsViewModel}"
+    d:DesignHeight="800"
+    d:DesignWidth="1200"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!--  Code Block Style  -->
+        <Style x:Key="CodeBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas, Courier New" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+            <Setter Property="Padding" Value="16,12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <!--  Section Header Style  -->
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="Margin" Value="0,20,0,12" />
+        </Style>
+
+        <!--  Method Card Style  -->
+        <Style x:Key="MethodCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+
+        <!--  Tag Style  -->
+        <Style x:Key="TagStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="8,4" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Navigation Sidebar  -->
+        <Border
+            Grid.Column="0"
+            Margin="0,0,8,0"
+            Background="{DynamicResource App.CardBrush}"
+            CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--  Sidebar Header  -->
+                <StackPanel Grid.Row="0" Margin="16,16,16,12">
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Width="28"
+                            Height="28"
+                            Margin="0,0,10,0"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            Kind="BookOpenPageVariant" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource App.ForegroundBrush}"
+                            Text="API Reference" />
+                    </StackPanel>
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="Comprehensive documentation for the MESharp API"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!--  Search Box  -->
+                <Border
+                    Grid.Row="1"
+                    Margin="16,0,16,12"
+                    Padding="10,8"
+                    Background="{DynamicResource App.BackgroundBrush}"
+                    BorderBrush="{DynamicResource App.BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="{DynamicResource App.ForegroundBrush}"
+                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Grid>
+                                                    <TextBlock
+                                                        Margin="2,0"
+                                                        VerticalAlignment="Center"
+                                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                        IsHitTestVisible="False"
+                                                        Text="Search classes...">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <ScrollViewer x:Name="PART_ContentHost" />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <iconPacks:PackIconMaterial
+                            Grid.Column="1"
+                            Width="16"
+                            Height="16"
+                            Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                            Kind="Magnify" />
+                    </Grid>
+                </Border>
+
+                <!--  Class List  -->
+                <ListBox
+                    Grid.Row="2"
+                    Margin="8"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ItemsSource="{Binding ApiClasses}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    SelectedItem="{Binding SelectedClass}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                            <Setter Property="Padding" Value="12,10" />
+                            <Setter Property="Margin" Value="4,2" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border
+                                            x:Name="Border"
+                                            Padding="{TemplateBinding Padding}"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{DynamicResource App.BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="6">
+                                            <StackPanel>
+                                                <TextBlock
+                                                    FontSize="13"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{TemplateBinding Foreground}"
+                                                    Text="{Binding Name}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                    Text="{Binding Namespace}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                                                <Setter TargetName="Border" Property="BorderThickness" Value="1" />
+                                                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                                                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!--  Documentation Content Area  -->
+        <Border
+            Grid.Column="1"
+            Background="{DynamicResource App.CardBrush}"
+            CornerRadius="8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="32,24" DataContext="{Binding SelectedClassDocumentation}">
+                    <!--  Class Header  -->
+                    <Grid Margin="0,0,0,24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <!--  Class Name  -->
+                            <TextBlock
+                                FontSize="32"
+                                FontWeight="Bold"
+                                Foreground="{DynamicResource App.ForegroundBrush}"
+                                Text="{Binding ClassName}" />
+
+                            <!--  Namespace  -->
+                            <TextBlock
+                                Margin="0,4,0,0"
+                                FontFamily="Consolas"
+                                FontSize="13"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}">
+                                <Run Text="namespace" />
+                                <Run FontWeight="SemiBold" Text="{Binding Namespace, Mode=OneWay}" />
+                            </TextBlock>
+
+                            <!--  Category Tag  -->
+                            <Border
+                                Margin="0,12,0,0"
+                                HorizontalAlignment="Left"
+                                Style="{StaticResource TagStyle}">
+                                <TextBlock
+                                    FontSize="11"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource PrimaryBrush}"
+                                    Text="{Binding Category}" />
+                            </Border>
+                        </StackPanel>
+
+                        <!--  Related Classes  -->
+                        <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                            <TextBlock
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="Related APIs" />
+                            <ItemsControl Margin="0,6,0,0" ItemsSource="{Binding RelatedClasses}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button
+                                            Margin="0,2"
+                                            Padding="8,4"
+                                            HorizontalAlignment="Left"
+                                            Background="Transparent"
+                                            BorderBrush="{DynamicResource PrimaryBrush}"
+                                            BorderThickness="1"
+                                            Content="{Binding}"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource PrimaryBrush}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Grid>
+
+                    <!--  Summary  -->
+                    <TextBlock
+                        Margin="0,0,0,16"
+                        FontSize="15"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource App.ForegroundBrush}"
+                        Text="{Binding Summary}"
+                        TextWrapping="Wrap" />
+
+                    <!--  Description  -->
+                    <Border
+                        Margin="0,0,0,20"
+                        Padding="20,16"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        BorderBrush="{DynamicResource PrimaryBrush}"
+                        BorderThickness="0,0,0,3"
+                        CornerRadius="6">
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="{DynamicResource App.ForegroundBrush}"
+                            LineHeight="22"
+                            Text="{Binding Description}"
+                            TextWrapping="Wrap" />
+                    </Border>
+
+                    <!--  Properties Section  -->
+                    <StackPanel Visibility="{Binding Properties.Count, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Kind="FormatListBulleted" />
+                            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Properties" />
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding Properties}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:ApiPropertyDoc}">
+                                    <Border Style="{StaticResource MethodCardStyle}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <!--  Property Header  -->
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    FontFamily="Consolas"
+                                                    FontSize="14"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource App.ForegroundBrush}">
+                                                    <Run Text="{Binding Name, Mode=OneWay}" />
+                                                    <Run Foreground="{DynamicResource App.SubtleForegroundBrush}" Text=":" />
+                                                    <Run Foreground="{DynamicResource PrimaryBrush}" Text="{Binding Type, Mode=OneWay}" />
+                                                </TextBlock>
+
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Border
+                                                        Margin="0,0,4,0"
+                                                        Padding="6,2"
+                                                        Background="{DynamicResource PrimarySoftBrush}"
+                                                        CornerRadius="4"
+                                                        Visibility="{Binding IsStatic, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <TextBlock
+                                                            FontSize="9"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{DynamicResource PrimaryBrush}"
+                                                            Text="STATIC" />
+                                                    </Border>
+                                                    <Border
+                                                        Padding="6,2"
+                                                        Background="{DynamicResource App.CardBrush}"
+                                                        BorderBrush="{DynamicResource App.BorderBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="4"
+                                                        Visibility="{Binding IsReadOnly, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <TextBlock
+                                                            FontSize="9"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                            Text="READ-ONLY" />
+                                                    </Border>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!--  Summary  -->
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Margin="0,8,0,0"
+                                                FontSize="13"
+                                                Foreground="{DynamicResource App.ForegroundBrush}"
+                                                Text="{Binding Summary}"
+                                                TextWrapping="Wrap" />
+
+                                            <!--  Examples  -->
+                                            <ItemsControl
+                                                Grid.Row="2"
+                                                Margin="0,12,0,0"
+                                                ItemsSource="{Binding Examples}"
+                                                Visibility="{Binding Examples.Count, Converter={StaticResource NullToVisibilityConverter}}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type models:ApiExampleDoc}">
+                                                        <Border
+                                                            Margin="0,0,0,8"
+                                                            BorderBrush="{DynamicResource PrimaryBrush}"
+                                                            BorderThickness="1,0,0,0"
+                                                            Padding="12,0,0,0">
+                                                            <StackPanel>
+                                                                <TextBlock
+                                                                    FontSize="12"
+                                                                    FontWeight="SemiBold"
+                                                                    Foreground="{DynamicResource PrimaryBrush}"
+                                                                    Text="{Binding Title}" />
+                                                                <Border
+                                                                    Margin="0,6,0,0"
+                                                                    CornerRadius="4">
+                                                                    <TextBlock Style="{StaticResource CodeBlockStyle}" Text="{Binding Code}" />
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!--  Methods Section  -->
+                    <StackPanel Margin="0,20,0,0" Visibility="{Binding Methods.Count, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Kind="FunctionVariant" />
+                            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Methods" />
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding Methods}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:ApiMethodDoc}">
+                                    <Border Style="{StaticResource MethodCardStyle}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <!--  Method Signature  -->
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    FontFamily="Consolas"
+                                                    FontSize="14"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource App.ForegroundBrush}">
+                                                    <Run Text="{Binding Name, Mode=OneWay}" />
+                                                    <Run Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="{Binding ParametersDisplay, Mode=OneWay}" />
+                                                </TextBlock>
+
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Padding="6,2"
+                                                    Background="{DynamicResource PrimarySoftBrush}"
+                                                    CornerRadius="4"
+                                                    Visibility="{Binding IsStatic, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock
+                                                        FontSize="9"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{DynamicResource PrimaryBrush}"
+                                                        Text="STATIC" />
+                                                </Border>
+                                            </Grid>
+
+                                            <!--  Return Type  -->
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Margin="0,4,0,0"
+                                                FontFamily="Consolas"
+                                                FontSize="11"
+                                                Foreground="{DynamicResource App.SubtleForegroundBrush}">
+                                                <Run Text="Returns:" />
+                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" Text="{Binding ReturnType, Mode=OneWay}" />
+                                            </TextBlock>
+
+                                            <!--  Summary  -->
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Margin="0,12,0,0"
+                                                FontSize="13"
+                                                Foreground="{DynamicResource App.ForegroundBrush}"
+                                                Text="{Binding Summary}"
+                                                TextWrapping="Wrap" />
+
+                                            <!--  Parameters  -->
+                                            <StackPanel
+                                                Grid.Row="3"
+                                                Margin="0,12,0,0"
+                                                Visibility="{Binding Parameters.Count, Converter={StaticResource NullToVisibilityConverter}}">
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                    Text="Parameters:" />
+                                                <ItemsControl Margin="0,6,0,0" ItemsSource="{Binding Parameters}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type models:ApiParameterDoc}">
+                                                            <Grid Margin="0,4">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto" MinWidth="100" />
+                                                                    <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <TextBlock
+                                                                    Grid.Column="0"
+                                                                    FontFamily="Consolas"
+                                                                    FontSize="12"
+                                                                    FontWeight="SemiBold"
+                                                                    Foreground="{DynamicResource App.ForegroundBrush}"
+                                                                    Text="{Binding Name}" />
+
+                                                                <TextBlock
+                                                                    Grid.Column="1"
+                                                                    Margin="12,0"
+                                                                    FontFamily="Consolas"
+                                                                    FontSize="11"
+                                                                    Foreground="{DynamicResource PrimaryBrush}"
+                                                                    Text="{Binding Type}" />
+
+                                                                <TextBlock
+                                                                    Grid.Column="2"
+                                                                    FontSize="12"
+                                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                                    Text="{Binding Description}"
+                                                                    TextWrapping="Wrap" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+
+                                            <!--  Examples  -->
+                                            <ItemsControl
+                                                Grid.Row="4"
+                                                Margin="0,16,0,0"
+                                                ItemsSource="{Binding Examples}"
+                                                Visibility="{Binding Examples.Count, Converter={StaticResource NullToVisibilityConverter}}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type models:ApiExampleDoc}">
+                                                        <Border
+                                                            Margin="0,0,0,12"
+                                                            BorderBrush="{DynamicResource PrimaryBrush}"
+                                                            BorderThickness="2,0,0,0"
+                                                            Padding="16,0,0,0">
+                                                            <StackPanel>
+                                                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                                                    <iconPacks:PackIconMaterial
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Margin="0,0,6,0"
+                                                                        VerticalAlignment="Center"
+                                                                        Foreground="{DynamicResource PrimaryBrush}"
+                                                                        Kind="CodeBraces" />
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        FontSize="13"
+                                                                        FontWeight="SemiBold"
+                                                                        Foreground="{DynamicResource PrimaryBrush}"
+                                                                        Text="{Binding Title}" />
+                                                                </StackPanel>
+
+                                                                <TextBlock
+                                                                    Margin="0,0,0,8"
+                                                                    FontSize="12"
+                                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                                    Text="{Binding Description}"
+                                                                    TextWrapping="Wrap" />
+
+                                                                <Border CornerRadius="6">
+                                                                    <TextBlock Style="{StaticResource CodeBlockStyle}" Text="{Binding Code}" />
+                                                                </Border>
+
+                                                                <Border
+                                                                    Margin="0,8,0,0"
+                                                                    Padding="12,8"
+                                                                    Background="{DynamicResource App.CardBrush}"
+                                                                    BorderBrush="{DynamicResource PrimaryBrush}"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="4"
+                                                                    Visibility="{Binding Output, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                    <StackPanel>
+                                                                        <TextBlock
+                                                                            FontSize="10"
+                                                                            FontWeight="SemiBold"
+                                                                            Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                                            Text="Output:" />
+                                                                        <TextBlock
+                                                                            Margin="0,4,0,0"
+                                                                            FontFamily="Consolas"
+                                                                            FontSize="11"
+                                                                            Foreground="{DynamicResource App.ForegroundBrush}"
+                                                                            Text="{Binding Output}" />
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

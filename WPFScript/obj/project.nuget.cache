@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "IiW2duDefYY=",
+  "dgSpecHash": "c5jCdtvE5lU=",
   "success": true,
   "projectFilePath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\istokee\\.nuget\\packages\\controlzex\\4.4.0\\controlzex.4.4.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\costura.fody\\6.0.0\\costura.fody.6.0.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\fody\\6.9.2\\fody.6.9.2.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro\\2.4.11\\mahapps.metro.2.4.11.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro.iconpacks\\6.1.0\\mahapps.metro.iconpacks.6.1.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro.iconpacks.bootstrapicons\\6.1.0\\mahapps.metro.iconpacks.bootstrapicons.6.1.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro.iconpacks.boxicons\\6.1.0\\mahapps.metro.iconpacks.boxicons.6.1.0.nupkg.sha512",
@@ -49,6 +51,7 @@
     "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro.iconpacks.vaadinicons\\6.1.0\\mahapps.metro.iconpacks.vaadinicons.6.1.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro.iconpacks.weathericons\\6.1.0\\mahapps.metro.iconpacks.weathericons.6.1.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\mahapps.metro.iconpacks.zondicons\\6.1.0\\mahapps.metro.iconpacks.zondicons.6.1.0.nupkg.sha512",
+    "C:\\Users\\istokee\\.nuget\\packages\\mcmaster.netcore.plugins\\2.0.0\\mcmaster.netcore.plugins.2.0.0.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.135\\microsoft.xaml.behaviors.wpf.1.1.135.nupkg.sha512",
     "C:\\Users\\istokee\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512"
   ],

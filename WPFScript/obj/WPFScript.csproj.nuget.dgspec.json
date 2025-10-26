@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
-        "projectName": "WPFScript",
+        "projectName": "MESharp_DebugUtil",
         "projectPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\WPFScript.csproj",
         "packagesPath": "C:\\Users\\istokee\\.nuget\\packages\\",
         "outputPath": "C:\\Development\\MemoryError\\C#\\ME_CSharp_Scripts\\ME-wpf-debug\\WPFScript\\obj\\",
@@ -62,9 +62,17 @@
               "target": "Package",
               "version": "[6.9.2, )"
             },
+            "MahApps.Metro": {
+              "target": "Package",
+              "version": "[2.4.11, )"
+            },
             "MahApps.Metro.IconPacks": {
               "target": "Package",
               "version": "[6.1.0, )"
+            },
+            "McMaster.NETCore.Plugins": {
+              "target": "Package",
+              "version": "[2.0.0, )"
             },
             "Microsoft.Xaml.Behaviors.Wpf": {
               "target": "Package",

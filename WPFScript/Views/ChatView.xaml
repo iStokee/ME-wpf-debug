@@ -10,18 +10,35 @@
         <StackPanel Margin="24">
 
             <!--  Header  -->
-            <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
-                <iconPacks:PackIconMaterial
-                    Width="24"
-                    Height="24"
-                    Margin="0,0,8,0"
-                    Foreground="{DynamicResource PrimaryBrush}"
-                    Kind="Message" />
-                <TextBlock
-                    FontSize="20"
-                    FontWeight="SemiBold"
-                    Text="Chat" />
-            </StackPanel>
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="24"
+                        Height="24"
+                        Margin="0,0,8,0"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Kind="Message" />
+                    <TextBlock
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Text="Chat" />
+                </StackPanel>
+                <Button
+                    Grid.Column="1"
+                    Style="{StaticResource HeaderHelpButton}"
+                    ToolTip="Open API docs"
+                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                    <iconPacks:PackIconMaterial
+                        Width="18"
+                        Height="18"
+                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Kind="HelpCircleOutline" />
+                </Button>
+            </Grid>
 
             <!--  Controls Card  -->
             <Border
@@ -87,62 +104,53 @@
                         Text="Live Events" />
 
                     <Grid>
-                        <ListView
+                        <DataGrid
                             Height="460"
+                            Margin="5"
+                            AutoGenerateColumns="False"
                             Background="{DynamicResource App.BackgroundBrush}"
+                            BorderThickness="0"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            CanUserSortColumns="True"
                             Foreground="{DynamicResource App.ForegroundBrush}"
+                            GridLinesVisibility="Horizontal"
+                            HeadersVisibility="Column"
+                            IsReadOnly="True"
                             ItemsSource="{Binding LiveEvents}"
-                            ScrollViewer.VerticalScrollBarVisibility="Auto">
-                            <ListView.ItemContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn
-                                        Width="Auto"
-                                        DisplayMemberBinding="{Binding Sequence}"
-                                        Header="#" />
-                                    <GridViewColumn
-                                        Width="Auto"
-                                        DisplayMemberBinding="{Binding Time}"
-                                        Header="Time" />
-                                    <GridViewColumn
-                                        Width="Auto"
-                                        DisplayMemberBinding="{Binding Channel}"
-                                        Header="Channel" />
-                                    <GridViewColumn Width="Auto" Header="Names">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Names}" TextWrapping="Wrap" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Text">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock
-                                                    Width="Auto"
-                                                    Text="{Binding Text}"
-                                                    TextWrapping="Wrap" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Width="Auto" Header="Details">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Details}" TextWrapping="Wrap" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn
-                                        Width="Auto"
-                                        DisplayMemberBinding="{Binding Tick}"
-                                        Header="Tick" />
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                            RowBackground="{DynamicResource App.CardBrush}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Width="50"
+                                    Binding="{Binding Sequence}"
+                                    Header="#" />
+                                <DataGridTextColumn
+                                    Width="90"
+                                    Binding="{Binding Time}"
+                                    Header="Time" />
+                                <DataGridTextColumn
+                                    Width="100"
+                                    Binding="{Binding Channel}"
+                                    Header="Channel" />
+                                <DataGridTextColumn
+                                    Width="120"
+                                    Binding="{Binding Names}"
+                                    Header="Names" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    MinWidth="200"
+                                    Binding="{Binding Text}"
+                                    Header="Text" />
+                                <DataGridTextColumn
+                                    Width="150"
+                                    Binding="{Binding Details}"
+                                    Header="Details" />
+                                <DataGridTextColumn
+                                    Width="70"
+                                    Binding="{Binding Tick}"
+                                    Header="Tick" />
+                            </DataGrid.Columns>
+                        </DataGrid>
 
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -167,6 +175,199 @@
                     </Grid>
                 </StackPanel>
             </Border>
+
+            <!--  Chat Messages Card  -->
+            <Border
+                Margin="0,16,0,0"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Chat Message History" />
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Load recent chat messages from memory."
+                        TextWrapping="Wrap" />
+
+                    <Button
+                        Width="150"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,12"
+                        Command="{Binding GetMessagesCommand}"
+                        Content="Load Messages"
+                        Style="{StaticResource AccentButton}" />
+
+                    <DataGrid
+                        Height="200"
+                        Margin="5"
+                        AutoGenerateColumns="False"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        BorderThickness="0"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserSortColumns="True"
+                        Foreground="{DynamicResource App.ForegroundBrush}"
+                        GridLinesVisibility="Horizontal"
+                        HeadersVisibility="Column"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding Messages}"
+                        RowBackground="{DynamicResource App.CardBrush}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="150"
+                                Binding="{Binding Name}"
+                                Header="Name" />
+                            <DataGridTextColumn
+                                Width="*"
+                                MinWidth="200"
+                                Binding="{Binding Text}"
+                                Header="Text" />
+                            <DataGridTextColumn
+                                Width="100"
+                                Binding="{Binding Timestamp}"
+                                Header="Timestamp" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!--  Find Message Card  -->
+            <Border
+                Margin="0,16,0,0"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Find Message" />
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Search for a specific message in chat history."
+                        TextWrapping="Wrap" />
+
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding FindMessageText, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Text="Limit:" />
+
+                        <TextBox
+                            Grid.Column="2"
+                            Width="60"
+                            VerticalAlignment="Center"
+                            Text="{Binding FindMessageLimit}" />
+                    </Grid>
+
+                    <Button
+                        Width="120"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,8"
+                        Command="{Binding TryFindMessageCommand}"
+                        Content="Search"
+                        Style="{StaticResource AccentButton}" />
+
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        FontSize="12"
+                        Foreground="{DynamicResource App.ForegroundBrush}"
+                        Text="{Binding FoundMessageResult}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!--  Friend Chat Card  -->
+            <Border
+                Margin="0,16,0,0"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Friend Chat Members" />
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Load list of friend chat members."
+                        TextWrapping="Wrap" />
+
+                    <Button
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,12"
+                        Command="{Binding GetFriendChatCommand}"
+                        Content="Load Friend Chat"
+                        Style="{StaticResource AccentButton}" />
+
+                    <ListBox
+                        Height="120"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        ItemsSource="{Binding FriendChatMembers}" />
+                </StackPanel>
+            </Border>
+
+            <!--  Portable Time Card  -->
+            <Border
+                Margin="0,16,0,0"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Portable Timer" />
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.MutedBrush}"
+                        Text="Check portable skilling station time remaining."
+                        TextWrapping="Wrap" />
+
+                    <Button
+                        Width="150"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,12"
+                        Command="{Binding GetPortableTimeCommand}"
+                        Content="Check Time"
+                        Style="{StaticResource AccentButton}" />
+
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Text="{Binding PortableTimeRemaining}" />
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

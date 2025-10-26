@@ -18,5 +18,6 @@
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgMicrosoft_Xaml_Behaviors_Wpf Condition=" '$(PkgMicrosoft_Xaml_Behaviors_Wpf)' == '' ">C:\Users\istokee\.nuget\packages\microsoft.xaml.behaviors.wpf\1.1.135</PkgMicrosoft_Xaml_Behaviors_Wpf>
+    <PkgMahApps_Metro Condition=" '$(PkgMahApps_Metro)' == '' ">C:\Users\istokee\.nuget\packages\mahapps.metro\2.4.11</PkgMahApps_Metro>
   </PropertyGroup>
 </Project>

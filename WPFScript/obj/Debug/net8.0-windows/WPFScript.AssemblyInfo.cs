@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("WPFScript")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("MESharp_DebugUtil")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+766fc0d9897cf00ef6c28c080c2e14d2ca49f136")]
-[assembly: System.Reflection.AssemblyProductAttribute("WPFScript")]
-[assembly: System.Reflection.AssemblyTitleAttribute("WPFScript")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94e43c84a4165a7d88a81bd8e67a5324694c311f")]
+[assembly: System.Reflection.AssemblyProductAttribute("MESharp_DebugUtil")]
+[assembly: System.Reflection.AssemblyTitleAttribute("MESharp_DebugUtil")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]

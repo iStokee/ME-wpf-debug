@@ -10,18 +10,35 @@
         <StackPanel Margin="24">
 
             <!--  Header  -->
-            <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
-                <iconPacks:PackIconMaterial
-                    Width="24"
-                    Height="24"
-                    Margin="0,0,8,0"
-                    Foreground="{DynamicResource PrimaryBrush}"
-                    Kind="ViewList" />
-                <TextBlock
-                    FontSize="20"
-                    FontWeight="SemiBold"
-                    Text="Inventory" />
-            </StackPanel>
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="24"
+                        Height="24"
+                        Margin="0,0,8,0"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Kind="ViewList" />
+                    <TextBlock
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Text="Inventory" />
+                </StackPanel>
+                <Button
+                    Grid.Column="1"
+                    Style="{StaticResource HeaderHelpButton}"
+                    ToolTip="Open API docs"
+                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                    <iconPacks:PackIconMaterial
+                        Width="18"
+                        Height="18"
+                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Kind="HelpCircleOutline" />
+                </Button>
+            </Grid>
 
             <!--  Status Card  -->
             <Border
@@ -374,35 +391,52 @@
                         FontWeight="SemiBold"
                         Text="Items" />
 
-                    <ListView
+                    <DataGrid
                         Height="460"
+                        Margin="5"
+                        AutoGenerateColumns="False"
                         Background="{DynamicResource App.BackgroundBrush}"
-                        ItemsSource="{Binding ItemsView}">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn
-                                    Width="60"
-                                    DisplayMemberBinding="{Binding Slot}"
-                                    Header="Slot" />
-                                <GridViewColumn
-                                    Width="70"
-                                    DisplayMemberBinding="{Binding Id}"
-                                    Header="ID" />
-                                <GridViewColumn
-                                    Width="240"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    Header="Name" />
-                                <GridViewColumn
-                                    Width="90"
-                                    DisplayMemberBinding="{Binding Amount}"
-                                    Header="Amount" />
-                                <GridViewColumn
-                                    Width="90"
-                                    DisplayMemberBinding="{Binding Exp}"
-                                    Header="XP" />
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                        BorderThickness="0"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserSortColumns="True"
+                        Foreground="{DynamicResource App.ForegroundBrush}"
+                        GridLinesVisibility="Horizontal"
+                        HeadersVisibility="Column"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding ItemsView}"
+                        RowBackground="{DynamicResource App.CardBrush}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="60"
+                                Binding="{Binding Slot}"
+                                Header="Slot" />
+                            <DataGridTextColumn
+                                Width="70"
+                                Binding="{Binding Id}"
+                                Header="ID" />
+                            <DataGridTextColumn
+                                Width="*"
+                                MinWidth="200"
+                                Binding="{Binding Name}"
+                                Header="Name" />
+                            <DataGridTextColumn
+                                Width="90"
+                                Binding="{Binding Amount}"
+                                Header="Amount" />
+                            <DataGridTemplateColumn Width="170" Header="Flags">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemFlagBadgesTemplate}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn
+                                Width="90"
+                                Binding="{Binding Exp}"
+                                Header="XP" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </StackPanel>
             </Border>
         </StackPanel>

@@ -12,33 +12,27 @@ using System.Windows.Shapes;
 
 using MESharp.ViewModels;
 using MESharp.API;
+using MESharp.ViewModels;
 
 namespace MESharp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
 			public MainWindow()
 			{
 			InitializeComponent();
 
-			// Theme is now loaded in App.OnStartup() before window creation
-
             var vm = new MainWindowViewModel();
             	this.DataContext = vm;
 
-			// Register our UI thread and hwnd with the native layer so it doesn't spoof focus
 				try
                 {
                     Console.WriteLine("[Managed] Registering UI thread + hwnd");
-                    API.Focus.RegisterManagedThread(NativeMethods.GetCurrentThreadId());
+				    MESharp.API.Focus.RegisterManagedThread(NativeMethods.GetCurrentThreadId());
 					var hwnd = new WindowInteropHelper(this).Handle;
                     Console.WriteLine($"[Managed] MainWindow HWND={hwnd}");
-				    API.Focus.RegisterManagedWindow(hwnd);
+				    MESharp.API.Focus.RegisterManagedWindow(hwnd);
 
-                    // Nudge focus towards this window when user clicks inside (helps fight native focus spoofing)
                     this.PreviewMouseDown += (_, __) =>
                     {
                         try { this.Activate(); Keyboard.Focus(this); } catch { }
@@ -49,14 +43,13 @@ namespace MESharp
                     Console.WriteLine($"[Managed] Failed to register UI thread/HWND: {ex}");
                 }
 
-            // Once the window is loaded and we have an HWND, ask native side to bring us to foreground
             this.Loaded += (_, __) =>
             {
                 try
                 {
                     Console.WriteLine("[Managed] Requesting native focus activation + spoof OFF");
-					API.Focus.ActivateManagedWindow();
-					API.Focus.SetFocusSpoofEnabled(false);
+					MESharp.API.Focus.ActivateManagedWindow();
+					MESharp.API.Focus.SetFocusSpoofEnabled(false);
                 }
                 catch (Exception ex)
                 {
@@ -69,7 +62,7 @@ namespace MESharp
                 try
                 {
                     Console.WriteLine("[Managed] Window activated; spoof OFF");
-					API.Focus.SetFocusSpoofEnabled(false);
+					MESharp.API.Focus.SetFocusSpoofEnabled(false);
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +75,7 @@ namespace MESharp
                 try
                 {
                     Console.WriteLine("[Managed] Window deactivated; spoof ON");
-					API.Focus.SetFocusSpoofEnabled(true);
+					MESharp.API.Focus.SetFocusSpoofEnabled(true);
                 }
                 catch (Exception ex)
                 {
@@ -95,7 +88,7 @@ namespace MESharp
                 try
                 {
                     Console.WriteLine("[Managed] Window closed; spoof ON");
-					API.Focus.SetFocusSpoofEnabled(true);
+					MESharp.API.Focus.SetFocusSpoofEnabled(true);
                 }
                 catch (Exception ex)
                 {
@@ -141,6 +134,7 @@ namespace MESharp
                 ? WindowState.Normal
                 : WindowState.Maximized;
         }
+
     }
 
     internal static class NativeMethods
