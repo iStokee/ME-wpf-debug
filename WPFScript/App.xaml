@@ -2,8 +2,8 @@
     x:Class="MESharp.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MESharp"
-    xmlns:conv="clr-namespace:MESharp.Converters">
+    xmlns:conv="clr-namespace:MESharp.Converters"
+    xmlns:local="clr-namespace:MESharp">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

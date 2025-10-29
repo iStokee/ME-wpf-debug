@@ -41,6 +41,8 @@ namespace MESharp
         private static bool _initialized;
         private static Thread? _uiThread;
         private static Dispatcher? _uiDispatcher;
+        private static Application? _app;
+        private static Window? _mainWindow;
         private static readonly ManualResetEventSlim _uiReady = new(false);
 
 		/// <summary>
@@ -62,155 +64,139 @@ namespace MESharp
 			}
 		}
 
-			/// <summary>
-			/// Initialize entry point for hot-reload path (called via reflection from ScriptLoader).
-			/// </summary>
-			public static void Initialize()
-			{
-				Initialize_Impl();
-			}
+		/// <summary>
+		/// Initialize entry point for hot-reload path (called via reflection from ScriptLoader).
+		/// </summary>
+		public static void Initialize()
+		{
+			Initialize_Impl();
+		}
 
-			/// <summary>
-			/// Initialize entry point for legacy native path (called via function pointer from ME).
-			/// </summary>
-			[UnmanagedCallersOnly]
-			public static void Initialize_Native()
-			{
-				Initialize_Impl();
-			}
+		/// <summary>
+		/// Initialize entry point for legacy native path (called via function pointer from ME).
+		/// </summary>
+		[UnmanagedCallersOnly]
+		public static void Initialize_Native()
+		{
+			Initialize_Impl();
+		}
 
-			/// <summary>
-			/// Shared initialization logic for both legacy and hot-reload paths.
-			/// </summary>
-			private static void Initialize_Impl()
-			{
-            lock (_initLock)
-            {
-                if (_initialized)
-                {
-                    Console.WriteLine("[Managed] Initialize() already executed; skipping duplicate call.");
-                    return;
-                }
-
-                _uiReady.Reset();
-
-                // Spin up the STA UI thread
-                _uiThread = new Thread(InitAndShowWindow)
-                {
-                    IsBackground = true,
-                    Name = "MESharp.WpfUiThread"
-                };
-                _uiThread.SetApartmentState(ApartmentState.STA);
-                _uiThread.Start();
-
-                _initialized = true;
-            }
-			}
-
-			/// <summary>
-			/// Shutdown entry point for hot-reload path (called via reflection from ScriptLoader).
-			/// </summary>
-			public static void Shutdown()
-			{
-				Shutdown_Impl();
-			}
-
-			/// <summary>
-			/// Shutdown entry point for legacy native path (called via function pointer from ME).
-			/// </summary>
-			[UnmanagedCallersOnly]
-			public static void Shutdown_Native()
-			{
-				Shutdown_Impl();
-			}
-
-			/// <summary>
-			/// Shared shutdown logic for both legacy and hot-reload paths.
-			/// </summary>
-			private static void Shutdown_Impl()
+		/// <summary>
+		/// Shared initialization logic for both legacy and hot-reload paths.
+		/// </summary>
+		private static void Initialize_Impl()
+		{
+        lock (_initLock)
         {
-            bool wasInitialized;
-            lock (_initLock)
+            if (_initialized)
             {
-                wasInitialized = _initialized;
-            }
-
-            if (!wasInitialized)
-            {
-                Console.WriteLine("[Managed] Shutdown() requested but Initialize() never completed.");
+                Console.WriteLine("[Managed] Initialize() already executed; skipping duplicate call.");
                 return;
             }
 
-            Console.WriteLine("[Managed] Shutdown() invoked; beginning WPF teardown.");
+            _uiReady.Reset();
 
-            try
+            // Spin up the STA UI thread
+            _uiThread = new Thread(InitAndShowWindow)
             {
-                if (!_uiReady.Wait(TimeSpan.FromSeconds(5)))
-                {
-                    Console.WriteLine("[Managed] Shutdown waiting for UI dispatcher timed out; continuing cleanup.");
-                }
+                IsBackground = true,
+                Name = "MESharp.WpfUiThread"
+            };
+            _uiThread.SetApartmentState(ApartmentState.STA);
+            _uiThread.Start();
 
-                var dispatcher = _uiDispatcher;
-                if (dispatcher != null && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
-                {
-                    dispatcher.InvokeAsync(() =>
-                    {
-                        Console.WriteLine("[Managed] Dispatcher shutting down Application.");
-                        Application.Current?.Shutdown();
-                    });
-                }
+            _initialized = true;
+        }
+		}
 
-                var uiThread = _uiThread;
-                if (uiThread != null && uiThread.IsAlive)
-                {
-                    if (!uiThread.Join(TimeSpan.FromSeconds(5)))
-                    {
-                        Console.WriteLine("[Managed] UI thread did not exit within timeout during shutdown.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("[Managed] Shutdown encountered an error: " + ex);
-            }
-            finally
-            {
-                App.DisposeShutdownRegistration();
+		/// <summary>
+		/// Shutdown entry point for hot-reload path (called via reflection from ScriptLoader).
+		/// </summary>
+		public static void Shutdown()
+		{
+			Shutdown_Impl();
+		}
 
-                lock (_initLock)
-                {
-                    _initialized = false;
-                }
+		/// <summary>
+		/// Shutdown entry point for legacy native path (called via function pointer from ME).
+		/// </summary>
+		[UnmanagedCallersOnly]
+		public static void Shutdown_Native()
+		{
+			Shutdown_Impl();
+		}
 
-                _uiDispatcher = null;
-                _uiThread = null;
-                _uiReady.Reset();
-            }
+		/// <summary>
+		/// Shared shutdown logic for both legacy and hot-reload paths.
+		/// </summary>
+		private static void Shutdown_Impl()
+    {
+        bool wasInitialized;
+        lock (_initLock)
+        {
+            wasInitialized = _initialized;
         }
 
+        if (!wasInitialized)
+        {
+            Console.WriteLine("[Managed] Shutdown() requested but Initialize() never completed.");
+            return;
+        }
 
-		//public static void Main()
-		//{
+        Console.WriteLine("[Managed] Shutdown() invoked; beginning WPF teardown.");
 
-		//	// 2) Spin up the STA UI thread
-		//	var uiThread = new Thread(InitAndShowWindow);
-		//	uiThread.SetApartmentState(ApartmentState.STA);
-		//	//uiThread.IsBackground = true;
-		//	uiThread.Start();
-		//}
+        try
+        {
+            if (!_uiReady.Wait(TimeSpan.FromSeconds(5)))
+            {
+                Console.WriteLine("[Managed] Shutdown waiting for UI dispatcher timed out; continuing cleanup.");
+            }
 
-		//private static void InitAndShowWindow()
-		//{
-		//	// You may also need to set the current directory so that
-		//	// P/Invokes find their native .dlls:
-		//	//var exeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-		//	//Environment.CurrentDirectory = exeFolder;
+            // CRITICAL: DON'T call Application.Current.Shutdown() here!
+            // We need to preserve Application.Current for hot reload.
+            // The window closing naturally will exit app.Run() without destroying Application.Current.
 
-		//	//var app = new Application();
-		//	var wnd = new MainWindow();
-		//	wnd.ShowDialog();
-		//	Dispatcher.Run();
-		//}
+            // Just wait for the UI thread to exit naturally (window already closed by user or shutdown signal)
+            var uiThread = _uiThread;
+            if (uiThread != null && uiThread.IsAlive)
+            {
+                Console.WriteLine("[Managed] Waiting for UI thread to exit naturally...");
+                if (!uiThread.Join(TimeSpan.FromSeconds(5)))
+                {
+                    Console.WriteLine("[Managed] UI thread did not exit within timeout during shutdown.");
+                }
+                else
+                {
+                    Console.WriteLine("[Managed] UI thread exited successfully.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[Managed] Shutdown encountered an error: " + ex);
+        }
+        finally
+        {
+            App.DisposeShutdownRegistration();
+
+            // CRITICAL: DON'T clear _app - preserve Application.Current for hot reload!
+            // WPF only allows ONE Application instance per AppDomain.
+            // Each reload creates a new thread with its own Dispatcher, but reuses Application.Current.
+
+            lock (_initLock)
+            {
+                _initialized = false;
+            }
+
+            // Clear thread references (new thread will be created on next load)
+            _mainWindow = null;
+            _uiThread = null;
+            _uiDispatcher = null; // New Dispatcher will be created on next thread
+            _uiReady.Reset();
+
+            Console.WriteLine("[Managed] Shutdown cleanup complete; ready for hot reload (Application.Current preserved)");
+        }
+    }
 
 		private static void InitAndShowWindow()
 	    {
@@ -220,24 +206,64 @@ namespace MESharp
                 _uiDispatcher = Dispatcher.CurrentDispatcher;
                 _uiReady.Set();
 
-                var app = Application.Current as App;
+                // CRITICAL: WPF only allows ONE Application instance per AppDomain, EVER.
+                // Even after Shutdown(), you cannot create a new Application() in the same AppDomain.
+                // We must check Application.Current FIRST (AppDomain-wide singleton) to handle
+                // the case where a different script was loaded in a new ALC.
+                Application app;
                 var initialized = false;
 
-                if (app == null)
+                // PRIORITY 1: Check AppDomain-wide Application.Current (persists across ALC loads)
+                if (Application.Current != null)
                 {
-                    app = new App();
-                    initialized = TryInitializeComponent(app);
+                    Console.WriteLine("[Managed] Reusing Application.Current from AppDomain (survives ALC unload)");
+                    app = Application.Current;
+                    _app = app; // Update static field for this ALC
+                    initialized = true;
+
+                    // Re-register shutdown handler with the NEW ShutdownMonitor token
+                    // (the old registration is tied to the old, disposed token)
+                    try
+                    {
+                        if (app is App appInstance)
+                        {
+                            App.DisposeShutdownRegistration();
+                            Console.WriteLine("[Managed] Re-registering shutdown handler for reused Application");
+                            appInstance.RegisterShutdownHandler();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Managed] Failed to re-register shutdown handler: {ex.Message}");
+                    }
                 }
-                else
+                // PRIORITY 2: Check static field from THIS ALC (only valid for same script reload)
+                else if (_app != null)
                 {
+                    Console.WriteLine("[Managed] Reusing existing Application from static field (same ALC)");
+                    app = _app;
                     initialized = true;
                 }
-
-                if (!initialized)
+                // PRIORITY 3: Create new instance (first load ever in this AppDomain)
+                else
                 {
-                    Console.WriteLine("[Managed] Falling back to manual resource bootstrap.");
-                    BootstrapResources(app);
-                    TryApplyTheme();
+                    Console.WriteLine("[Managed] Creating new App instance (first load in AppDomain)");
+                    app = new App();
+                    _app = app;
+
+                    // CRITICAL: Prevent automatic shutdown when main window closes!
+                    // This preserves Application.Current for hot reload.
+                    // Must be set BEFORE any windows are created and on the same thread.
+                    app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+                    initialized = TryInitializeComponent((App)app);
+
+                    if (!initialized)
+                    {
+                        Console.WriteLine("[Managed] Falling back to manual resource bootstrap.");
+                        BootstrapResources(app);
+                        TryApplyTheme();
+                    }
                 }
 
                 app.DispatcherUnhandledException += (s, e) =>
@@ -247,21 +273,40 @@ namespace MESharp
                 };
 
                 Console.WriteLine("[Managed] Launching MainWindow");
-                app.Run(new MainWindow());
-                Console.WriteLine("[Managed] MainWindow.Run exited");
 
-                App.DisposeShutdownRegistration();
-                lock (_initLock)
+                // Create and show the window
+                var window = new MainWindow();
+
+                // When reusing Application.Current from a previous load, we need to manually show the window
+                // and pump messages, because app.Run() can only be called once per Application instance.
+                if (initialized)
                 {
-                    _initialized = false;
+                    Console.WriteLine("[Managed] Reused Application - showing window and pumping dispatcher");
+                    window.Show();
+                    Dispatcher.Run(); // Pump messages on this thread until Dispatcher.InvokeShutdown() is called
+                    Console.WriteLine("[Managed] Dispatcher.Run exited");
                 }
-                _uiDispatcher = null;
-                _uiThread = null;
-                _uiReady.Reset();
+                else
+                {
+                    // New Application - call Run() normally
+                    Console.WriteLine("[Managed] New Application - calling app.Run()");
+                    app.Run(window);
+                    Console.WriteLine("[Managed] MainWindow.Run exited");
+                }
+
+                // DON'T reset state here - Shutdown() will handle cleanup
+                // This prevents race condition where user closes window before hot reload unloads
+                Console.WriteLine("[Managed] UI thread exiting naturally (window closed by user)");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("[Managed] InitAndShowWindow failed: " + ex);
+
+                // On error, ensure we clean up
+                lock (_initLock)
+                {
+                    _initialized = false;
+                }
             }
         }
 

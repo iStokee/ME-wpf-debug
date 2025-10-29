@@ -46,3 +46,6 @@ WPFScript/.vs/WPFScript/v17/.futdcache.v2
 WPFScript/.vs/WPFScript/v17/.suo
 WPFScript/.vs/WPFScript/v17/DocumentLayout.backup.json
 WPFScript/.vs/WPFScript/v17/DocumentLayout.json
+/WPFScript/bin
+/WPFScript/obj
+/WPFScript/.vs

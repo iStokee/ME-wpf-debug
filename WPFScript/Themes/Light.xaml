@@ -147,7 +147,7 @@
         </Setter>
     </Style>
 
-    <!--  Themed checkbox -->
+    <!--  Themed checkbox  -->
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
         <Setter Property="Cursor" Value="Hand" />
@@ -155,7 +155,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                         <Border
                             x:Name="CheckBorder"
                             Width="18"
@@ -167,15 +167,15 @@
                             CornerRadius="4">
                             <Path
                                 x:Name="CheckGlyph"
-                                Data="M4,9 L8,13 L14,5"
-                                StrokeThickness="2"
-                                Stroke="{DynamicResource PrimaryBrush}"
-                                StrokeLineJoin="Round"
-                                StrokeStartLineCap="Round"
-                                StrokeEndLineCap="Round"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
+                                Data="M4,9 L8,13 L14,5"
                                 Stretch="None"
+                                Stroke="{DynamicResource PrimaryBrush}"
+                                StrokeEndLineCap="Round"
+                                StrokeLineJoin="Round"
+                                StrokeStartLineCap="Round"
+                                StrokeThickness="2"
                                 Visibility="Collapsed" />
                         </Border>
                         <ContentPresenter

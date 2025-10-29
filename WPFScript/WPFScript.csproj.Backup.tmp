@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command=":: ensure the target folder exists&#xD;&#xA;if not exist &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot; (&#xD;&#xA;  mkdir &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:: copy the freshly built DLL&#xD;&#xA;xcopy /Y /I &quot;$(TargetPath)&quot; &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;" />
+    <Exec Command=":: ensure the target folder exists&#xD;&#xA;if not exist &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot; (&#xD;&#xA;  mkdir &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:: copy the freshly built DLL into that folder&#xD;&#xA;xcopy /Y /I &quot;$(TargetPath)&quot; &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;" />
   </Target>
 
   <ItemGroup>
@@ -43,14 +43,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Reference csharp_interop but DON'T copy it to output by default (ME loads it) -->
-    <!-- The CopyInteropToOutput target below copies it ONLY for local API docs -->
     <Reference Include="csharp_interop">
       <HintPath>..\..\..\csharp_interop\bin\Debug\net8.0-windows\csharp_interop.dll</HintPath>
-      <Private>false</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
-    <!-- Orbit integration is now optional via reflection - no hard reference -->
+    <Reference Include="Orbit">
+      <HintPath>..\..\..\..\Orbit\Orbit\bin\x64\Debug\net8.0-windows8.0\Orbit.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <Target Name="CopyInteropDependencies" AfterTargets="ResolveReferences">

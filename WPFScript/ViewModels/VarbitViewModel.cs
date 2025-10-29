@@ -47,8 +47,8 @@ namespace MESharp.ViewModels
         {
             _status = string.Empty;
             GetVarbitCommand = new RelayCommand(
-                (Action<object>)GetVarbit,
-                (Func<object, bool>)(_ => Game.IsInjected)
+                new System.Action<object>(GetVarbit),
+                new System.Func<object, bool>(_ => Game.IsInjected)
             );
         }
 

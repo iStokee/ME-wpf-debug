@@ -44,18 +44,44 @@ namespace MESharp
 			catch { /* ignore theme init issues */ }
 
 			// Start monitoring for shutdown signals from native host
+			RegisterShutdownHandler();
+
+			base.OnStartup(e);
+		}
+
+		/// <summary>
+		/// Registers the shutdown handler. Called on startup and when reusing Application.Current.
+		/// </summary>
+		internal void RegisterShutdownHandler()
+		{
 			try
 			{
 				MESharp.Services.ShutdownMonitor.StartMonitoring();
 
-				// Register handler to gracefully close WPF when signaled
+				// Dispose old registration if it exists
 				DisposeShutdownRegistration();
+
+				// Register handler to gracefully close WPF when signaled
 				_shutdownRegistration = MESharp.Services.ShutdownMonitor.Token.Register(() =>
 				{
 					Dispatcher.InvokeAsync(() =>
 					{
 						Console.WriteLine("WPF: Gracefully shutting down due to runtime restart...");
-						Shutdown();
+
+						// CRITICAL: DON'T call Shutdown() - it destroys Application.Current!
+						// Instead, close all windows which will exit app.Run() naturally.
+						// This preserves Application.Current for hot reload.
+						foreach (Window window in Windows)
+						{
+							try { window.Close(); } catch { /* ignore */ }
+						}
+
+						// If we're pumping a dispatcher on a worker thread (reload case), shut it down
+						var currentDispatcher = System.Windows.Threading.Dispatcher.FromThread(System.Threading.Thread.CurrentThread);
+						if (currentDispatcher != null && currentDispatcher != Dispatcher && !currentDispatcher.HasShutdownStarted)
+						{
+							currentDispatcher.InvokeShutdown();
+						}
 					});
 				});
 				_shutdownRegistered = true;
@@ -64,10 +90,8 @@ namespace MESharp
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"WPF: Failed to start shutdown monitoring: {ex.Message}");
+				Console.WriteLine($"WPF: Failed to register shutdown handler: {ex.Message}");
 			}
-
-			base.OnStartup(e);
 		}
 	}
 }

@@ -18,6 +18,8 @@ namespace MESharp
 {
     public partial class MainWindow
     {
+		private Guid? _orbitSessionId;
+
 			public MainWindow()
 			{
 			InitializeComponent();
@@ -54,6 +56,24 @@ namespace MESharp
                 catch (Exception ex)
                 {
                     Console.WriteLine($"[Managed] Activate request failed: {ex}");
+                }
+
+                // Try to dock into Orbit if available (optional, via reflection)
+                try
+                {
+                    _orbitSessionId = TryDockWithOrbit(new WindowInteropHelper(this).Handle);
+                    if (_orbitSessionId.HasValue)
+                    {
+                        Console.WriteLine($"[Managed] Docked into Orbit with session ID: {_orbitSessionId}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("[Managed] Orbit not available, running standalone");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Managed] Failed to dock with Orbit: {ex.Message}");
                 }
             };
 
@@ -96,6 +116,20 @@ namespace MESharp
                 }
                 finally
                 {
+                    // Undock from Orbit if registered
+                    if (_orbitSessionId.HasValue)
+                    {
+                        try
+                        {
+                            TryUndockFromOrbit(_orbitSessionId.Value);
+                            Console.WriteLine($"[Managed] Undocked from Orbit");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[Managed] Failed to undock from Orbit: {ex.Message}");
+                        }
+                    }
+
                     if (this.DataContext is IDisposable disposableVm)
                     {
                         try { disposableVm.Dispose(); } catch { /* ignore */ }
@@ -133,6 +167,90 @@ namespace MESharp
             this.WindowState = (this.WindowState == WindowState.Maximized)
                 ? WindowState.Normal
                 : WindowState.Maximized;
+        }
+
+        /// <summary>
+        /// Try to dock with Orbit if available (uses reflection to avoid hard dependency)
+        /// </summary>
+        private static Guid? TryDockWithOrbit(IntPtr hwnd)
+        {
+            try
+            {
+                // Try to load Orbit.dll from the same directory
+                var orbitPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Orbit.dll");
+                if (!System.IO.File.Exists(orbitPath))
+                {
+                    return null; // Orbit not available
+                }
+
+                var orbitAssembly = System.Reflection.Assembly.LoadFrom(orbitPath);
+                var orbitApiType = orbitAssembly.GetType("Orbit.OrbitAPI");
+                if (orbitApiType == null)
+                {
+                    return null;
+                }
+
+                // Check if Orbit is available
+                var isAvailableMethod = orbitApiType.GetMethod("IsOrbitAvailable", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                if (isAvailableMethod == null)
+                {
+                    return null;
+                }
+
+                var isAvailable = (bool)(isAvailableMethod.Invoke(null, null) ?? false);
+                if (!isAvailable)
+                {
+                    return null;
+                }
+
+                // Register the window
+                var registerMethod = orbitApiType.GetMethod("RegisterScriptWindow", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                if (registerMethod == null)
+                {
+                    return null;
+                }
+
+                var result = registerMethod.Invoke(null, new object[] { hwnd, "MESharp Debug Util" });
+                return result as Guid?;
+            }
+            catch
+            {
+                return null; // Orbit integration failed, continue standalone
+            }
+        }
+
+        /// <summary>
+        /// Try to undock from Orbit (uses reflection to avoid hard dependency)
+        /// </summary>
+        private static void TryUndockFromOrbit(Guid sessionId)
+        {
+            try
+            {
+                var orbitPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Orbit.dll");
+                if (!System.IO.File.Exists(orbitPath))
+                {
+                    return;
+                }
+
+                var orbitAssembly = System.Reflection.Assembly.LoadFrom(orbitPath);
+                var orbitApiType = orbitAssembly.GetType("Orbit.OrbitAPI");
+                if (orbitApiType == null)
+                {
+                    return;
+                }
+
+                var unregisterMethod = orbitApiType.GetMethod("UnregisterScriptWindow", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                if (unregisterMethod == null)
+                {
+                    return;
+                }
+
+                unregisterMethod.Invoke(null, new object[] { sessionId });
+            }
+            catch
+            {
+                // Silently fail - Orbit integration is optional
+            }
         }
 
     }

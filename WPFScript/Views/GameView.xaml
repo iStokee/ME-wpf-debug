@@ -30,8 +30,9 @@
                 <Button
                     Grid.Column="1"
                     Style="{StaticResource HeaderHelpButton}"
-                    ToolTip="Open API docs"
-                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                    ToolTip="Open Help"
+                    Command="{Binding DataContext.ShowHelpCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    CommandParameter="Game">
                     <iconPacks:PackIconMaterial
                         Width="18"
                         Height="18"

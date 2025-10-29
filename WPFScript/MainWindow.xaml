@@ -32,6 +32,7 @@
             <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <conv:ObjectEqualsConverter x:Key="ObjectEqualsConverter" />
 
             <!--  DataTemplates for Views  -->
             <DataTemplate DataType="{x:Type vm:GameViewModel}">
@@ -91,17 +92,24 @@
             <DataTemplate DataType="{x:Type vm:ApiDocsViewModel}">
                 <views:ApiDocsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:HelpViewModel}">
+                <views:HelpView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:HowToUseViewModel}">
+                <views:HowToUseView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ThemeSettingsViewModel}">
+                <views:ThemeSettingsView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
 
     <Border
         Background="{DynamicResource App.BackgroundBrush}"
+        BorderBrush="{DynamicResource PrimaryBrush}"
         BorderThickness="2"
         CornerRadius="0 0 0 0">
-        <Border.Effect>
-            <DropShadowEffect Color="{DynamicResource PrimaryColor}" />
-        </Border.Effect>
 
         <DockPanel>
             <!--  Custom Title Bar  -->
@@ -129,7 +137,7 @@
                             FontSize="16"
                             FontWeight="SemiBold"
                             Foreground="{DynamicResource App.ForegroundBrush}"
-                            Text="MESharp Debug Util" />
+                            Text="MESharp Debug Util (Test)" />
                     </StackPanel>
                     <StackPanel
                         Grid.Column="1"
@@ -306,20 +314,7 @@
                                 <TextBlock Text="Varbits" />
                             </StackPanel>
                         </ToggleButton>
-                        <ToggleButton
-                            Margin="5,0,5,0"
-                            Command="{Binding ShowApiDocsCommand}"
-                            IsChecked="{Binding IsApiDocsSelected, Mode=OneWay}"
-                            ToolTip="API Docs">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial
-                                    Margin="0,0,6,0"
-                                    VerticalAlignment="Center"
-                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                                    Kind="BookOutline" />
-                                <TextBlock Text="API Docs" />
-                            </StackPanel>
-                        </ToggleButton>
+
                         <ToggleButton
                             Margin="5,0,5,0"
                             Command="{Binding ShowInterfacesCommand}"
@@ -337,18 +332,10 @@
 
                         <ToggleButton
                             Margin="5,0,5,0"
-                            Command="{Binding ShowSettingsCommand}"
-                            IsChecked="{Binding IsSettingsSelected, Mode=OneWay}"
-                            ToolTip="Settings">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial
-                                    Margin="0,0,6,0"
-                                    VerticalAlignment="Center"
-                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                                    Kind="Cog" />
-                                <TextBlock Text="Settings" />
-                            </StackPanel>
-                        </ToggleButton>
+                            Command="{Binding ShowHelpCommand}"
+                            Content="Help"
+                            IsChecked="{Binding IsHelpSelected, Mode=OneWay}"
+                            ToolTip="Help" />
 
                     </StackPanel>
                 </ScrollViewer>
