@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Media;
 using System.Threading;
+using MESharp.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MESharp
 {
@@ -39,6 +41,7 @@ namespace MESharp
 	{
         private static readonly object _initLock = new();
         private static bool _initialized;
+		private static bool _servicesConfigured;
         private static Thread? _uiThread;
         private static Dispatcher? _uiDispatcher;
         private static Application? _app;
@@ -93,6 +96,25 @@ namespace MESharp
                 Console.WriteLine("[Managed] Initialize() already executed; skipping duplicate call.");
                 return;
             }
+
+			// Configure services before any other initialization
+			if (!_servicesConfigured)
+			{
+				try
+				{
+					ScriptRuntime.ConfigureServices(services =>
+					{
+						services.AddSingleton<WpfScriptShell>();
+					});
+					_servicesConfigured = true;
+					Console.WriteLine("[Managed] Services configured successfully.");
+				}
+				catch (InvalidOperationException ex)
+				{
+					Console.WriteLine($"[Managed] Service configuration skipped (provider already built): {ex.Message}");
+					// This is OK - services were configured by host or previous script
+				}
+			}
 
             _uiReady.Reset();
 
@@ -205,6 +227,16 @@ namespace MESharp
                 Console.WriteLine("[Managed] InitAndShowWindow starting on thread " + Thread.CurrentThread.ManagedThreadId);
                 _uiDispatcher = Dispatcher.CurrentDispatcher;
                 _uiReady.Set();
+
+                try
+                {
+                    var shell = ScriptRuntime.GetRequiredService<WpfScriptShell>();
+                    shell.RegisterDispatcher(_uiDispatcher);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("[Managed] Failed to publish dispatcher to service provider: " + ex.Message);
+                }
 
                 // CRITICAL: WPF only allows ONE Application instance per AppDomain, EVER.
                 // Even after Shutdown(), you cannot create a new Application() in the same AppDomain.
@@ -421,4 +453,24 @@ namespace MESharp
 
     }
 
+}
+
+namespace MESharp
+{
+    internal sealed class WpfScriptShell
+    {
+        private readonly object _sync = new();
+
+        public Dispatcher? Dispatcher { get; private set; }
+
+        public void RegisterDispatcher(Dispatcher dispatcher)
+        {
+            if (dispatcher == null) throw new ArgumentNullException(nameof(dispatcher));
+
+            lock (_sync)
+            {
+                Dispatcher = dispatcher;
+            }
+        }
+    }
 }
