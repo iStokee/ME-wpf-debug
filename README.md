@@ -23,8 +23,8 @@ dotnet build -c Debug
 
 # 2. Load in MemoryError
 #    - Inject ME into RuneScape 3
-#    - Press Insert to open ImGui
-#    - Navigate to "Load .NET Script"
+#    - Right click the '>" menu and select C#
+#    - If the script is in the appropriate folder, it will appear automatically. If not, browse to and select it
 #    - Select: %USERPROFILE%\MemoryError\CSharp_scripts\MESharp_DebugUtil.dll
 #    - Click "Hot Reload"
 
