@@ -22,7 +22,7 @@
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="320" />
         </Grid.ColumnDefinitions>
 
         <!--  Main Content Area  -->
@@ -254,6 +254,8 @@
                                         Height="16"
                                         Margin="10,4,0,4"
                                         VerticalAlignment="Center"
+                                        Background="{DynamicResource App.CardBrush}"
+                                        Foreground="{DynamicResource PrimaryBrush}"
                                         Maximum="100"
                                         Value="{Binding HoverProgress}" />
                                 </Grid>
@@ -424,12 +426,16 @@
                                 Width="60"
                                 Margin="0,0,15,0"
                                 VerticalAlignment="Center"
+                                Background="{DynamicResource App.BackgroundBrush}"
+                                Foreground="{DynamicResource App.ForegroundBrush}"
                                 Text="{Binding MaxDistance}" />
 
                             <TextBox
                                 Grid.Column="2"
                                 Margin="0,0,15,0"
                                 VerticalAlignment="Center"
+                                Background="{DynamicResource App.BackgroundBrush}"
+                                Foreground="{DynamicResource App.ForegroundBrush}"
                                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
 
                             <CheckBox
@@ -442,9 +448,8 @@
                             <StackPanel Grid.Column="4" Orientation="Horizontal">
                                 <Button
                                     Margin="0,0,5,0"
-                                    Padding="12,5"
                                     Command="{Binding LoadPlayersCommand}"
-                                    Style="{StaticResource AccentButton}">
+                                    Style="{StaticResource SecondaryCommandButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial
                                             Margin="0,0,5,0"
@@ -454,7 +459,7 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Padding="12,5" Command="{Binding ClearCommand}">
+                                <Button Command="{Binding ClearCommand}" Style="{StaticResource SecondaryCommandButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial
                                             Margin="0,0,5,0"
@@ -471,6 +476,7 @@
                     <DataGrid
                         Grid.Row="1"
                         Margin="5"
+                        AlternatingRowBackground="{DynamicResource App.CardBrush}"
                         AutoGenerateColumns="False"
                         Background="{DynamicResource App.BackgroundBrush}"
                         BorderThickness="0"
@@ -482,8 +488,23 @@
                         HeadersVisibility="Column"
                         IsReadOnly="True"
                         ItemsSource="{Binding PlayersView}"
-                        RowBackground="{DynamicResource App.CardBrush}"
+                        RowBackground="{DynamicResource App.BackgroundBrush}"
                         SelectedItem="{Binding SelectedPlayer}">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                                <Setter Property="Padding" Value="6,4" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                <Setter Property="FontSize" Value="12" />
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn
                                 Width="*"
@@ -572,10 +593,11 @@
         <!--  Action Panel  -->
         <Border
             Grid.Column="1"
-            Width="260"
+            Width="320"
+            Margin="6,0,0,0"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="6">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="18">
                     <StackPanel.Resources>
                         <Style TargetType="Button">
@@ -602,10 +624,7 @@
                                 Text="Select a player from the list to perform actions"
                                 TextWrapping="Wrap" />
 
-                            <Button
-                                Width="150"
-                                Command="{Binding AttackCommand}"
-                                Style="{StaticResource AccentButton}">
+                            <Button Command="{Binding AttackCommand}" Style="{StaticResource PrimaryCommandButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <iconPacks:PackIconMaterial
                                         Margin="0,0,10,0"
@@ -616,7 +635,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Command="{Binding FollowCommand}">
+                            <Button Command="{Binding FollowCommand}" Style="{StaticResource SecondaryCommandButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <iconPacks:PackIconMaterial
                                         Margin="0,0,10,0"
@@ -627,7 +646,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Command="{Binding TradeCommand}">
+                            <Button Command="{Binding TradeCommand}" Style="{StaticResource SecondaryCommandButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <iconPacks:PackIconMaterial
                                         Margin="0,0,10,0"
@@ -638,7 +657,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Command="{Binding ExamineCommand}">
+                            <Button Command="{Binding ExamineCommand}" Style="{StaticResource SecondaryCommandButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <iconPacks:PackIconMaterial
                                         Margin="0,0,10,0"

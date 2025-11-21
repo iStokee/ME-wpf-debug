@@ -26,7 +26,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header -->
+        <!--  Header  -->
         <Border
             Grid.Row="0"
             Margin="0,0,0,10"
@@ -59,17 +59,21 @@
                         Text="Test walk-to, waypoint paths, and lodestone teleports directly against the Traversal API."
                         TextWrapping="Wrap" />
                 </StackPanel>
-                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
                     <TextBlock
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
                         FontFamily="Consolas"
                         Foreground="{DynamicResource App.SubtleForegroundBrush}"
                         Text="{Binding LastStatus}" />
-                        <Button
-                            Padding="10,6"
-                            Command="{Binding RefreshCommand}"
-                            Style="{StaticResource AccentButton}">
+                    <Button
+                        Margin="8,0,0,0"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource PrimaryCommandButton}">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial
                                 Width="16"
@@ -84,7 +88,7 @@
             </Grid>
         </Border>
 
-        <!-- Live status -->
+        <!--  Live status  -->
         <Border
             Grid.Row="1"
             Margin="0,0,0,10"
@@ -116,7 +120,11 @@
                         Text="{Binding ExactPosition}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel
+                    Grid.Column="2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
                     <Ellipse
                         Width="14"
                         Height="14"
@@ -130,7 +138,7 @@
             </Grid>
         </Border>
 
-        <!-- Main content -->
+        <!--  Main content  -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
@@ -138,7 +146,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                <!-- Walk to tile -->
+                <!--  Walk to tile  -->
                 <Border
                     Margin="0,0,0,10"
                     Padding="12"
@@ -152,7 +160,10 @@
                                 Margin="0,0,6,0"
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 Kind="CursorDefaultClick" />
-                            <TextBlock FontSize="16" FontWeight="SemiBold" Text="Walk to tile" />
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="Walk to tile" />
                         </StackPanel>
                         <Grid Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
@@ -162,28 +173,94 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <StackPanel Grid.Column="0" Margin="0,0,0,0">
                                 <TextBlock FontWeight="SemiBold" Text="X" />
-                                <TextBox
-                                    Margin="0,4,0,0"
-                                    Padding="6"
-                                    Text="{Binding TargetX, UpdateSourceTrigger=PropertyChanged}" />
+                                <DockPanel Margin="0,4,0,0">
+                                    <StackPanel
+                                        Width="28"
+                                        DockPanel.Dock="Right"
+                                        Orientation="Vertical">
+                                        <Button
+                                            Height="22"
+                                            Padding="0"
+                                            Command="{Binding NudgeXPositiveCommand}">
+                                            <iconPacks:PackIconMaterial
+                                                Width="14"
+                                                Height="14"
+                                                Kind="ChevronUp" />
+                                        </Button>
+                                        <Button
+                                            Height="22"
+                                            Padding="0"
+                                            Command="{Binding NudgeXNegativeCommand}">
+                                            <iconPacks:PackIconMaterial
+                                                Width="14"
+                                                Height="14"
+                                                Kind="ChevronDown" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBox Padding="6" Text="{Binding TargetX, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Margin="0,0,10,0">
                                 <TextBlock FontWeight="SemiBold" Text="Y" />
-                                <TextBox
-                                    Margin="0,4,0,0"
-                                    Padding="6"
-                                    Text="{Binding TargetY, UpdateSourceTrigger=PropertyChanged}" />
+                                <DockPanel Margin="0,4,0,0">
+                                    <StackPanel
+                                        Width="28"
+                                        DockPanel.Dock="Right"
+                                        Orientation="Vertical">
+                                        <Button
+                                            Height="22"
+                                            Padding="0"
+                                            Command="{Binding NudgeYPositiveCommand}">
+                                            <iconPacks:PackIconMaterial
+                                                Width="14"
+                                                Height="14"
+                                                Kind="ChevronUp" />
+                                        </Button>
+                                        <Button
+                                            Height="22"
+                                            Padding="0"
+                                            Command="{Binding NudgeYNegativeCommand}">
+                                            <iconPacks:PackIconMaterial
+                                                Width="14"
+                                                Height="14"
+                                                Kind="ChevronDown" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBox Padding="6" Text="{Binding TargetY, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2" Margin="0,0,10,0">
                                 <TextBlock FontWeight="SemiBold" Text="Z (optional)" />
-                                <TextBox
-                                    Margin="0,4,0,0"
-                                    Padding="6"
-                                    Text="{Binding TargetZ, UpdateSourceTrigger=PropertyChanged}" />
+                                <DockPanel Margin="0,4,0,0">
+                                    <StackPanel
+                                        Width="28"
+                                        DockPanel.Dock="Right"
+                                        Orientation="Vertical">
+                                        <Button
+                                            Height="22"
+                                            Padding="0"
+                                            Command="{Binding NudgeZPositiveCommand}">
+                                            <iconPacks:PackIconMaterial
+                                                Width="14"
+                                                Height="14"
+                                                Kind="ChevronUp" />
+                                        </Button>
+                                        <Button
+                                            Height="22"
+                                            Padding="0"
+                                            Command="{Binding NudgeZNegativeCommand}">
+                                            <iconPacks:PackIconMaterial
+                                                Width="14"
+                                                Height="14"
+                                                Kind="ChevronDown" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBox Padding="6" Text="{Binding TargetZ, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
                             </StackPanel>
 
                             <StackPanel Grid.Column="3">
@@ -194,6 +271,32 @@
                                     Text="{Binding StopShortTiles, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </Grid>
+
+                        <StackPanel
+                            Margin="0,10,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Button Command="{Binding UseCurrentTileCommand}" Style="{StaticResource SecondaryCommandButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,6,0"
+                                        Kind="CrosshairsGps" />
+                                    <TextBlock Text="Use current tile" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="Nudge step" />
+                                <TextBox
+                                    Width="60"
+                                    Padding="6"
+                                    Text="{Binding NudgeStep, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </StackPanel>
 
                         <Grid Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
@@ -218,16 +321,34 @@
                                     Text="{Binding JitterTiles, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
 
-                            <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-                                <Button Padding="12,8" Command="{Binding WalkToCommand}" Style="{StaticResource AccentButton}">
+                            <StackPanel
+                                Grid.Column="2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Orientation="Horizontal">
+                                <Button Command="{Binding WalkToCommand}" Style="{StaticResource PrimaryCommandButton}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial
+                                            Width="20"
+                                            Height="20"
+                                            Margin="0,-2,6,0"
+                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                            Kind="Play" />
+                                        <TextBlock Text="Walk" />
+                                    </StackPanel>
+                                </Button>
+                                <Button
+                                    Margin="10,0,0,0"
+                                    Command="{Binding ClickToCommand}"
+                                    Style="{StaticResource SecondaryCommandButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial
                                             Width="16"
                                             Height="16"
                                             Margin="0,0,6,0"
                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                            Kind="Play" />
-                                        <TextBlock Text="Walk" />
+                                            Kind="CursorDefaultClick" />
+                                        <TextBlock Text="Click only" />
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
@@ -235,7 +356,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Path walking -->
+                <!--  Path walking  -->
                 <Border
                     Padding="12"
                     Background="{DynamicResource App.CardBrush}"
@@ -248,7 +369,10 @@
                                 Margin="0,0,6,0"
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 Kind="ChartTimelineVariant" />
-                            <TextBlock FontSize="16" FontWeight="SemiBold" Text="Waypoint path" />
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="Waypoint path" />
                         </StackPanel>
                         <TextBlock
                             Margin="0,6,0,8"
@@ -260,8 +384,11 @@
                             AcceptsReturn="True"
                             Text="{Binding PathInput, UpdateSourceTrigger=PropertyChanged}"
                             VerticalScrollBarVisibility="Auto" />
-                        <StackPanel Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Padding="12,8" Command="{Binding WalkPathCommand}" Style="{StaticResource AccentButton}">
+                        <StackPanel
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <Button Command="{Binding WalkPathCommand}" Style="{StaticResource PrimaryCommandButton}">
                                 <StackPanel Orientation="Horizontal">
                                     <iconPacks:PackIconMaterial
                                         Width="16"
@@ -272,12 +399,26 @@
                                     <TextBlock Text="Walk path" />
                                 </StackPanel>
                             </Button>
+                            <Button
+                                Margin="10,0,0,0"
+                                Command="{Binding ClickPathCommand}"
+                                Style="{StaticResource SecondaryCommandButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,6,0"
+                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                        Kind="CursorDefaultClick" />
+                                    <TextBlock Text="Click path (no wait)" />
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>
 
-            <!-- Lodestones + log -->
+            <!--  Lodestones + log  -->
             <StackPanel Grid.Column="1">
                 <Border
                     Margin="0,0,0,10"
@@ -292,7 +433,10 @@
                                 Margin="0,0,6,0"
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 Kind="TransitTransfer" />
-                            <TextBlock FontSize="16" FontWeight="SemiBold" Text="Lodestone network" />
+                            <TextBlock
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="Lodestone network" />
                         </StackPanel>
 
                         <Grid Margin="10,10,0,0">
@@ -304,17 +448,24 @@
                                 <TextBlock FontWeight="SemiBold" Text="Select destination" />
                                 <ComboBox
                                     Margin="0,4,0,0"
+                                    DisplayMemberPath="Display"
                                     ItemsSource="{Binding Lodestones}"
-                                    SelectedItem="{Binding SelectedLodestone}"
-                                    DisplayMemberPath="Display" />
+                                    SelectedItem="{Binding SelectedLodestone}" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-                                <Button Padding="10,6" Command="{Binding TeleportSelectedCommand}" Style="{StaticResource AccentButton}">
+                            <StackPanel
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="8,0,0,0"
+                                    Command="{Binding TeleportSelectedCommand}"
+                                    Style="{StaticResource PrimaryCommandButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial
-                                            Width="16"
-                                            Height="16"
-                                            Margin="0,0,6,0"
+                                            Width="24"
+                                            Height="24"
+                                            Margin="0,-2,6,0"
                                             Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                             Kind="RayStartArrow" />
                                         <TextBlock Text="Teleport" />
@@ -326,6 +477,7 @@
                         <Grid Margin="10,12,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
@@ -340,8 +492,15 @@
                                     Foreground="{DynamicResource App.SubtleForegroundBrush}"
                                     Text="Partial match is fine (e.g., 'priff', 'edge', 'lunar')." />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-                                <Button Padding="10,6" Command="{Binding TeleportByNameCommand}">
+                            <StackPanel
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="8,0,0,0"
+                                    Command="{Binding TeleportByNameCommand}"
+                                    Style="{StaticResource SecondaryCommandButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial
                                             Width="16"
@@ -353,15 +512,48 @@
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
+                            <StackPanel
+                                Grid.Column="2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Orientation="Horizontal">
+                                <Button Command="{Binding WaitWhileMovingCommand}" Style="{StaticResource SecondaryCommandButton}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial
+                                            Width="16"
+                                            Height="16"
+                                            Margin="0,0,6,0"
+                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                            Kind="TimerSand" />
+                                        <TextBlock Text="Wait stop" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </Grid>
 
-                        <StackPanel Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel
+                            Margin="0,10,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
                             <TextBlock FontWeight="SemiBold" Text="Teleport timeout (ms)" />
                             <TextBox
                                 Width="100"
                                 Margin="10,0,0,0"
                                 Padding="6"
                                 Text="{Binding TeleportTimeoutMs, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                            <Button Command="{Binding WaitUntilWithinCommand}" Style="{StaticResource SecondaryCommandButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,6,0"
+                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                        Kind="MapMarkerCheck" />
+                                    <TextBlock Text="Wait arrival" />
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -378,12 +570,35 @@
                                 Margin="0,0,6,0"
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 Kind="FormatListChecks" />
-                            <TextBlock FontSize="15" FontWeight="SemiBold" Text="Activity log" />
+                            <TextBlock
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Text="Activity log" />
                         </StackPanel>
                         <ListBox
+                            MaxHeight="240"
                             Margin="0,8,0,0"
-                            ItemsSource="{Binding ActivityLog}"
-                            MaxHeight="240" />
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            BorderBrush="{DynamicResource PrimarySoftBrush}"
+                            BorderThickness="1"
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            Foreground="{DynamicResource App.ForegroundBrush}"
+                            ItemsSource="{Binding ActivityLog}">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="6,3" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
                     </StackPanel>
                 </Border>
             </StackPanel>

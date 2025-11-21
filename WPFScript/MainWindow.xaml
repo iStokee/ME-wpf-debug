@@ -140,7 +140,7 @@
                             FontSize="16"
                             FontWeight="SemiBold"
                             Foreground="{DynamicResource App.ForegroundBrush}"
-                            Text="MESharp Debug Util (Test)" />
+                            Text="MESharp Debug Util" />
                     </StackPanel>
                     <StackPanel
                         Grid.Column="1"

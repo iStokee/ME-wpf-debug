@@ -29,6 +29,7 @@ namespace MESharp.ViewModels
         private int _stopShortTiles = 2;
         private int _timeoutMs = 8000;
         private int _jitterTiles = 1;
+        private int _nudgeStep = 1;
 
         // Path inputs
         private string _pathInput = "3200,3200,0\n3205,3210,0";
@@ -49,6 +50,7 @@ namespace MESharp.ViewModels
         public int StopShortTiles { get => _stopShortTiles; set => SetProperty(ref _stopShortTiles, value); }
         public int TimeoutMs { get => _timeoutMs; set => SetProperty(ref _timeoutMs, value); }
         public int JitterTiles { get => _jitterTiles; set => SetProperty(ref _jitterTiles, value); }
+        public int NudgeStep { get => _nudgeStep; set => SetProperty(ref _nudgeStep, value); }
 
         public string PathInput { get => _pathInput; set => SetProperty(ref _pathInput, value); }
 
@@ -59,8 +61,19 @@ namespace MESharp.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand WalkToCommand { get; }
         public ICommand WalkPathCommand { get; }
+        public ICommand ClickToCommand { get; }
+        public ICommand ClickPathCommand { get; }
+        public ICommand WaitUntilWithinCommand { get; }
+        public ICommand WaitWhileMovingCommand { get; }
         public ICommand TeleportSelectedCommand { get; }
         public ICommand TeleportByNameCommand { get; }
+        public ICommand UseCurrentTileCommand { get; }
+        public ICommand NudgeXPositiveCommand { get; }
+        public ICommand NudgeXNegativeCommand { get; }
+        public ICommand NudgeYPositiveCommand { get; }
+        public ICommand NudgeYNegativeCommand { get; }
+        public ICommand NudgeZPositiveCommand { get; }
+        public ICommand NudgeZNegativeCommand { get; }
 
         public NavigationViewModel()
         {
@@ -70,8 +83,19 @@ namespace MESharp.ViewModels
             RefreshCommand = new RelayCommand(_ => RefreshPosition());
             WalkToCommand = new RelayCommand(_ => WalkTo());
             WalkPathCommand = new RelayCommand(_ => WalkPath());
+            ClickToCommand = new RelayCommand(_ => ClickTo());
+            ClickPathCommand = new RelayCommand(_ => ClickPath());
+            WaitUntilWithinCommand = new RelayCommand(_ => WaitUntilWithin());
+            WaitWhileMovingCommand = new RelayCommand(_ => WaitWhileMoving());
             TeleportSelectedCommand = new RelayCommand(_ => TeleportSelected(), _ => SelectedLodestone != null);
             TeleportByNameCommand = new RelayCommand(_ => TeleportByName(), _ => !string.IsNullOrWhiteSpace(LodestoneSearch));
+            UseCurrentTileCommand = new RelayCommand(_ => UseCurrentTile());
+            NudgeXPositiveCommand = new RelayCommand(_ => TargetX = Adjust(TargetX, _nudgeStep));
+            NudgeXNegativeCommand = new RelayCommand(_ => TargetX = Adjust(TargetX, -_nudgeStep));
+            NudgeYPositiveCommand = new RelayCommand(_ => TargetY = Adjust(TargetY, _nudgeStep));
+            NudgeYNegativeCommand = new RelayCommand(_ => TargetY = Adjust(TargetY, -_nudgeStep));
+            NudgeZPositiveCommand = new RelayCommand(_ => TargetZ = Adjust(TargetZ, _nudgeStep));
+            NudgeZNegativeCommand = new RelayCommand(_ => TargetZ = Adjust(TargetZ, -_nudgeStep));
 
             _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
             {
@@ -161,6 +185,85 @@ namespace MESharp.ViewModels
             }
         }
 
+        private void ClickTo()
+        {
+            if (!TryParseTarget(out var x, out var y, out var z))
+            {
+                LastStatus = "Enter X and Y (ints).";
+                return;
+            }
+
+            try
+            {
+                var ok = Traversal.ClickTo(x, y, z, JitterTiles);
+                LastStatus = ok ? $"Click issued to {x},{y},{z} (jitter {JitterTiles})." : "ClickTo failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"ClickTo error: {ex.Message}";
+                AddLog(LastStatus);
+            }
+        }
+
+        private void ClickPath()
+        {
+            var points = ParsePath(PathInput).ToArray();
+            if (points.Length == 0)
+            {
+                LastStatus = "Path input is empty or invalid.";
+                return;
+            }
+
+            try
+            {
+                var ok = Traversal.ClickPath(points, JitterTiles);
+                LastStatus = ok ? $"ClickPath issued ({points.Length} waypoints)." : "ClickPath failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"ClickPath error: {ex.Message}";
+                AddLog(LastStatus);
+            }
+        }
+
+        private void WaitUntilWithin()
+        {
+            if (!TryParseTarget(out var x, out var y, out var z))
+            {
+                LastStatus = "Enter X and Y (ints).";
+                return;
+            }
+
+            try
+            {
+                var ok = Traversal.WaitUntilWithin(x, y, z, StopShortTiles, TimeoutMs);
+                LastStatus = ok ? $"Arrived within {StopShortTiles} tiles." : $"Timeout waiting to reach {x},{y},{z}.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"WaitUntilWithin error: {ex.Message}";
+                AddLog(LastStatus);
+            }
+        }
+
+        private void WaitWhileMoving()
+        {
+            try
+            {
+                var ok = Traversal.WaitWhileMoving(TimeoutMs);
+                LastStatus = ok ? "Stopped moving within timeout." : "Still moving after timeout.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"WaitWhileMoving error: {ex.Message}";
+                AddLog(LastStatus);
+            }
+        }
+
         private void TeleportByName()
         {
             var dest = LodestoneSearch?.Trim();
@@ -187,6 +290,29 @@ namespace MESharp.ViewModels
                 LastStatus = $"Lodestone error: {ex.Message}";
                 AddLog(LastStatus);
             }
+        }
+
+        private void UseCurrentTile()
+        {
+            try
+            {
+                var tile = LocalPlayer.GetTilePosition();
+                TargetX = tile.x.ToString();
+                TargetY = tile.y.ToString();
+                TargetZ = tile.z.ToString();
+                LastStatus = $"Target set to current tile {tile.x},{tile.y},{tile.z}.";
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Failed to read current tile: {ex.Message}";
+            }
+        }
+
+        private static string Adjust(string current, int delta)
+        {
+            if (!int.TryParse(current, out var val)) val = 0;
+            val += delta;
+            return val.ToString();
         }
 
         private bool TryParseTarget(out int x, out int y, out int z)
