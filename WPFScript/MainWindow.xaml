@@ -47,6 +47,9 @@
             <DataTemplate DataType="{x:Type vm:PlayersViewModel}">
                 <views:PlayersView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
+                <views:NavigationView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:InventoryViewModel}">
                 <views:InventoryView />
             </DataTemplate>
@@ -268,8 +271,22 @@
                                     Margin="0,0,6,0"
                                     VerticalAlignment="Center"
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                                    Kind="AccountMultiple" />
+                                Kind="AccountMultiple" />
                                 <TextBlock Text="Players" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowNavigationCommand}"
+                            IsChecked="{Binding IsNavigationSelected, Mode=OneWay}"
+                            ToolTip="Navigation and movement">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="MapMarkerPath" />
+                                <TextBlock Text="Navigation" />
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton

@@ -15,6 +15,7 @@ namespace MESharp.ViewModels
         Chat,
         Skills,
         Players,
+        Navigation,
         ItemsUnified,
         ObjectsUnified,
         Interfaces,
@@ -48,6 +49,7 @@ namespace MESharp.ViewModels
                     OnPropertyChanged(nameof(IsChatSelected));
                     OnPropertyChanged(nameof(IsSkillsSelected));
                     OnPropertyChanged(nameof(IsPlayersSelected));
+                    OnPropertyChanged(nameof(IsNavigationSelected));
                     OnPropertyChanged(nameof(IsItemsUnifiedSelected));
                     OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
                     OnPropertyChanged(nameof(IsInterfacesSelected));
@@ -66,6 +68,7 @@ namespace MESharp.ViewModels
         public bool IsChatSelected => CurrentPage == AppPage.Chat;
         public bool IsSkillsSelected => CurrentPage == AppPage.Skills;
         public bool IsPlayersSelected => CurrentPage == AppPage.Players;
+        public bool IsNavigationSelected => CurrentPage == AppPage.Navigation;
         public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
         public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
         public bool IsInterfacesSelected => CurrentPage == AppPage.Interfaces;
@@ -76,6 +79,7 @@ namespace MESharp.ViewModels
         public ICommand ShowChatCommand { get; }
         public ICommand ShowSkillsCommand { get; }
         public ICommand ShowPlayersCommand { get; }
+        public ICommand ShowNavigationCommand { get; }
         public ICommand ShowItemsUnifiedCommand { get; }
         public ICommand ShowObjectsUnifiedCommand { get; }
         public ICommand ShowInterfacesCommand { get; }
@@ -97,6 +101,7 @@ namespace MESharp.ViewModels
             ShowChatCommand           = new RelayCommand(_ => ShowChat());
             ShowSkillsCommand         = new RelayCommand(_ => ShowSkills());
             ShowPlayersCommand        = new RelayCommand(_ => ShowPlayers());
+            ShowNavigationCommand     = new RelayCommand(_ => ShowNavigation());
             ShowItemsUnifiedCommand   = new RelayCommand(_ => ShowItemsUnified());
             ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
             ShowInterfacesCommand     = new RelayCommand(_ => ShowInterfaces());
@@ -124,6 +129,7 @@ namespace MESharp.ViewModels
         private void ShowChat() => SwitchView(AppPage.Chat, () => new ChatViewModel());
         private void ShowSkills() => SwitchView(AppPage.Skills, () => new SkillsViewModel());
         private void ShowPlayers() => SwitchView(AppPage.Players, () => new PlayersViewModel());
+        private void ShowNavigation() => SwitchView(AppPage.Navigation, () => new NavigationViewModel());
         private void ShowItemsUnified() => SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
         private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
         private void ShowInterfaces() => SwitchView(AppPage.Interfaces, () => new InterfacesViewModel());
