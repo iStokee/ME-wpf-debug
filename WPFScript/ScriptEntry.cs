@@ -41,11 +41,12 @@ namespace MESharp
 	{
         private static readonly object _initLock = new();
         private static bool _initialized;
-		private static bool _servicesConfigured;
+        private static bool _servicesConfigured;
         private static Thread? _uiThread;
         private static Dispatcher? _uiDispatcher;
         private static Application? _app;
         private static Window? _mainWindow;
+        private static WpfScriptShell? _shellInstance;
         private static readonly ManualResetEventSlim _uiReady = new(false);
 
 		/// <summary>
@@ -89,46 +90,54 @@ namespace MESharp
 		/// </summary>
 		private static void Initialize_Impl()
 		{
-        lock (_initLock)
-        {
-            if (_initialized)
-            {
-                Console.WriteLine("[Managed] Initialize() already executed; skipping duplicate call.");
-                return;
-            }
-
-			// Configure services before any other initialization
-			if (!_servicesConfigured)
+			lock (_initLock)
 			{
-				try
+				if (_initialized)
 				{
-					ScriptRuntime.ConfigureServices(services =>
+					Console.WriteLine("[Managed] Initialize() already executed; skipping duplicate call.");
+					return;
+				}
+
+				// Configure services before any other initialization
+				if (!_servicesConfigured)
+				{
+					try
 					{
-						services.AddSingleton<WpfScriptShell>();
-					});
-					_servicesConfigured = true;
-					Console.WriteLine("[Managed] Services configured successfully.");
+						ScriptRuntime.ConfigureServices(services =>
+						{
+							services.AddSingleton<WpfScriptShell>();
+						});
+						_servicesConfigured = true;
+						Console.WriteLine("[Managed] Services configured successfully.");
+					}
+					catch (InvalidOperationException ex)
+					{
+						Console.WriteLine($"[Managed] Service configuration skipped (provider already built): {ex.Message}");
+						// Provider already exists; try to reuse any existing shell instance or fall back later.
+						try
+						{
+							_shellInstance ??= ScriptRuntime.Services.GetService<WpfScriptShell>();
+						}
+						catch (Exception resolveEx)
+						{
+							Console.WriteLine($"[Managed] Could not resolve WpfScriptShell from existing provider: {resolveEx.Message}");
+						}
+					}
 				}
-				catch (InvalidOperationException ex)
+
+				_uiReady.Reset();
+
+				// Spin up the STA UI thread
+				_uiThread = new Thread(InitAndShowWindow)
 				{
-					Console.WriteLine($"[Managed] Service configuration skipped (provider already built): {ex.Message}");
-					// This is OK - services were configured by host or previous script
-				}
+					IsBackground = true,
+					Name = "MESharp.WpfUiThread"
+				};
+				_uiThread.SetApartmentState(ApartmentState.STA);
+				_uiThread.Start();
+
+				_initialized = true;
 			}
-
-            _uiReady.Reset();
-
-            // Spin up the STA UI thread
-            _uiThread = new Thread(InitAndShowWindow)
-            {
-                IsBackground = true,
-                Name = "MESharp.WpfUiThread"
-            };
-            _uiThread.SetApartmentState(ApartmentState.STA);
-            _uiThread.Start();
-
-            _initialized = true;
-        }
 		}
 
 		/// <summary>
@@ -230,7 +239,7 @@ namespace MESharp
 
                 try
                 {
-                    var shell = ScriptRuntime.GetRequiredService<WpfScriptShell>();
+                    var shell = GetShell();
                     shell.RegisterDispatcher(_uiDispatcher);
                 }
                 catch (Exception ex)
@@ -449,6 +458,29 @@ namespace MESharp
             {
                 Console.WriteLine("[Managed] Theme apply during bootstrap failed: " + ex);
             }
+        }
+
+        private static WpfScriptShell GetShell()
+        {
+            // Prefer the DI container if the service was registered before the provider was built.
+            try
+            {
+                var fromServices = ScriptRuntime.Services.GetService<WpfScriptShell>();
+                if (fromServices != null)
+                {
+                    _shellInstance = fromServices;
+                    return fromServices;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Managed] ScriptRuntime.Services unavailable while resolving WpfScriptShell: " + ex.Message);
+            }
+
+            // Fallback: create a local instance so dispatcher registration always succeeds.
+            _shellInstance ??= new WpfScriptShell();
+            Console.WriteLine("[Managed] Using local WpfScriptShell instance (not registered in DI).");
+            return _shellInstance;
         }
 
     }

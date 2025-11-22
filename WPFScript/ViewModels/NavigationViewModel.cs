@@ -1,5 +1,7 @@
 using MESharp.API;
 using MESharp.Commands;
+using MESharp.Models;
+using MESharp.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +17,8 @@ namespace MESharp.ViewModels
 
         public ObservableCollection<string> ActivityLog { get; } = new();
         public ObservableCollection<LodestoneOption> Lodestones { get; }
+        public ObservableCollection<RouteWaypoint> CurrentRoute { get; } = new();
+        public ObservableCollection<RouteDefinition> SavedRoutes { get; } = new();
 
         // Live status
         private string _tilePosition = "--";
@@ -39,6 +43,11 @@ namespace MESharp.ViewModels
         private string _lodestoneSearch = "Varrock";
         private int _teleportTimeoutMs = 12000;
 
+        // Route builder
+        private string _routeName = "New route";
+        private RouteDefinition? _selectedRoute;
+        private RouteWaypoint? _selectedWaypoint;
+
         public string TilePosition { get => _tilePosition; set => SetProperty(ref _tilePosition, value); }
         public string ExactPosition { get => _exactPosition; set => SetProperty(ref _exactPosition, value); }
         public bool IsMoving { get => _isMoving; set => SetProperty(ref _isMoving, value); }
@@ -57,6 +66,10 @@ namespace MESharp.ViewModels
         public LodestoneOption? SelectedLodestone { get => _selectedLodestone; set => SetProperty(ref _selectedLodestone, value); }
         public string LodestoneSearch { get => _lodestoneSearch; set => SetProperty(ref _lodestoneSearch, value); }
         public int TeleportTimeoutMs { get => _teleportTimeoutMs; set => SetProperty(ref _teleportTimeoutMs, value); }
+        public string RouteName { get => _routeName; set { SetProperty(ref _routeName, value); RefreshCommandStates(); } }
+        public RouteDefinition? SelectedRoute { get => _selectedRoute; set { SetProperty(ref _selectedRoute, value); RefreshCommandStates(); } }
+        public RouteWaypoint? SelectedWaypoint { get => _selectedWaypoint; set { SetProperty(ref _selectedWaypoint, value); RefreshCommandStates(); } }
+        public string RouteStorePath => RouteStore.GetStorePath();
 
         public ICommand RefreshCommand { get; }
         public ICommand WalkToCommand { get; }
@@ -74,6 +87,12 @@ namespace MESharp.ViewModels
         public ICommand NudgeYNegativeCommand { get; }
         public ICommand NudgeZPositiveCommand { get; }
         public ICommand NudgeZNegativeCommand { get; }
+        public ICommand AddCurrentWaypointCommand { get; }
+        public ICommand AddTargetWaypointCommand { get; }
+        public ICommand RemoveWaypointCommand { get; }
+        public ICommand ClearRouteCommand { get; }
+        public ICommand SaveRouteCommand { get; }
+        public ICommand LoadRouteCommand { get; }
 
         public NavigationViewModel()
         {
@@ -96,6 +115,12 @@ namespace MESharp.ViewModels
             NudgeYNegativeCommand = new RelayCommand(_ => TargetY = Adjust(TargetY, -_nudgeStep));
             NudgeZPositiveCommand = new RelayCommand(_ => TargetZ = Adjust(TargetZ, _nudgeStep));
             NudgeZNegativeCommand = new RelayCommand(_ => TargetZ = Adjust(TargetZ, -_nudgeStep));
+            AddCurrentWaypointCommand = new RelayCommand(_ => AddWaypointFromCurrent());
+            AddTargetWaypointCommand = new RelayCommand(_ => AddWaypointFromTarget());
+            RemoveWaypointCommand = new RelayCommand(_ => RemoveSelectedWaypoint(), _ => SelectedWaypoint != null);
+            ClearRouteCommand = new RelayCommand(_ => ClearRoute());
+            SaveRouteCommand = new RelayCommand(_ => SaveRoute(), _ => CurrentRoute.Any() && !string.IsNullOrWhiteSpace(RouteName));
+            LoadRouteCommand = new RelayCommand(_ => LoadRoute(), _ => SelectedRoute != null);
 
             _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
             {
@@ -104,6 +129,7 @@ namespace MESharp.ViewModels
             _refreshTimer.Tick += OnRefreshTick;
             _refreshTimer.Start();
 
+            LoadRoutes();
             RefreshPosition();
             AddLog("Navigation tester ready.");
         }
@@ -354,6 +380,126 @@ namespace MESharp.ViewModels
                 ActivityLog.RemoveAt(ActivityLog.Count - 1);
             }
         }
+
+        private void AddWaypointFromCurrent()
+        {
+            try
+            {
+                var tile = LocalPlayer.GetTilePosition();
+                CurrentRoute.Add(new RouteWaypoint { X = tile.x, Y = tile.y, Z = tile.z });
+                LastStatus = $"Added waypoint {tile.x},{tile.y},{tile.z}.";
+                RefreshCommandStates();
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Failed to read current tile: {ex.Message}";
+            }
+        }
+
+        private void AddWaypointFromTarget()
+        {
+            if (!TryParseTarget(out var x, out var y, out var z))
+            {
+                LastStatus = "Enter X and Y (ints) before adding target waypoint.";
+                return;
+            }
+
+            CurrentRoute.Add(new RouteWaypoint { X = x, Y = y, Z = z });
+            LastStatus = $"Added waypoint {x},{y},{z} from target.";
+            RefreshCommandStates();
+        }
+
+        private void RemoveSelectedWaypoint()
+        {
+            if (SelectedWaypoint == null) return;
+            CurrentRoute.Remove(SelectedWaypoint);
+            SelectedWaypoint = null;
+            RefreshCommandStates();
+        }
+
+        private void ClearRoute()
+        {
+            CurrentRoute.Clear();
+            LastStatus = "Cleared route builder.";
+            RefreshCommandStates();
+        }
+
+        private void SaveRoute()
+        {
+            var name = RouteName?.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                LastStatus = "Enter a route name.";
+                return;
+            }
+
+            if (!CurrentRoute.Any())
+            {
+                LastStatus = "Add at least one waypoint before saving.";
+                return;
+            }
+
+            var route = new RouteDefinition
+            {
+                Name = name,
+                SavedAt = DateTime.UtcNow,
+                Waypoints = CurrentRoute.Select(w => new RouteWaypoint { X = w.X, Y = w.Y, Z = w.Z }).ToList()
+            };
+
+            var existing = SavedRoutes.FirstOrDefault(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+            {
+                var index = SavedRoutes.IndexOf(existing);
+                SavedRoutes[index] = route;
+            }
+            else
+            {
+                SavedRoutes.Add(route);
+            }
+
+            RouteStore.Save(SavedRoutes);
+            SelectedRoute = route;
+            LastStatus = $"Route '{route.Name}' saved ({route.Waypoints.Count} waypoints).";
+            AddLog(LastStatus);
+            RefreshCommandStates();
+        }
+
+        private void LoadRoute()
+        {
+            var route = SelectedRoute;
+            if (route == null)
+            {
+                LastStatus = "Select a route to load.";
+                return;
+            }
+
+            CurrentRoute.Clear();
+            foreach (var wp in route.Waypoints)
+            {
+                CurrentRoute.Add(new RouteWaypoint { X = wp.X, Y = wp.Y, Z = wp.Z });
+            }
+
+            PathInput = string.Join(Environment.NewLine, route.Waypoints.Select(w => w.ToString()));
+            LastStatus = $"Loaded route '{route.Name}' into path input.";
+            AddLog(LastStatus);
+            RefreshCommandStates();
+        }
+
+        private void LoadRoutes()
+        {
+            SavedRoutes.Clear();
+            foreach (var route in RouteStore.Load())
+            {
+                SavedRoutes.Add(route);
+            }
+
+            if (SavedRoutes.Any())
+            {
+                SelectedRoute = SavedRoutes.First();
+            }
+        }
+
+        private void RefreshCommandStates() => System.Windows.Input.CommandManager.InvalidateRequerySuggested();
 
         private static IReadOnlyList<LodestoneOption> BuildLodestones()
         {
