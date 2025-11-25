@@ -7,20 +7,22 @@
              xmlns:vm="clr-namespace:MESharp.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Margin="0,0,8,0" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
-            <StackPanel>
-                <Button Content="API Reference" Command="{Binding ShowApiDocsCommand}" Margin="8"/>
-                <Button Content="How to Use" Command="{Binding ShowHowToUseCommand}" Margin="8"/>
-                <Button Content="Theme Settings" Command="{Binding ShowThemeSettingsCommand}" Margin="8"/>
-            </StackPanel>
-        </Border>
+            <Border Grid.Column="0" Margin="0,0,8,0" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                <StackPanel>
+                    <Button Content="API Reference" Command="{Binding ShowApiDocsCommand}" Margin="8"/>
+                    <Button Content="How to Use" Command="{Binding ShowHowToUseCommand}" Margin="8"/>
+                    <Button Content="Theme Settings" Command="{Binding ShowThemeSettingsCommand}" Margin="8"/>
+                </StackPanel>
+            </Border>
 
-        <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
-    </Grid>
+            <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
+        </Grid>
+    </ScrollViewer>
 </UserControl>

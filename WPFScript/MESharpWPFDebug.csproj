@@ -45,7 +45,7 @@
 
   <ItemGroup>
     <Reference Include="csharp_interop">
-      <HintPath>..\..\..\..\ME\x64\Build_DLL\csharp_interop.dll</HintPath>
+      <HintPath>..\..\csharp_interop\bin\Debug\net8.0-windows\csharp_interop.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -56,11 +56,6 @@
     <Message Importance="High" Text="[HotReload] Copying dependencies to $(OutputPath)HotReload" />
     <MakeDir Directories="$(OutputPath)HotReload" />
     <Copy SourceFiles="@(HotReloadDependencies)" DestinationFolder="$(OutputPath)HotReload" SkipUnchangedFiles="true" />
-  </Target>
-
-  <Target Name="CopyInteropToOutput" AfterTargets="Build">
-    <Message Importance="High" Text="[Build] Copying csharp_interop.dll to output directory for API docs" />
-    <Copy SourceFiles="..\..\..\csharp_interop\bin\$(Configuration)\net8.0-windows\csharp_interop.dll" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

@@ -19,7 +19,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="5">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -322,5 +323,6 @@
                     Text="{Binding StatusMessage}" />
             </Grid>
         </Border>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

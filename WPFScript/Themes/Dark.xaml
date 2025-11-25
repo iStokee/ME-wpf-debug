@@ -868,7 +868,11 @@
     </Style>
 
     <!--  Apply ScrollBar styles globally  -->
-    <Style TargetType="ScrollBar" BasedOn="{StaticResource {x:Type ScrollBar}}">
+    <!--  Central scrollbar base style so every scrollbar inherits the same visuals  -->
+    <Style
+        x:Key="AppScrollBarBase"
+        TargetType="ScrollBar"
+        BasedOn="{StaticResource {x:Type ScrollBar}}">
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">
                 <Setter Property="Width" Value="12" />
@@ -936,6 +940,10 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <!--  Default scrollbars use the shared base style  -->
+    <Style TargetType="ScrollBar" BasedOn="{StaticResource AppScrollBarBase}" />
+    <!--  Retain keyed access for explicit usage if needed  -->
+    <Style x:Key="ScrollBar" TargetType="ScrollBar" BasedOn="{StaticResource AppScrollBarBase}" />
 
     <!--  ScrollViewer style to ensure scrollbars use our theme  -->
     <Style TargetType="ScrollViewer">

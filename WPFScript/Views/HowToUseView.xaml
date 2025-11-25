@@ -6,10 +6,12 @@
              xmlns:local="clr-namespace:MESharp.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <StackPanel>
-            <TextBlock Text="How to Use This Tool" FontSize="20" FontWeight="Bold" Margin="10"/>
-            <TextBlock Text="{Binding Section}" FontSize="16" Margin="10"/>
-        </StackPanel>
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid>
+            <StackPanel>
+                <TextBlock Text="How to Use This Tool" FontSize="20" FontWeight="Bold" Margin="10"/>
+                <TextBlock Text="{Binding Section}" FontSize="16" Margin="10"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

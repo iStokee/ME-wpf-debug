@@ -9,17 +9,19 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="InterfacesDebug">
 
-    <Grid>
-        <StackPanel>
-            <TextBlock Text="Interfaces" FontSize="20" FontWeight="Bold" Margin="10"/>
-            <Button Content="Refresh" Click="Refresh_Click" Margin="10"/>
-            <TreeView x:Name="InterfacesTreeView" Margin="10">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Name}"/>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
-        </StackPanel>
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid>
+            <StackPanel>
+                <TextBlock Text="Interfaces" FontSize="20" FontWeight="Bold" Margin="10"/>
+                <Button Content="Refresh" Click="Refresh_Click" Margin="10"/>
+                <TreeView x:Name="InterfacesTreeView" Margin="10">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Name}"/>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </Page>

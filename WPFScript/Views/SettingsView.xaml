@@ -26,7 +26,8 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel Margin="24">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24">
         <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
             <iconPacks:PackIconMaterial
                 Width="22"
@@ -288,4 +289,5 @@
             </StackPanel>
         </Border>
     </StackPanel>
+</ScrollViewer>
 </UserControl>
