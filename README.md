@@ -84,33 +84,6 @@ public static class ScriptEntry
 }
 ```
 
-## 📁 Project Structure
-
-```
-WPFScript/
-├── ScriptEntry.cs          # Hot reload entry point, WPF initialization
-├── MainWindow.xaml         # Main UI layout
-├── MainWindow.xaml.cs      # UI logic and event handlers
-├── ViewModels/             # MVVM view models
-│   ├── InventoryViewModel.cs
-│   ├── BankViewModel.cs
-│   ├── NPCViewModel.cs
-│   └── ...
-├── Views/                  # Individual tab user controls
-│   ├── InventoryView.xaml
-│   ├── BankView.xaml
-│   ├── NPCView.xaml
-│   └── ...
-├── Models/                 # Data models
-│   ├── InventoryItemModel.cs
-│   ├── NPCModel.cs
-│   └── ...
-├── Services/               # Utility services
-│   ├── WpfScriptShell.cs  # DI container access
-│   └── ...
-├── Commands/               # ICommand implementations
-└── Converters/             # XAML value converters
-```
 
 ## 🔨 Building
 
