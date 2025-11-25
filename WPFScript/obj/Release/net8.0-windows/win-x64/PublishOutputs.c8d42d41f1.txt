@@ -1,3 +1,0 @@
-C:\Development\ME\WPFScript\bin\Release\net8.0-windows\win-x64\publish\WPFScript.dll
-C:\Development\ME\WPFScript\bin\Release\net8.0-windows\win-x64\publish\WPFScript.deps.json
-C:\Development\ME\WPFScript\bin\Release\net8.0-windows\win-x64\publish\WPFScript.pdb
