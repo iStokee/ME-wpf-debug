@@ -16,6 +16,16 @@ using MESharp.ViewModels;
 
 namespace MESharp
 {
+	/// <summary>
+	/// MainWindow for MESharp WPF Debug Utility.
+	///
+	/// OPTIONAL FEATURES DEMONSTRATED:
+	/// - Focus management (Focus.RegisterManagedWindow, Focus.SetFocusSpoofEnabled)
+	/// - Orbit integration (docking script windows into Orbit management app)
+	///
+	/// Most scripts don't need these features! For simpler scripts, just create
+	/// a basic Window with your UI controls.
+	/// </summary>
     public partial class MainWindow
     {
 		private Guid? _orbitSessionId;
@@ -47,6 +57,8 @@ namespace MESharp
 
             this.Loaded += (_, __) =>
             {
+				// OPTIONAL: Activate focus management for this window
+				// Most scripts don't need this
                 try
                 {
                     Console.WriteLine("[Managed] Requesting native focus activation + spoof OFF");
@@ -58,7 +70,9 @@ namespace MESharp
                     Console.WriteLine($"[Managed] Activate request failed: {ex}");
                 }
 
-                // Try to dock into Orbit if available (optional, via reflection)
+                // OPTIONAL: Try to dock into Orbit management app if available
+                // Orbit is a separate app that can manage multiple script windows
+                // Most scripts don't need this - it's only useful for complex multi-window setups
                 try
                 {
                     _orbitSessionId = TryDockWithOrbit(new WindowInteropHelper(this).Handle);

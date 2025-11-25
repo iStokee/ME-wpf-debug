@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Media;
@@ -12,31 +10,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MESharp
 {
-	// A custom TextWriter that redirects output to a C++ function pointer.
-	public class CppLogWriter : TextWriter
-	{
-		// The delegate that matches the C++ function's signature
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate void LoggerCallback(string message);
-
-		private readonly LoggerCallback _loggerCallback;
-
-		public CppLogWriter(IntPtr loggerCallbackPtr)
-		{
-			// Convert the C++ function pointer to a callable C# delegate
-			_loggerCallback = Marshal.GetDelegateForFunctionPointer<LoggerCallback>(loggerCallbackPtr);
-		}
-
-		// This is the most important method to override
-		public override void WriteLine(string? value)
-		{
-			_loggerCallback?.Invoke(value ?? string.Empty);
-		}
-
-		// This is also required
-		public override Encoding Encoding => Encoding.UTF8;
-	}
-
+	/// <summary>
+	/// ScriptEntry for MESharp WPF Debug Utility.
+	///
+	/// REQUIRED FOR HOT-RELOAD:
+	/// - public static class ScriptEntry in MESharp namespace
+	/// - public static void Initialize()
+	/// - public static void Shutdown()
+	///
+	/// OPTIONAL FEATURES USED IN THIS EXAMPLE:
+	/// - Service configuration (DI container)
+	/// - Custom WpfScriptShell service
+	/// - Theme/resource management
+	///
+	/// For simpler scripts, see cli_template_minimal.txt or wpf_template_minimal.txt
+	/// </summary>
 	public static class ScriptEntry
 	{
         private static readonly object _initLock = new();
@@ -50,45 +38,10 @@ namespace MESharp
         private static readonly ManualResetEventSlim _uiReady = new(false);
 
 		/// <summary>
-		/// This method is called first by the C++ host to set up the console redirection.
-		/// Legacy path only - uses native function pointer.
-		/// </summary>
-		[UnmanagedCallersOnly]
-		public static void SetLogger(IntPtr loggerCallbackPtr)
-		{
-			try
-			{
-				var writer = new CppLogWriter(loggerCallbackPtr);
-				Console.SetOut(writer);
-				Console.SetError(writer); // Also redirect error stream
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Failed to set logger: {ex.Message}");
-			}
-		}
-
-		/// <summary>
 		/// Initialize entry point for hot-reload path (called via reflection from ScriptLoader).
+		/// This is the ONLY required method for hot-reload to work.
 		/// </summary>
 		public static void Initialize()
-		{
-			Initialize_Impl();
-		}
-
-		/// <summary>
-		/// Initialize entry point for legacy native path (called via function pointer from ME).
-		/// </summary>
-		[UnmanagedCallersOnly]
-		public static void Initialize_Native()
-		{
-			Initialize_Impl();
-		}
-
-		/// <summary>
-		/// Shared initialization logic for both legacy and hot-reload paths.
-		/// </summary>
-		private static void Initialize_Impl()
 		{
 			lock (_initLock)
 			{
@@ -98,13 +51,15 @@ namespace MESharp
 					return;
 				}
 
-				// Configure services before any other initialization
+				// OPTIONAL: Configure services for dependency injection
+				// This is NOT required for most scripts - only if you need DI container features
 				if (!_servicesConfigured)
 				{
 					try
 					{
 						ScriptRuntime.ConfigureServices(services =>
 						{
+							// Register your services here
 							services.AddSingleton<WpfScriptShell>();
 						});
 						_servicesConfigured = true;
@@ -142,25 +97,9 @@ namespace MESharp
 
 		/// <summary>
 		/// Shutdown entry point for hot-reload path (called via reflection from ScriptLoader).
+		/// This method is optional but HIGHLY RECOMMENDED for clean resource cleanup.
 		/// </summary>
 		public static void Shutdown()
-		{
-			Shutdown_Impl();
-		}
-
-		/// <summary>
-		/// Shutdown entry point for legacy native path (called via function pointer from ME).
-		/// </summary>
-		[UnmanagedCallersOnly]
-		public static void Shutdown_Native()
-		{
-			Shutdown_Impl();
-		}
-
-		/// <summary>
-		/// Shared shutdown logic for both legacy and hot-reload paths.
-		/// </summary>
-		private static void Shutdown_Impl()
     {
         bool wasInitialized;
         lock (_initLock)
@@ -301,6 +240,9 @@ namespace MESharp
 
                     if (!initialized)
                     {
+                        // OPTIONAL: Manual resource bootstrapping
+                        // This is only needed if you have custom themes or MahApps.Metro resources
+                        // Most scripts don't need this complexity
                         Console.WriteLine("[Managed] Falling back to manual resource bootstrap.");
                         BootstrapResources(app);
                         TryApplyTheme();
@@ -365,6 +307,11 @@ namespace MESharp
             }
         }
 
+        /// <summary>
+        /// OPTIONAL: Manual resource bootstrapping for custom themes and MahApps.Metro.
+        /// Most scripts don't need this - it's only here for the debug utility's fancy UI.
+        /// For simpler scripts, just use plain WPF controls without custom themes.
+        /// </summary>
         private static void BootstrapResources(Application app)
         {
             if (Application.ResourceAssembly == null)
@@ -460,6 +407,10 @@ namespace MESharp
             }
         }
 
+        /// <summary>
+        /// OPTIONAL: Custom service for managing WPF dispatcher across services.
+        /// Most scripts don't need this - it's only here for advanced DI scenarios.
+        /// </summary>
         private static WpfScriptShell GetShell()
         {
             // Prefer the DI container if the service was registered before the provider was built.
@@ -489,6 +440,10 @@ namespace MESharp
 
 namespace MESharp
 {
+    /// <summary>
+    /// OPTIONAL: Custom service for managing WPF dispatcher in DI scenarios.
+    /// Most scripts don't need this - it's only here for the debug utility's DI setup.
+    /// </summary>
     internal sealed class WpfScriptShell
     {
         private readonly object _sync = new();
