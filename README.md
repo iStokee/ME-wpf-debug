@@ -1,6 +1,6 @@
 # ME WPF Debug Utility
 
-Interactive WPF harness for exercising the MESharp C# API. It’s a tabbed, hot‑reloadable UI you can use to poke every exposed endpoint while you iterate.
+Interactive WPF script for interacting with the MESharp C# API. It’s a tabbed, hot‑reloadable UI you can use to examine every exposed api surface, and to debug while you script.
 
 ## Overview
 - Builds to `MESharp_DebugUtil.dll`, intended to load via MemoryError.
