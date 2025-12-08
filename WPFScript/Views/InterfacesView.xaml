@@ -163,7 +163,7 @@
                                     Visibility="{Binding HasText, Converter={StaticResource BoolToVisibilityConverter}}" />
                                 <TextBlock
                                     FontSize="10"
-                                    Foreground="{DynamicResource AccentBrush}"
+                                    Foreground="{DynamicResource PrimaryBrush}"
                                     Text="{Binding ItemText}"
                                     Visibility="{Binding HasItem, Converter={StaticResource BoolToVisibilityConverter}}" />
                             </StackPanel>
