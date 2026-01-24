@@ -5,6 +5,7 @@
     xmlns:conv="clr-namespace:MESharp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:MESharp.ViewModels"
     d:DataContext="{d:DesignInstance Type=vm:ObjectsUnifiedViewModel}"
@@ -33,43 +34,14 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!--  Header  -->
-        <Border
+        <!--  Header  -->
+        <controls:SectionHeader
             Grid.Row="0"
             Margin="0,0,0,10"
-            Padding="10"
-            Background="{DynamicResource App.CardBrush}"
-            CornerRadius="5">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <TextBlock
-                        Margin="0,0,0,5"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Text="Game Objects - Unified View" />
-                    <TextBlock
-                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                        Text="View NPCs and Objects with type-specific controls in the side panel"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-                <Button
-                    Grid.Column="1"
-                    VerticalAlignment="Top"
-                    Style="{StaticResource HeaderHelpButton}"
-                    ToolTip="Open API docs"
-                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                    <iconPacks:PackIconMaterial
-                        Width="18"
-                        Height="18"
-                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                        Kind="HelpCircleOutline" />
-                </Button>
-            </Grid>
-        </Border>
+            Title="World Objects"
+            Description="Browse NPCs and objects with type-specific controls in the side panel."
+            IconKind="CubeOutline"
+            HelpCommand="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
 
             <!--  Object Type Selection and Actions  -->
             <Border

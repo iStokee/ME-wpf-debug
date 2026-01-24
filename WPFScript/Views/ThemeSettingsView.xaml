@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:MESharp.Views"
              xmlns:conv="clr-namespace:MESharp.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:controls="clr-namespace:MESharp.Views.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -23,17 +24,12 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="24">
-        <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
-            <iconPacks:PackIconMaterial
-                Width="22"
-                Height="22"
-                Margin="0,0,8,0"
-                Kind="Palette" />
-            <TextBlock
-                FontSize="20"
-                FontWeight="SemiBold"
-                Text="Theme Settings" />
-        </StackPanel>
+        <controls:SectionHeader
+            Margin="0,0,0,16"
+            Title="Theme Settings"
+            Description="Switch modes and tune accent colors for the debug UI."
+            IconKind="Palette"
+            ShowHelp="False" />
 
         <!--  Theme Mode Toggle  -->
         <Border
@@ -192,6 +188,7 @@
                                 Width="28"
                                 Height="16"
                                 Margin="5,6,5,4"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                 Kind="Palette" />
                             <TextBlock Margin="0,4,8,4" Text="Pick Color" />
                         </StackPanel>
@@ -203,6 +200,7 @@
                                 Width="28"
                                 Height="16"
                                 Margin="5,6,5,4"
+                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                 Kind="ShuffleVariant" />
                             <TextBlock Margin="0,4,8,4" Text="Random" />
                         </StackPanel>

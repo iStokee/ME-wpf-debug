@@ -163,7 +163,7 @@
                     BorderThickness="0"
                     ItemsSource="{Binding ApiClasses}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    SelectedItem="{Binding SelectedClass}">
+                    SelectedItem="{Binding SelectedClass, Mode=TwoWay}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Background" Value="Transparent" />

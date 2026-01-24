@@ -61,7 +61,11 @@ namespace MESharp.Services
                     return $"P:{member.DeclaringType.FullName}.{member.Name}";
                 case MemberTypes.Method:
                     var method = (MethodInfo)member;
-                    var parameters = method.GetParameters().Select(p => p.ParameterType.FullName.Replace("&", "@"));
+                    var parameters = method.GetParameters().Select(p =>
+                    {
+                        var typeName = p.ParameterType.FullName ?? p.ParameterType.Name;
+                        return (typeName ?? string.Empty).Replace("&", "@");
+                    });
                     return $"M:{member.DeclaringType.FullName}.{member.Name}({string.Join(",", parameters)})";
                 default:
                     return null;
@@ -77,6 +81,19 @@ namespace MESharp.Services
             }
 
             var xmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{assemblyName}.xml");
+            if (!File.Exists(xmlPath))
+            {
+                var assemblyLocation = assembly.Location;
+                if (!string.IsNullOrWhiteSpace(assemblyLocation))
+                {
+                    var locationXml = Path.ChangeExtension(assemblyLocation, ".xml");
+                    if (File.Exists(locationXml))
+                    {
+                        xmlPath = locationXml;
+                    }
+                }
+            }
+
             if (!File.Exists(xmlPath))
             {
                 Console.WriteLine($"[XmlDocProvider] Documentation not found at {xmlPath}");

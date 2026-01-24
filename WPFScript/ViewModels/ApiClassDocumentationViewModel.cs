@@ -34,7 +34,8 @@ namespace MESharp.ViewModels
 
         private void LoadProperties(Type classType)
         {
-            var properties = classType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
+            var properties = classType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                      .Where(p => p.DeclaringType == classType);
 
             foreach (var prop in properties)
             {
@@ -60,8 +61,8 @@ namespace MESharp.ViewModels
 
         private void LoadMethods(Type classType)
         {
-            var methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
-                                   .Where(m => !m.IsSpecialName); // Exclude property getters/setters
+            var methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                   .Where(m => m.DeclaringType == classType && !m.IsSpecialName); // Exclude property getters/setters
 
             foreach (var method in methods)
             {

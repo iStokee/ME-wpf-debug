@@ -1,0 +1,81 @@
+<UserControl
+    x:Class="MESharp.Views.Controls.SectionHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:MESharp.Converters"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Border
+        Padding="{Binding HeaderPadding, RelativeSource={RelativeSource AncestorType=UserControl}}"
+        Background="{DynamicResource App.CardBrush}"
+        CornerRadius="{Binding HeaderCornerRadius, RelativeSource={RelativeSource AncestorType=UserControl}}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Width="{Binding IconSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Height="{Binding IconSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Margin="0,0,8,0"
+                        VerticalAlignment="Center"
+                        Foreground="{Binding IconForeground, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Kind="{Binding IconKind, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="{Binding TitleFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        FontWeight="SemiBold"
+                        Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                </StackPanel>
+
+                <TextBlock
+                    Margin="0,4,0,0"
+                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                    Text="{Binding Description, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding Description, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                <ContentPresenter
+                    Margin="0,8,0,0"
+                    Content="{Binding AdditionalContent, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Visibility="{Binding AdditionalContent, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <ContentPresenter
+                    VerticalAlignment="Center"
+                    Content="{Binding RightContent, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Visibility="{Binding RightContent, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}" />
+                <Button
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    Command="{Binding HelpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding HelpCommandParameter, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Style="{StaticResource HeaderHelpButton}"
+                    ToolTip="{Binding HelpToolTip, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Visibility="{Binding ShowHelp, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <iconPacks:PackIconMaterial
+                        Width="18"
+                        Height="18"
+                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Kind="HelpCircleOutline" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

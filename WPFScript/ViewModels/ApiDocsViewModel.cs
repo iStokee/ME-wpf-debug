@@ -61,15 +61,22 @@ namespace MESharp.ViewModels
         {
             try
             {
-                var assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "csharp_interop.dll");
-                if (!File.Exists(assemblyPath))
+                var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(a => string.Equals(a.GetName().Name, "csharp_interop", StringComparison.OrdinalIgnoreCase));
+
+                if (assembly == null)
                 {
-                    Console.WriteLine($"[ApiDocs] csharp_interop.dll not found at {assemblyPath}");
-                    _allClasses = new List<ApiClassInfo>();
-                    return;
+                    var assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "csharp_interop.dll");
+                    if (!File.Exists(assemblyPath))
+                    {
+                        Console.WriteLine($"[ApiDocs] csharp_interop.dll not found at {assemblyPath}");
+                        _allClasses = new List<ApiClassInfo>();
+                        return;
+                    }
+
+                    assembly = Assembly.LoadFrom(assemblyPath);
                 }
 
-                var assembly = Assembly.LoadFrom(assemblyPath);
                 _allClasses = assembly.GetTypes()
                     .Where(t => t.IsPublic && t.IsClass && t.Namespace == "MESharp.API")
                     .OrderBy(t => t.Name)

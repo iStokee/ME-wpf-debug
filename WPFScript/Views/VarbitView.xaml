@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
     xmlns:viewModels="clr-namespace:MESharp.ViewModels"
     Background="{DynamicResource App.BackgroundBrush}"
     Foreground="{DynamicResource App.ForegroundBrush}"
@@ -14,103 +15,271 @@
     mc:Ignorable="d">
 
     <ScrollViewer>
-        <StackPanel Margin="24">
+        <StackPanel Margin="5">
 
             <!--  Header  -->
+            <controls:SectionHeader
+                Margin="0,0,0,16"
+                Title="Varbit Reader"
+                Description="Inspect varbits and decode varp state at a glance."
+                IconKind="Numeric"
+                HelpCommand="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial
-                        Width="24"
-                        Height="24"
-                        Margin="0,0,8,0"
-                        Foreground="{DynamicResource PrimaryBrush}"
-                        Kind="Numeric" />
-                    <TextBlock
-                        FontSize="20"
-                        FontWeight="SemiBold"
-                        Text="Varbit Reader" />
-                </StackPanel>
-                    <Button
-                        Grid.Column="1"
-                        Style="{StaticResource HeaderHelpButton}"
-                        ToolTip="Open API docs"
-                        Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                        <iconPacks:PackIconMaterial
-                            Width="18"
-                            Height="18"
-                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                            Kind="HelpCircleOutline" />
-                    </Button>
+
+                <!--  Varbit lookup card  -->
+                <Border
+                    Grid.Column="0"
+                    Padding="16"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="Varbit Lookup" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            FontSize="11"
+                            Foreground="{DynamicResource App.MutedBrush}"
+                            Text="Read a specific varbit value by ID." />
+
+                        <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                            <iconPacks:PackIconMaterial
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Kind="Numeric" />
+                            <TextBlock
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="Varbit ID:" />
+                            <TextBox
+                                Width="140"
+                                Margin="0,0,12,0"
+                                Text="{Binding VarbitId, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button
+                                Width="110"
+                                Height="32"
+                                Command="{Binding GetVarbitCommand}"
+                                Content="Get Value"
+                                Style="{StaticResource AccentButton}" />
+                        </WrapPanel>
+
+                        <Separator Margin="0,16,0,16" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,8,0"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Text="Result:" />
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Text="{Binding VarbitValue}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!--  Varp inspector card  -->
+                <Border
+                    Grid.Column="2"
+                    Padding="16"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="Varp Inspector" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            FontSize="11"
+                            Foreground="{DynamicResource App.MutedBrush}"
+                            Text="Load varbits derived from a varp and view the raw bit string." />
+
+                        <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                            <iconPacks:PackIconMaterial
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Kind="Numeric" />
+                            <TextBlock
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="Varp ID:" />
+                            <TextBox
+                                Width="140"
+                                Margin="0,0,12,0"
+                                Text="{Binding VarpId, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button
+                                Width="110"
+                                Height="32"
+                                Command="{Binding LoadVarpCommand}"
+                                Content="Load Varp"
+                                Style="{StaticResource AccentButton}" />
+                            <Button
+                                Width="90"
+                                Height="32"
+                                Margin="8,0,0,0"
+                                Command="{Binding ClearVarpCommand}"
+                                Content="Clear" />
+                        </WrapPanel>
+
+                        <Separator Margin="0,16,0,16" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,8,0"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Text="State:" />
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Text="{Binding VarpState}" />
+                        </StackPanel>
+
+                        <TextBlock
+                            Margin="0,10,0,4"
+                            FontWeight="SemiBold"
+                            Text="Bit String" />
+                        <TextBlock
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            TextWrapping="Wrap"
+                            Text="{Binding VarpBitString}" />
+                    </StackPanel>
+                </Border>
             </Grid>
 
-            <!--  Varbit lookup card  -->
             <Border
-                Margin="0,0,0,16"
                 Padding="16"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="8">
-                <StackPanel>
-                    <TextBlock
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Lookup" />
-                    <TextBlock
-                        Margin="0,4,0,0"
-                        FontSize="11"
-                        Foreground="{DynamicResource App.MutedBrush}"
-                        Text="Enter a varbit ID to read its current value from the active client." />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="260" />
+                    </Grid.ColumnDefinitions>
 
-                    <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
-                        <iconPacks:PackIconMaterial
-                            Width="20"
-                            Height="20"
-                            Margin="0,0,8,0"
-                            Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                            Kind="Numeric" />
+                    <StackPanel Grid.Column="0">
                         <TextBlock
-                            Margin="0,0,6,0"
-                            VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="16"
                             FontWeight="SemiBold"
-                            Text="Varbit ID:" />
-                        <TextBox
-                            Width="160"
-                            Margin="0,0,12,0"
-                            Text="{Binding VarbitId, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button
-                            Width="110"
-                            Height="32"
-                            Command="{Binding GetVarbitCommand}"
-                            Content="Get Value"
-                            Style="{StaticResource AccentButton}" />
-                    </WrapPanel>
+                            Text="Varbits From Varp" />
+                        <TextBlock
+                            Margin="0,4,0,12"
+                            FontSize="11"
+                            Foreground="{DynamicResource App.MutedBrush}"
+                            Text="Shows varbit definitions derived from the selected varp." />
 
-                    <Separator Margin="0,16,0,16" />
-
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            Margin="0,0,8,0"
-                            FontSize="13"
-                            FontWeight="SemiBold"
-                            Text="Result:" />
-                        <TextBlock
-                            FontSize="18"
-                            FontWeight="SemiBold"
-                            Foreground="{DynamicResource PrimaryBrush}"
-                            Text="{Binding VarbitValue}" />
+                        <DataGrid
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            HeadersVisibility="Column"
+                            ItemsSource="{Binding VarpVarbits}"
+                            SelectedItem="{Binding SelectedVarbit}"
+                            MinHeight="200">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Varbit" Binding="{Binding Id}" Width="*" />
+                                <DataGridTextColumn Header="Start" Binding="{Binding StartBit}" Width="Auto" />
+                                <DataGridTextColumn Header="End" Binding="{Binding EndBit}" Width="Auto" />
+                                <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="Auto" />
+                                <DataGridTextColumn Header="Domain" Binding="{Binding Domain}" Width="Auto" />
+                                <DataGridTextColumn Header="Loaded" Binding="{Binding Loaded}" Width="Auto" />
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </StackPanel>
 
-                    <TextBlock
-                        Margin="0,12,0,0"
-                        FontSize="11"
-                        Foreground="{DynamicResource App.MutedBrush}"
-                        Text="{Binding Status}" />
-                </StackPanel>
+                    <Border
+                        Grid.Column="2"
+                        Padding="10"
+                        Background="{DynamicResource App.PanelBrush}"
+                        CornerRadius="6">
+                        <StackPanel>
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Text="Details" />
+                            <TextBlock
+                                Margin="0,2,0,8"
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                Text="{Binding SelectedVarbitLabel}" />
+
+                            <TextBlock FontWeight="SemiBold" Text="Varp" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                Text="{Binding VarpId, StringFormat='ID: {0}'}" />
+                            <TextBlock
+                                Margin="0,0,0,6"
+                                Text="{Binding VarpAddress, StringFormat='Addr: 0x{0:X}'}" />
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                Text="{Binding VarpIndexAddress, StringFormat='Index: 0x{0:X}'}" />
+
+                            <StackPanel Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    Padding="8,3"
+                                    Command="{Binding CopyVarpStateCommand}">
+                                    <TextBlock Text="Copy State" />
+                                </Button>
+                                <Button
+                                    Padding="8,3"
+                                    Command="{Binding CopyVarpBitsCommand}">
+                                    <TextBlock Text="Copy Bits" />
+                                </Button>
+                            </StackPanel>
+
+                            <Separator Margin="0,10,0,10" />
+
+                            <TextBlock FontWeight="SemiBold" Text="Selected Varbit" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                Text="{Binding SelectedVarbit.Id, StringFormat='ID: {0}'}" />
+                            <TextBlock
+                                Margin="0,0,0,6"
+                                Text="{Binding SelectedVarbit.StartBit, StringFormat='Start: {0}'}" />
+                            <TextBlock
+                                Margin="0,0,0,6"
+                                Text="{Binding SelectedVarbit.EndBit, StringFormat='End: {0}'}" />
+                            <TextBlock
+                                Margin="0,0,0,6"
+                                Text="{Binding SelectedVarbit.Value, StringFormat='Value: {0}'}" />
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                Text="{Binding SelectedVarbit.Domain, StringFormat='Domain: {0}'}" />
+
+                            <Button
+                                Padding="8,3"
+                                Command="{Binding CopySelectedVarbitIdCommand}">
+                                <TextBlock Text="Copy Varbit ID" />
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Border>
+
+            <TextBlock
+                Margin="0,12,0,0"
+                FontSize="11"
+                Foreground="{DynamicResource App.MutedBrush}"
+                Text="{Binding Status}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

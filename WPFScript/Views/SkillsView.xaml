@@ -5,6 +5,7 @@
     xmlns:conv="clr-namespace:MESharp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
     xmlns:local="clr-namespace:MESharp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{DynamicResource App.BackgroundBrush}"
@@ -349,39 +350,16 @@
     </UserControl.Resources>
 
 
-    <ScrollViewer>
-        <StackPanel Margin="24">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="5">
 
             <!--  Header  -->
-            <Grid Margin="0,0,0,16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial
-                        Width="24"
-                        Height="24"
-                        Margin="0,0,8,0"
-                        Foreground="{DynamicResource PrimaryBrush}"
-                        Kind="TrophyVariant" />
-                    <TextBlock
-                        FontSize="20"
-                        FontWeight="SemiBold"
-                        Text="Skills" />
-                </StackPanel>
-                <Button
-                    Grid.Column="1"
-                    Style="{StaticResource HeaderHelpButton}"
-                    ToolTip="Open API docs"
-                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                    <iconPacks:PackIconMaterial
-                        Width="18"
-                        Height="18"
-                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                        Kind="HelpCircleOutline" />
-                </Button>
-            </Grid>
+            <controls:SectionHeader
+                Margin="0,0,0,16"
+                Title="Skills"
+                Description="Track XP, levels, and per-hour gains across skills."
+                IconKind="TrophyVariant"
+                HelpCommand="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
 
             <!--  Controls Card  -->
             <Border
@@ -443,8 +421,14 @@
                 Padding="16"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="8">
-                <ScrollViewer MaxHeight="640" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding SkillsView}">
+                <ScrollViewer
+                    MaxHeight="640"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+            <ItemsControl
+                ItemsSource="{Binding SkillsView}"
+                HorizontalAlignment="Stretch"
+                Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
                 <ItemsControl.Style>
                     <Style TargetType="ItemsControl">
                         <!--  default to grid  -->

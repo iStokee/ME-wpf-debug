@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
     Background="{DynamicResource App.BackgroundBrush}"
     Foreground="{DynamicResource App.ForegroundBrush}">
 
@@ -12,35 +13,12 @@
         <StackPanel Margin="24">
 
             <!--  Header  -->
-            <Grid Margin="0,0,0,16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial
-                        Width="24"
-                        Height="24"
-                        Margin="0,0,8,0"
-                        Foreground="{DynamicResource PrimaryBrush}"
-                        Kind="BankOutline" />
-                    <TextBlock
-                        FontSize="20"
-                        FontWeight="SemiBold"
-                        Text="Bank" />
-                </StackPanel>
-                <Button
-                    Grid.Column="1"
-                    Style="{StaticResource HeaderHelpButton}"
-                    ToolTip="Open API docs"
-                    Command="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                    <iconPacks:PackIconMaterial
-                        Width="18"
-                        Height="18"
-                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                        Kind="HelpCircleOutline" />
-                </Button>
-            </Grid>
+            <controls:SectionHeader
+                Margin="0,0,0,16"
+                Title="Bank"
+                Description="Inspect bank state, filters, and common actions."
+                IconKind="BankOutline"
+                HelpCommand="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
 
             <!--  Status, Lookups & Actions Card  -->
             <Border

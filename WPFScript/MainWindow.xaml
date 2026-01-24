@@ -50,17 +50,8 @@
             <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
                 <views:NavigationView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:InventoryViewModel}">
-                <views:InventoryView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:NpcViewModel}">
-                <views:NPCsView />
-            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
                 <views:EquipmentView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:ObjectsViewModel}">
-                <views:ObjectsView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:BankViewModel}">
                 <views:BankView />
@@ -73,9 +64,6 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TradeWindowViewModel}">
                 <views:TradeWindowView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:ItemContainersViewModel}">
-                <views:ItemContainersView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ItemsUnifiedViewModel}">
                 <views:ItemsUnifiedView />
@@ -350,9 +338,17 @@
                         <ToggleButton
                             Margin="5,0,5,0"
                             Command="{Binding ShowHelpCommand}"
-                            Content="Help"
                             IsChecked="{Binding IsHelpSelected, Mode=OneWay}"
-                            ToolTip="Help" />
+                            ToolTip="Help">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="HelpCircleOutline" />
+                                <TextBlock Text="Help" />
+                            </StackPanel>
+                        </ToggleButton>
 
                     </StackPanel>
                 </ScrollViewer>

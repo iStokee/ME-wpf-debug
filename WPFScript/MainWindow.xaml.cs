@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -45,9 +46,17 @@ namespace MESharp
                     Console.WriteLine($"[Managed] MainWindow HWND={hwnd}");
 				    MESharp.API.Focus.RegisterManagedWindow(hwnd);
 
-                    this.PreviewMouseDown += (_, __) =>
+                    this.PreviewMouseDown += (_, e) =>
                     {
-                        try { this.Activate(); Keyboard.Focus(this); } catch { }
+                        try
+                        {
+                            if (ShouldForceWindowFocus(e.OriginalSource as DependencyObject))
+                            {
+                                this.Activate();
+                                Keyboard.Focus(this);
+                            }
+                        }
+                        catch { }
                     };
                 }
                 catch (Exception ex)
@@ -181,6 +190,29 @@ namespace MESharp
             this.WindowState = (this.WindowState == WindowState.Maximized)
                 ? WindowState.Normal
                 : WindowState.Maximized;
+        }
+
+        private static bool ShouldForceWindowFocus(DependencyObject? source)
+        {
+            var current = source;
+            while (current != null)
+            {
+                if (current is ComboBox ||
+                    current is ComboBoxItem ||
+                    current is TextBoxBase ||
+                    current is Selector ||
+                    current is ButtonBase ||
+                    current is PasswordBox ||
+                    current is ListBoxItem ||
+                    current is ListViewItem)
+                {
+                    return false;
+                }
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return true;
         }
 
         /// <summary>

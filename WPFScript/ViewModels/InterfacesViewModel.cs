@@ -27,6 +27,8 @@ namespace MESharp.ViewModels
         public bool HasText => !string.IsNullOrWhiteSpace(Component.TextItem) || !string.IsNullOrWhiteSpace(Component.TextIds);
         public bool HasItem => Component.ItemId > 0;
         public string Text => $"{Component.TextIds} {Component.TextItem}";
+        public string MemLocText => $"Mem: 0x{Component.MemLoc:X}";
+        public string IdPathText => string.IsNullOrWhiteSpace(Component.FullIdPath) ? string.Empty : Component.FullIdPath;
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -66,6 +68,74 @@ namespace MESharp.ViewModels
             }
         }
 
+        private bool _includeHidden;
+        public bool IncludeHidden
+        {
+            get => _includeHidden;
+            set => SetProperty(ref _includeHidden, value);
+        }
+
+        private bool _textOnly;
+        public bool TextOnly
+        {
+            get => _textOnly;
+            set => SetProperty(ref _textOnly, value);
+        }
+
+        private bool _filterIndex1;
+        public bool FilterIndex1
+        {
+            get => _filterIndex1;
+            set => SetProperty(ref _filterIndex1, value);
+        }
+
+        private bool _filterIndex2;
+        public bool FilterIndex2
+        {
+            get => _filterIndex2;
+            set => SetProperty(ref _filterIndex2, value);
+        }
+
+        private bool _filterIndex3;
+        public bool FilterIndex3
+        {
+            get => _filterIndex3;
+            set => SetProperty(ref _filterIndex3, value);
+        }
+
+        private bool _focusRoot;
+        public bool FocusRoot
+        {
+            get => _focusRoot;
+            set => SetProperty(ref _focusRoot, value);
+        }
+
+        private string _rootIdText;
+        public string RootIdText
+        {
+            get => _rootIdText;
+            set => SetProperty(ref _rootIdText, value);
+        }
+
+        private InterfaceComponent _selectedInterface;
+        public InterfaceComponent SelectedInterface
+        {
+            get => _selectedInterface;
+            set
+            {
+                if (SetProperty(ref _selectedInterface, value))
+                {
+                    OnPropertyChanged(nameof(SelectedInterfaceLabel));
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        public string SelectedInterfaceLabel =>
+            SelectedInterface == null
+                ? "(none selected)"
+                : $"{SelectedInterface.Id1}:{SelectedInterface.Id2}:{SelectedInterface.Id3}";
+
         public ObservableCollection<InterfaceComponentViewModel> AllInterfaces { get; } = new ObservableCollection<InterfaceComponentViewModel>();
         
         private int _interfaceCount;
@@ -86,6 +156,8 @@ namespace MESharp.ViewModels
         
         public ICommand LoadInterfacesCommand { get; }
         public ICommand ClearCommand { get; }
+        public ICommand UseSelectedRootCommand { get; }
+        public ICommand RefreshSelectedCommand { get; }
 
         public InterfacesViewModel()
         {
@@ -94,9 +166,12 @@ namespace MESharp.ViewModels
             {
                 AllInterfaces.Clear();
                 InterfaceCount = 0;
+                SelectedInterface = null;
                 StatusMessage = "Cleared.";
                 OnPropertyChanged(nameof(HasInterfaces));
             });
+            UseSelectedRootCommand = new RelayCommand(_ => UseSelectedRoot());
+            RefreshSelectedCommand = new RelayCommand(_ => RefreshSelected(), _ => SelectedInterface != null);
 
             _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
@@ -113,10 +188,40 @@ namespace MESharp.ViewModels
             {
                 AllInterfaces.Clear();
 
-                var components = Interfaces.GetAll();
+                int rootId = -1;
+                bool getOnlyTarget = false;
+                if (FocusRoot && int.TryParse(RootIdText, out int parsed))
+                {
+                    rootId = parsed;
+                    getOnlyTarget = true;
+                }
+
+                var components = Interfaces.Scan(rootId, getOnlyTarget, textOnly: true, includeHidden: IncludeHidden);
                 if (components.Count == 0)
                 {
+                    InterfaceCount = 0;
                     StatusMessage = "No interfaces found.";
+                    return;
+                }
+
+                if (TextOnly)
+                {
+                    components = components.Where(c => !string.IsNullOrWhiteSpace(c.TextItem) || !string.IsNullOrWhiteSpace(c.TextIds)).ToList();
+                }
+
+                if (FilterIndex1 || FilterIndex2 || FilterIndex3)
+                {
+                    components = components.Where(c =>
+                        (FilterIndex1 && c.Index == 1) ||
+                        (FilterIndex2 && c.Index == 2) ||
+                        (FilterIndex3 && c.Index == 3)).ToList();
+                }
+
+                if (components.Count == 0)
+                {
+                    InterfaceCount = 0;
+                    StatusMessage = "No interfaces matched the current filters.";
+                    OnPropertyChanged(nameof(HasInterfaces));
                     return;
                 }
 
@@ -160,6 +265,32 @@ namespace MESharp.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"Error: {ex.Message}";
+            }
+        }
+
+        private void UseSelectedRoot()
+        {
+            if (SelectedInterface == null)
+            {
+                return;
+            }
+
+            RootIdText = SelectedInterface.Id1.ToString();
+            FocusRoot = true;
+            LoadInterfaces();
+        }
+
+        private void RefreshSelected()
+        {
+            if (SelectedInterface == null)
+            {
+                return;
+            }
+
+            var refreshed = Interfaces.GetInfo(SelectedInterface.MemLoc, refreshData: true, refreshText: true);
+            if (refreshed != null)
+            {
+                SelectedInterface = refreshed;
             }
         }
 

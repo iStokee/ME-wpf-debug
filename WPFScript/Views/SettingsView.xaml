@@ -5,6 +5,7 @@
     xmlns:conv="clr-namespace:MESharp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
     xmlns:local="clr-namespace:MESharp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
@@ -28,17 +29,12 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="24">
-        <StackPanel Margin="0,0,0,16" Orientation="Horizontal">
-            <iconPacks:PackIconMaterial
-                Width="22"
-                Height="22"
-                Margin="0,0,8,0"
-                Kind="Palette" />
-            <TextBlock
-                FontSize="20"
-                FontWeight="SemiBold"
-                Text="Theme Settings" />
-        </StackPanel>
+        <controls:SectionHeader
+            Margin="0,0,0,16"
+            Title="Theme Settings"
+            Description="Switch modes and tune accent colors for the debug UI."
+            IconKind="Palette"
+            ShowHelp="False" />
 
         <!--  Theme Mode Toggle  -->
         <Border
