@@ -50,7 +50,7 @@
             <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
                 <views:NavigationView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
+            <!--<DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
                 <views:EquipmentView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:BankViewModel}">
@@ -64,7 +64,7 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TradeWindowViewModel}">
                 <views:TradeWindowView />
-            </DataTemplate>
+            </DataTemplate> -->
             <DataTemplate DataType="{x:Type vm:ItemsUnifiedViewModel}">
                 <views:ItemsUnifiedView />
             </DataTemplate>
