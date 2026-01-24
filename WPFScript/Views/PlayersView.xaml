@@ -74,6 +74,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <!--  Column 1: Position & Movement  -->
@@ -346,6 +347,241 @@
                                         FontWeight="SemiBold"
                                         Foreground="{DynamicResource PrimaryBrush}"
                                         Text="{Binding CalculatedDistance, StringFormat={}{0:F2}}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!--  Column 4: Vitals & Status  -->
+                        <Border
+                            Grid.Column="3"
+                            Margin="5,0,0,0"
+                            Padding="8"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="4">
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource PrimaryBrush}"
+                                    Text="Vitals &amp; Status" />
+                                <Rectangle
+                                    Height="2"
+                                    Margin="0,4,0,6"
+                                    Fill="{DynamicResource PrimaryBrush}" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="HP:" />
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding Health}" />
+
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="HP Max:" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding HealthMax}" />
+
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="HP %:" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding HealthPercent}" />
+
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Prayer:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding Prayer}" />
+
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Prayer Max:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding PrayerMax}" />
+
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Prayer %:" />
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding PrayerPercent}" />
+
+                                    <TextBlock
+                                        Grid.Row="6"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Summon:" />
+                                    <TextBlock
+                                        Grid.Row="6"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding Summoning}" />
+
+                                    <TextBlock
+                                        Grid.Row="7"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Summon Max:" />
+                                    <TextBlock
+                                        Grid.Row="7"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding SummoningMax}" />
+
+                                    <TextBlock
+                                        Grid.Row="8"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Adren:" />
+                                    <TextBlock
+                                        Grid.Row="8"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding Adrenaline}" />
+
+                                    <TextBlock
+                                        Grid.Row="9"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Adren UI:" />
+                                    <TextBlock
+                                        Grid.Row="9"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding AdrenalineUi, StringFormat={}{0:F1}}" />
+                                </Grid>
+
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Target %:" />
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding TargetHealthPercent}" />
+
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Targeting:" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsTargeting, Converter={StaticResource BoolToStringConverter}}" />
+
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Combat VB:" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsInCombatVarbit, Converter={StaticResource BoolToStringConverter}}" />
+
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Run:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsRunEnabled, Converter={StaticResource BoolToStringConverter}}" />
+
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Run Alt:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsRunEnabledAlt, Converter={StaticResource BoolToStringConverter}}" />
+
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Quick Pray:" />
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsQuickPrayerEnabled, Converter={StaticResource BoolToStringConverter}}" />
                                 </Grid>
                             </StackPanel>
                         </Border>

@@ -1,0 +1,301 @@
+<UserControl
+    x:Class="MESharp.Views.GrandExchangeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:MESharp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:MESharp.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:GrandExchangeViewModel}"
+    d:DesignHeight="800"
+    d:DesignWidth="1000"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <conv:BoolToStringConverter x:Key="BoolToStringConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:SectionHeader
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Title="Grand Exchange"
+            Description="Inspect slots, validate order states, and test GE actions."
+            IconKind="Store"
+            HelpCommand="{Binding DataContext.ShowApiDocsCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" Margin="0,0,10,0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="12"
+                        Background="{DynamicResource App.CardBrush}"
+                        CornerRadius="5">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,8">
+                                <TextBlock
+                                    DockPanel.Dock="Left"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource PrimaryBrush}"
+                                    Text="Status" />
+                                <Button
+                                    DockPanel.Dock="Right"
+                                    Padding="10,4"
+                                    Command="{Binding RefreshCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Refresh" Width="14" Height="14" />
+                                        <TextBlock Margin="6,0,0,0" Text="Refresh" />
+                                    </StackPanel>
+                                </Button>
+                            </DockPanel>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,4,8,4" Text="At GE:" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="0,4,0,4"
+                                    Text="{Binding IsAtGE, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Yes|No}" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,4,8,4" Text="Window Open:" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="0,4,0,4"
+                                    Text="{Binding IsWindowOpen, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Yes|No}" />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,4,8,4" Text="Search Open:" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="0,4,0,4"
+                                    Text="{Binding IsSearchOpen, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Yes|No}" />
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,4,8,4" Text="Available Slots:" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,4,0,4" Text="{Binding AvailableSlots}" />
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,4,8,4" Text="Finished Slots:" />
+                                <TextBlock Grid.Row="4" Grid.Column="1" Margin="0,4,0,4" Text="{Binding FinishedSlots}" />
+
+                                <TextBlock Grid.Row="5" Grid.Column="0" Margin="0,4,8,4" Text="Next Slot:" />
+                                <TextBlock
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Margin="0,4,0,4"
+                                    Text="{Binding NextAvailableSlot, StringFormat=Index {0}}" />
+                            </Grid>
+
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock
+                                    Foreground="{DynamicResource App.MutedBrush}"
+                                    TextWrapping="Wrap"
+                                    Text="{Binding StatusMessage}" />
+                            </StackPanel>
+
+                            <UniformGrid Margin="0,10,0,0" Columns="2">
+                                <Button Margin="0,0,6,6" Command="{Binding OpenGeCommand}" Content="Open GE" />
+                                <Button Margin="0,0,0,6" Command="{Binding CloseGeCommand}" Content="Close GE" />
+                                <Button Margin="0,0,6,0" Command="{Binding BackCommand}" Content="Back" />
+                                <Button Margin="0,0,0,0" Command="{Binding CollectCommand}" Content="Collect" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="12"
+                        Background="{DynamicResource App.CardBrush}"
+                        CornerRadius="5">
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Text="Slot Actions" />
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Open slot (0-based):" />
+                                <TextBox Width="60" Margin="8,0,0,0" Text="{Binding OpenSlotIndex}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding OpenSlotCommand}" Content="Open" />
+                            </StackPanel>
+
+                            <Button Margin="0,8,0,0" Command="{Binding OpenNextSlotCommand}" Content="Open Next Available" />
+
+                            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Cancel slot (1-based):" />
+                                <TextBox Width="60" Margin="8,0,0,0" Text="{Binding CancelSlotIndex}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding CancelOrderCommand}" Content="Cancel" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Find order (item id):" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding FindItemId}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding FindOrderCommand}" Content="Find" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="12"
+                        Background="{DynamicResource App.CardBrush}"
+                        CornerRadius="5">
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Text="Place Order" />
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Type:" />
+                                <ComboBox
+                                    Width="120"
+                                    Margin="8,0,0,0"
+                                    ItemsSource="{Binding OrderTypes}"
+                                    SelectedItem="{Binding PlaceOrderType}" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Item ID:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding PlaceItemId}" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Item name:" />
+                                <TextBox Width="200" Margin="8,0,0,0" Text="{Binding PlaceItemName}" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Price:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding PlacePrice}" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Quantity:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding PlaceQuantity}" />
+                            </StackPanel>
+
+                            <Button Margin="0,10,0,0" Command="{Binding PlaceOrderCommand}" Content="Place Order" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        Padding="12"
+                        Background="{DynamicResource App.CardBrush}"
+                        CornerRadius="5">
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Text="Manual Controls" />
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Search item ID:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding SearchItemId}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding SearchItemCommand}" Content="Search" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Select item ID:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding ManualItemId}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding SelectItemCommand}" Content="Select" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Set price:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding ManualPrice}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding SetPriceCommand}" Content="Apply" />
+                            </StackPanel>
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Set quantity:" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding ManualQuantity}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding SetQuantityCommand}" Content="Apply" />
+                            </StackPanel>
+
+                            <Button Margin="0,10,0,0" Command="{Binding ConfirmOrderCommand}" Content="Confirm Order" />
+
+                            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Delay offset (ms):" />
+                                <TextBox Width="80" Margin="8,0,0,0" Text="{Binding DelayOffset}" />
+                                <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding ApplyDelayCommand}" Content="Apply" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border
+                Grid.Column="1"
+                Padding="12"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            FontSize="13"
+                            FontWeight="SemiBold"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            Text="Slots" />
+                        <Button DockPanel.Dock="Right" Command="{Binding RefreshCommand}" Padding="10,4" Content="Refresh" />
+                    </DockPanel>
+
+                    <DataGrid
+                        Grid.Row="1"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding Slots}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" Binding="{Binding SlotNumber}" Width="40" />
+                            <DataGridTextColumn Header="Status" Binding="{Binding StatusLabel}" Width="120" />
+                            <DataGridTextColumn Header="Type" Binding="{Binding OrderType}" Width="80" />
+                            <DataGridTextColumn Header="Item" Binding="{Binding ItemId}" Width="80" />
+                            <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="80" />
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="60" />
+                            <DataGridTextColumn Header="Done" Binding="{Binding CompletedQuantity}" Width="70" />
+                            <DataGridTextColumn Header="Value" Binding="{Binding CompletedValue}" Width="80" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

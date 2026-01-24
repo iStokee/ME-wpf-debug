@@ -68,6 +68,9 @@
             <DataTemplate DataType="{x:Type vm:ItemsUnifiedViewModel}">
                 <views:ItemsUnifiedView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GrandExchangeViewModel}">
+                <views:GrandExchangeView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ObjectsUnifiedViewModel}">
                 <views:ObjectsUnifiedView />
             </DataTemplate>
@@ -289,6 +292,20 @@
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                                     Kind="PackageVariantClosed" />
                                 <TextBlock Text="Items" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowGrandExchangeCommand}"
+                            IsChecked="{Binding IsGrandExchangeSelected, Mode=OneWay}"
+                            ToolTip="Grand Exchange">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="Store" />
+                                <TextBlock Text="GE" />
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton

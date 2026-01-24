@@ -17,6 +17,7 @@ namespace MESharp.ViewModels
         Players,
         Navigation,
         ItemsUnified,
+        GrandExchange,
         ObjectsUnified,
         Interfaces,
         Varbit,
@@ -51,6 +52,7 @@ namespace MESharp.ViewModels
                     OnPropertyChanged(nameof(IsPlayersSelected));
                     OnPropertyChanged(nameof(IsNavigationSelected));
                     OnPropertyChanged(nameof(IsItemsUnifiedSelected));
+                    OnPropertyChanged(nameof(IsGrandExchangeSelected));
                     OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
                     OnPropertyChanged(nameof(IsInterfacesSelected));
                     OnPropertyChanged(nameof(IsVarbitSelected));
@@ -70,6 +72,7 @@ namespace MESharp.ViewModels
         public bool IsPlayersSelected => CurrentPage == AppPage.Players;
         public bool IsNavigationSelected => CurrentPage == AppPage.Navigation;
         public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
+        public bool IsGrandExchangeSelected => CurrentPage == AppPage.GrandExchange;
         public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
         public bool IsInterfacesSelected => CurrentPage == AppPage.Interfaces;
         public bool IsVarbitSelected => CurrentPage == AppPage.Varbit;
@@ -81,6 +84,7 @@ namespace MESharp.ViewModels
         public ICommand ShowPlayersCommand { get; }
         public ICommand ShowNavigationCommand { get; }
         public ICommand ShowItemsUnifiedCommand { get; }
+        public ICommand ShowGrandExchangeCommand { get; }
         public ICommand ShowObjectsUnifiedCommand { get; }
         public ICommand ShowInterfacesCommand { get; }
         public ICommand ShowVarbitCommand { get; }
@@ -103,6 +107,7 @@ namespace MESharp.ViewModels
             ShowPlayersCommand        = new RelayCommand(_ => ShowPlayers());
             ShowNavigationCommand     = new RelayCommand(_ => ShowNavigation());
             ShowItemsUnifiedCommand   = new RelayCommand(_ => ShowItemsUnified());
+            ShowGrandExchangeCommand  = new RelayCommand(_ => ShowGrandExchange());
             ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
             ShowInterfacesCommand     = new RelayCommand(_ => ShowInterfaces());
             ShowVarbitCommand         = new RelayCommand(_ => ShowVarbit());
@@ -131,6 +136,7 @@ namespace MESharp.ViewModels
         private void ShowPlayers() => SwitchView(AppPage.Players, () => new PlayersViewModel());
         private void ShowNavigation() => SwitchView(AppPage.Navigation, () => new NavigationViewModel());
         private void ShowItemsUnified() => SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
+        private void ShowGrandExchange() => SwitchView(AppPage.GrandExchange, () => new GrandExchangeViewModel());
         private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
         private void ShowInterfaces() => SwitchView(AppPage.Interfaces, () => new InterfacesViewModel());
         private void ShowVarbit() => SwitchView(AppPage.Varbit, () => new VarbitViewModel());

@@ -92,6 +92,22 @@ namespace MESharp.ViewModels
         private int _hoverProgress;
         private string _interactingWith = "";
         private int _interactingWithId;
+        private int _health;
+        private int _healthMax;
+        private int _healthPercent;
+        private int _prayer;
+        private int _prayerMax;
+        private int _prayerPercent;
+        private int _summoning;
+        private int _summoningMax;
+        private int _adrenaline;
+        private float _adrenalineUi;
+        private int _targetHealthPercent;
+        private bool _isTargeting;
+        private bool _isInCombatVarbit;
+        private bool _isRunEnabled;
+        private bool _isRunEnabledAlt;
+        private bool _isQuickPrayerEnabled;
 
         public bool IsLoggedIn
         {
@@ -136,6 +152,102 @@ namespace MESharp.ViewModels
         {
             get => _interactingWithId;
             set { _interactingWithId = value; OnPropertyChanged(); }
+        }
+
+        public int Health
+        {
+            get => _health;
+            set { _health = value; OnPropertyChanged(); }
+        }
+
+        public int HealthMax
+        {
+            get => _healthMax;
+            set { _healthMax = value; OnPropertyChanged(); }
+        }
+
+        public int HealthPercent
+        {
+            get => _healthPercent;
+            set { _healthPercent = value; OnPropertyChanged(); }
+        }
+
+        public int Prayer
+        {
+            get => _prayer;
+            set { _prayer = value; OnPropertyChanged(); }
+        }
+
+        public int PrayerMax
+        {
+            get => _prayerMax;
+            set { _prayerMax = value; OnPropertyChanged(); }
+        }
+
+        public int PrayerPercent
+        {
+            get => _prayerPercent;
+            set { _prayerPercent = value; OnPropertyChanged(); }
+        }
+
+        public int Summoning
+        {
+            get => _summoning;
+            set { _summoning = value; OnPropertyChanged(); }
+        }
+
+        public int SummoningMax
+        {
+            get => _summoningMax;
+            set { _summoningMax = value; OnPropertyChanged(); }
+        }
+
+        public int Adrenaline
+        {
+            get => _adrenaline;
+            set { _adrenaline = value; OnPropertyChanged(); }
+        }
+
+        public float AdrenalineUi
+        {
+            get => _adrenalineUi;
+            set { _adrenalineUi = value; OnPropertyChanged(); }
+        }
+
+        public int TargetHealthPercent
+        {
+            get => _targetHealthPercent;
+            set { _targetHealthPercent = value; OnPropertyChanged(); }
+        }
+
+        public bool IsTargeting
+        {
+            get => _isTargeting;
+            set { _isTargeting = value; OnPropertyChanged(); }
+        }
+
+        public bool IsInCombatVarbit
+        {
+            get => _isInCombatVarbit;
+            set { _isInCombatVarbit = value; OnPropertyChanged(); }
+        }
+
+        public bool IsRunEnabled
+        {
+            get => _isRunEnabled;
+            set { _isRunEnabled = value; OnPropertyChanged(); }
+        }
+
+        public bool IsRunEnabledAlt
+        {
+            get => _isRunEnabledAlt;
+            set { _isRunEnabledAlt = value; OnPropertyChanged(); }
+        }
+
+        public bool IsQuickPrayerEnabled
+        {
+            get => _isQuickPrayerEnabled;
+            set { _isQuickPrayerEnabled = value; OnPropertyChanged(); }
         }
 
         // Distance Calculator
@@ -227,6 +339,25 @@ namespace MESharp.ViewModels
             try
             {
                 IsLoggedIn = LocalPlayer.IsLoggedIn();
+                if (!IsLoggedIn || !Game.IsInjected)
+                {
+                    Health = 0;
+                    HealthMax = 0;
+                    HealthPercent = 0;
+                    Prayer = 0;
+                    PrayerMax = 0;
+                    PrayerPercent = 0;
+                    Summoning = 0;
+                    SummoningMax = 0;
+                    Adrenaline = 0;
+                    AdrenalineUi = 0;
+                    TargetHealthPercent = 0;
+                    IsTargeting = false;
+                    IsInCombatVarbit = false;
+                    IsRunEnabled = false;
+                    IsRunEnabledAlt = false;
+                    IsQuickPrayerEnabled = false;
+                }
 
                 var tilePos = LocalPlayer.GetTilePosition();
                 _tileX = tilePos.x;
@@ -246,6 +377,25 @@ namespace MESharp.ViewModels
                 HoverProgress = LocalPlayer.GetHoverProgress();
                 InteractingWith = LocalPlayer.GetInteractingWith();
                 InteractingWithId = LocalPlayer.GetInteractingWithId();
+                if (IsLoggedIn && Game.IsInjected)
+                {
+                    Health = LocalPlayer.GetHealth();
+                    HealthMax = LocalPlayer.GetHealthMax();
+                    HealthPercent = LocalPlayer.GetHealthPercent();
+                    Prayer = LocalPlayer.GetPrayer();
+                    PrayerMax = LocalPlayer.GetPrayerMax();
+                    PrayerPercent = LocalPlayer.GetPrayerPercent();
+                    Summoning = LocalPlayer.GetSummoning();
+                    SummoningMax = LocalPlayer.GetSummoningMax();
+                    Adrenaline = LocalPlayer.GetAdrenaline();
+                    AdrenalineUi = LocalPlayer.GetAdrenalineFromInterface();
+                    TargetHealthPercent = LocalPlayer.GetTargetHealthPercent();
+                    IsTargeting = LocalPlayer.IsTargeting();
+                    IsInCombatVarbit = LocalPlayer.IsInCombatVarbit();
+                    IsRunEnabled = LocalPlayer.IsRunEnabled();
+                    IsRunEnabledAlt = LocalPlayer.IsRunEnabledAlt();
+                    IsQuickPrayerEnabled = LocalPlayer.IsQuickPrayerEnabled();
+                }
             }
             catch (Exception ex)
             {
