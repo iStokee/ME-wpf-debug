@@ -20,7 +20,7 @@ Load it in MemoryError:
 3) Hit “Hot Reload” to launch the window.
 
 ## Build Notes
-- Requires .NET 8.0 SDK; VS 2022 recommended for XAML editing.
+- Requires .NET 10.0 SDK; VS 2022 recommended for XAML editing.
 - Post-build copies the DLL to `%USERPROFILE%\MemoryError\CSharp_scripts\`.
 - `csharp_interop.dll` is referenced but not copied; ME provides it to avoid duplicate loads.
 
@@ -68,7 +68,7 @@ if (Bank.IsOpen) { Bank.DepositAll(); Bank.Deposit("Bronze bar", 10); }
 - UI stutter? Move heavy API calls to `Task.Run` and marshal back via dispatcher.
 
 ## Notes
-- Target: `.NET 8.0-windows`, WPF, x64.
+- Target: `.NET 10.0-windows`, WPF, x64.
 - Dependencies are embedded with Costura; the single DLL is all you need to deploy (besides ME’s runtime assemblies).
 
 That’s it—build, load, and start testing.

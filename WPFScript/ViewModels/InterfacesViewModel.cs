@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -26,7 +28,26 @@ namespace MESharp.ViewModels
         public string ItemText => Component.ItemId > 0 ? $"Item: {Component.ItemId} x{Component.ItemStack}" : string.Empty;
         public bool HasText => !string.IsNullOrWhiteSpace(Component.TextItem) || !string.IsNullOrWhiteSpace(Component.TextIds);
         public bool HasItem => Component.ItemId > 0;
-        public string Text => $"{Component.TextIds} {Component.TextItem}";
+        public string CleanTextItem => InterfaceTextCleaner.Clean(Component.TextItem);
+        public string Text
+        {
+            get
+            {
+                var ids = Component.TextIds?.Trim();
+                var textItem = CleanTextItem;
+                if (string.IsNullOrWhiteSpace(ids))
+                {
+                    return textItem ?? string.Empty;
+                }
+
+                if (string.IsNullOrWhiteSpace(textItem))
+                {
+                    return ids;
+                }
+
+                return $"{ids} {textItem}";
+            }
+        }
         public string MemLocText => $"Mem: 0x{Component.MemLoc:X}";
         public string IdPathText => string.IsNullOrWhiteSpace(Component.FullIdPath) ? string.Empty : Component.FullIdPath;
 
@@ -38,6 +59,20 @@ namespace MESharp.ViewModels
 
     public class InterfacesViewModel : INotifyPropertyChanged, IActivatableViewModel, IDisposable
     {
+        public sealed class InterfaceOverrideEntry
+        {
+            public string Key { get; }
+            public InterfaceId Id { get; }
+
+            public InterfaceOverrideEntry(string key, InterfaceId id)
+            {
+                Key = key;
+                Id = id;
+            }
+
+            public string Display => $"{Key} = {Id.Id1}:{Id.Id2}:{Id.Id3}";
+        }
+
         private readonly DispatcherTimer _updateTimer;
         private bool _isActive;
         private bool _disposed;
@@ -126,6 +161,8 @@ namespace MESharp.ViewModels
                 if (SetProperty(ref _selectedInterface, value))
                 {
                     OnPropertyChanged(nameof(SelectedInterfaceLabel));
+                    OnPropertyChanged(nameof(SelectedInterfaceTextItem));
+                    HighlightSelectionNow();
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
@@ -135,6 +172,8 @@ namespace MESharp.ViewModels
             SelectedInterface == null
                 ? "(none selected)"
                 : $"{SelectedInterface.Id1}:{SelectedInterface.Id2}:{SelectedInterface.Id3}";
+
+        public string SelectedInterfaceTextItem => InterfaceTextCleaner.Clean(SelectedInterface?.TextItem);
 
         public ObservableCollection<InterfaceComponentViewModel> AllInterfaces { get; } = new ObservableCollection<InterfaceComponentViewModel>();
         
@@ -152,12 +191,57 @@ namespace MESharp.ViewModels
             set => SetProperty(ref _statusMessage, value);
         }
 
+        private bool _highlightSelection = true;
+        public bool HighlightSelection
+        {
+            get => _highlightSelection;
+            set => SetProperty(ref _highlightSelection, value);
+        }
+
+        private bool _keepHighlight;
+        public bool KeepHighlight
+        {
+            get => _keepHighlight;
+            set => SetProperty(ref _keepHighlight, value);
+        }
+
+        private int _highlightDurationMs = 1000;
+        public int HighlightDurationMs
+        {
+            get => _highlightDurationMs;
+            set => SetProperty(ref _highlightDurationMs, value);
+        }
+
+        private long _lastHighlightTick;
+
+        private string _newOverrideKey;
+        public string NewOverrideKey
+        {
+            get => _newOverrideKey;
+            set => SetProperty(ref _newOverrideKey, value);
+        }
+
+        private string _overridesPath;
+        public string OverridesPath
+        {
+            get => _overridesPath;
+            set => SetProperty(ref _overridesPath, value);
+        }
+
+        public ObservableCollection<InterfaceOverrideEntry> Overrides { get; } = new ObservableCollection<InterfaceOverrideEntry>();
+
         public bool HasInterfaces => AllInterfaces.Count > 0;
         
         public ICommand LoadInterfacesCommand { get; }
         public ICommand ClearCommand { get; }
         public ICommand UseSelectedRootCommand { get; }
         public ICommand RefreshSelectedCommand { get; }
+        public ICommand CaptureOverrideCommand { get; }
+        public ICommand RemoveOverrideCommand { get; }
+        public ICommand ExportOverridesCommand { get; }
+        public ICommand LoadOverridesCommand { get; }
+        public ICommand HighlightSelectedCommand { get; }
+        public ICommand ClearHighlightCommand { get; }
 
         public InterfacesViewModel()
         {
@@ -172,6 +256,12 @@ namespace MESharp.ViewModels
             });
             UseSelectedRootCommand = new RelayCommand(_ => UseSelectedRoot());
             RefreshSelectedCommand = new RelayCommand(_ => RefreshSelected(), _ => SelectedInterface != null);
+            CaptureOverrideCommand = new RelayCommand(_ => CaptureOverride(), _ => SelectedInterface != null);
+            RemoveOverrideCommand = new RelayCommand(entry => RemoveOverride(entry as InterfaceOverrideEntry), entry => entry is InterfaceOverrideEntry);
+            ExportOverridesCommand = new RelayCommand(_ => ExportOverrides());
+            LoadOverridesCommand = new RelayCommand(_ => LoadOverrides());
+            HighlightSelectedCommand = new RelayCommand(_ => HighlightSelectionNow(), _ => SelectedInterface != null);
+            ClearHighlightCommand = new RelayCommand(_ => DebugDraw.Clear("InterfaceSelection"));
 
             _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
@@ -180,6 +270,8 @@ namespace MESharp.ViewModels
             _updateTimer.Tick += OnTimerTick;
 
             StatusMessage = "Click Load Interfaces to scan the game UI.";
+            OverridesPath = Path.GetFullPath(InterfaceOverrides.ResolveDefaultPath());
+            LoadOverrides();
         }
 
         private void LoadInterfaces()
@@ -294,6 +386,104 @@ namespace MESharp.ViewModels
             }
         }
 
+        private void HighlightSelectionNow()
+        {
+            if (!HighlightSelection || SelectedInterface == null)
+            {
+                return;
+            }
+
+            if (SelectedInterface.Width <= 0 || SelectedInterface.Height <= 0)
+            {
+                return;
+            }
+
+            var now = Environment.TickCount64;
+            if (now - _lastHighlightTick < 250)
+            {
+                return;
+            }
+
+            _lastHighlightTick = now;
+            int duration = KeepHighlight ? 0 : HighlightDurationMs;
+            DebugDraw.HighlightInterface("InterfaceSelection", SelectedInterface, duration, 2.0f, false, KeepHighlight);
+        }
+
+        private void CaptureOverride()
+        {
+            if (SelectedInterface == null)
+            {
+                StatusMessage = "Select an interface component first.";
+                return;
+            }
+
+            var key = (NewOverrideKey ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                StatusMessage = "Enter a key name before capturing (e.g., Bank.Tab.Inventory).";
+                return;
+            }
+
+            var entry = new InterfaceOverrideEntry(key, new InterfaceId(SelectedInterface.Id1, SelectedInterface.Id2, SelectedInterface.Id3));
+            var existing = Overrides.FirstOrDefault(o => string.Equals(o.Key, key, StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+            {
+                Overrides.Remove(existing);
+            }
+
+            Overrides.Add(entry);
+            StatusMessage = $"Captured {entry.Display}.";
+        }
+
+        private void RemoveOverride(InterfaceOverrideEntry entry)
+        {
+            if (entry == null)
+                return;
+
+            Overrides.Remove(entry);
+            StatusMessage = $"Removed {entry.Key}.";
+        }
+
+        private void ExportOverrides()
+        {
+            var map = Overrides.ToDictionary(o => o.Key, o => o.Id, StringComparer.OrdinalIgnoreCase);
+            if (InterfaceOverrides.Save(map, OverridesPath))
+            {
+                StatusMessage = $"Saved overrides to {OverridesPath}.";
+            }
+            else
+            {
+                StatusMessage = "Failed to save overrides.";
+            }
+        }
+
+        private void LoadOverrides()
+        {
+            Overrides.Clear();
+            var loaded = InterfaceOverrides.Load(OverridesPath);
+            foreach (var kvp in InterfaceOverrides.Entries)
+            {
+                Overrides.Add(new InterfaceOverrideEntry(kvp.Key, kvp.Value));
+            }
+
+            if (loaded)
+            {
+                StatusMessage = $"Loaded overrides from {OverridesPath}.";
+                return;
+            }
+
+            if (!File.Exists(OverridesPath))
+            {
+                var created = InterfaceOverrides.Save(new Dictionary<string, InterfaceId>(StringComparer.OrdinalIgnoreCase), OverridesPath);
+                StatusMessage = created
+                    ? $"Created overrides file at {OverridesPath}."
+                    : "Overrides file was missing and could not be created.";
+                return;
+            }
+
+            StatusMessage = "Failed to load overrides. Check the JSON format.";
+        }
+
         private void OnTimerTick(object sender, EventArgs e)
         {
             if (_disposed || !_isActive || FreezeRefresh)
@@ -378,5 +568,21 @@ namespace MESharp.ViewModels
             catch { /* ignore */ }
         }
         #endregion
+    }
+
+    internal static class InterfaceTextCleaner
+    {
+        private static readonly Regex ColTagRegex = new Regex(@"</?col(?:=[^>]+)?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        public static string Clean(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+
+            var cleaned = ColTagRegex.Replace(value, string.Empty).Trim();
+            return cleaned;
+        }
     }
 }

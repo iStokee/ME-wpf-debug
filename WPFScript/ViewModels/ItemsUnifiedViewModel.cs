@@ -69,6 +69,12 @@ namespace MESharp.ViewModels
 		public ICommand BankDepositAllCommand { get; }
 		public ICommand BankDepositExceptIdsCommand { get; }
 		public ICommand BankCloseCommand { get; }
+		public ICommand BankWithdrawSelectedCommand { get; }
+		public ICommand BankWithdrawByIdCommand { get; }
+		public ICommand BankWithdrawByNameCommand { get; }
+		public ICommand BankInvDepositSelectedCommand { get; }
+		public ICommand BankInvDepositByIdCommand { get; }
+		public ICommand BankInvDepositByNameCommand { get; }
 		public ICommand EquipmentRefreshCommand { get; }
 		public ICommand EquipmentOpenCommand { get; }
 		public ICommand LootRefreshCommand { get; }
@@ -207,6 +213,48 @@ namespace MESharp.ViewModels
 			set => SetProperty(ref _bankKeepIds, value);
 		}
 
+		private string _bankMenuText = "Withdraw-1";
+		public string BankMenuText
+		{
+			get => _bankMenuText;
+			set => SetProperty(ref _bankMenuText, value);
+		}
+
+		private string _bankActionId = string.Empty;
+		public string BankActionId
+		{
+			get => _bankActionId;
+			set => SetProperty(ref _bankActionId, value);
+		}
+
+		private string _bankActionName = string.Empty;
+		public string BankActionName
+		{
+			get => _bankActionName;
+			set => SetProperty(ref _bankActionName, value);
+		}
+
+		private string _bankInvMenuText = "Deposit-1";
+		public string BankInvMenuText
+		{
+			get => _bankInvMenuText;
+			set => SetProperty(ref _bankInvMenuText, value);
+		}
+
+		private string _bankInvActionId = string.Empty;
+		public string BankInvActionId
+		{
+			get => _bankInvActionId;
+			set => SetProperty(ref _bankInvActionId, value);
+		}
+
+		private string _bankInvActionName = string.Empty;
+		public string BankInvActionName
+		{
+			get => _bankInvActionName;
+			set => SetProperty(ref _bankInvActionName, value);
+		}
+
 		// ─── Status Properties ──────────────────────────────────────────────
 		private bool _inventoryIsOpen;
 		private bool _inventoryIsFull;
@@ -275,6 +323,12 @@ namespace MESharp.ViewModels
 			BankDepositAllCommand = new RelayCommand(_ => BankDepositAll());
 			BankDepositExceptIdsCommand = new RelayCommand(_ => BankDepositExceptIds());
 			BankCloseCommand = new RelayCommand(_ => BankClose());
+			BankWithdrawSelectedCommand = new RelayCommand(_ => BankWithdrawSelected());
+			BankWithdrawByIdCommand = new RelayCommand(_ => BankWithdrawById());
+			BankWithdrawByNameCommand = new RelayCommand(_ => BankWithdrawByName());
+			BankInvDepositSelectedCommand = new RelayCommand(_ => BankInvDepositSelected());
+			BankInvDepositByIdCommand = new RelayCommand(_ => BankInvDepositById());
+			BankInvDepositByNameCommand = new RelayCommand(_ => BankInvDepositByName());
 			EquipmentRefreshCommand = new RelayCommand(_ => { LoadItems(); RefreshEquipmentStatus(); });
 			EquipmentOpenCommand = new RelayCommand(_ => EquipmentOpen());
 			LootRefreshCommand = new RelayCommand(_ => LoadItems());
@@ -301,7 +355,7 @@ namespace MESharp.ViewModels
 		private void UpdateContainerVisibility()
 		{
 			IsInventorySelected = SelectedContainer == ContainerType.Inventory;
-			IsBankSelected = SelectedContainer == ContainerType.Bank;
+			IsBankSelected = SelectedContainer == ContainerType.Bank || SelectedContainer == ContainerType.BankInventory;
 			IsEquipmentSelected = SelectedContainer == ContainerType.Equipment;
 			IsLootSelected = SelectedContainer == ContainerType.Loot;
 			IsMaterialCacheSelected = SelectedContainer == ContainerType.MaterialCache;
@@ -338,6 +392,10 @@ namespace MESharp.ViewModels
 				if (IsInventorySelected)
 				{
 					InventoryItemSelected = Inventory.IsItemSelected;
+				}
+				if (IsBankSelected)
+				{
+					RefreshBankStatus();
 				}
 
 				ItemCount = Items.Count;
@@ -399,6 +457,114 @@ namespace MESharp.ViewModels
 				Bank.Close();
 				StatusMessage = "Bank closed.";
 				RefreshBankStatus();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankWithdrawSelected()
+		{
+			if (SelectedItem == null)
+			{
+				StatusMessage = "Select a bank item first.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.WithdrawById(SelectedItem.Id, BankMenuText);
+				StatusMessage = ok ? $"Withdraw action sent for {SelectedItem.Name}." : "Withdraw action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankWithdrawById()
+		{
+			if (!int.TryParse(BankActionId, out var id))
+			{
+				StatusMessage = "Enter a valid item ID.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.WithdrawById(id, BankMenuText);
+				StatusMessage = ok ? $"Withdraw action sent for ID {id}." : "Withdraw action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankWithdrawByName()
+		{
+			if (string.IsNullOrWhiteSpace(BankActionName))
+			{
+				StatusMessage = "Enter a valid item name.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.WithdrawByName(BankActionName, BankMenuText);
+				StatusMessage = ok ? $"Withdraw action sent for '{BankActionName}'." : "Withdraw action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankInvDepositSelected()
+		{
+			if (SelectedItem == null)
+			{
+				StatusMessage = "Select a bank inventory item first.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.DepositFromInventoryById(SelectedItem.Id, BankInvMenuText);
+				StatusMessage = ok ? $"Deposit action sent for {SelectedItem.Name}." : "Deposit action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankInvDepositById()
+		{
+			if (!int.TryParse(BankInvActionId, out var id))
+			{
+				StatusMessage = "Enter a valid inventory item ID.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.DepositFromInventoryById(id, BankInvMenuText);
+				StatusMessage = ok ? $"Deposit action sent for ID {id}." : "Deposit action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankInvDepositByName()
+		{
+			if (string.IsNullOrWhiteSpace(BankInvActionName))
+			{
+				StatusMessage = "Enter a valid inventory item name.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.DepositFromInventoryByName(BankInvActionName, BankInvMenuText);
+				StatusMessage = ok ? $"Deposit action sent for '{BankInvActionName}'." : "Deposit action failed.";
 			}
 			catch (Exception ex)
 			{

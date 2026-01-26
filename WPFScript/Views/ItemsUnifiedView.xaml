@@ -531,6 +531,70 @@
                                     Padding="10,5"
                                     Command="{Binding BankDepositExceptIdsCommand}"
                                     Content="Deposit Except IDs" />
+
+                                <Separator Margin="0,10,0,10" />
+
+                                <TextBlock
+                                    Margin="0,0,0,6"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Text="Withdraw (Bank Items)" />
+                                <TextBlock FontSize="11" Text="Menu text (e.g., Withdraw-1, Withdraw-X)" />
+                                <TextBox Margin="0,4,0,6" Text="{Binding BankMenuText}" />
+
+                                <Button
+                                    Margin="0,0,0,6"
+                                    Padding="10,5"
+                                    Command="{Binding BankWithdrawSelectedCommand}"
+                                    Content="Withdraw Selected" />
+
+                                <TextBlock FontSize="11" Text="Withdraw by ID" />
+                                <TextBox Margin="0,4,0,6" Text="{Binding BankActionId}" />
+                                <Button
+                                    Margin="0,0,0,6"
+                                    Padding="10,5"
+                                    Command="{Binding BankWithdrawByIdCommand}"
+                                    Content="Withdraw ID" />
+
+                                <TextBlock FontSize="11" Text="Withdraw by Name" />
+                                <TextBox Margin="0,4,0,6" Text="{Binding BankActionName}" />
+                                <Button
+                                    Margin="0,0,0,6"
+                                    Padding="10,5"
+                                    Command="{Binding BankWithdrawByNameCommand}"
+                                    Content="Withdraw Name" />
+
+                                <Separator Margin="0,10,0,10" />
+
+                                <TextBlock
+                                    Margin="0,0,0,6"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Text="Deposit (Bank Inventory)" />
+                                <TextBlock FontSize="11" Text="Menu text (e.g., Deposit-1, Deposit-X)" />
+                                <TextBox Margin="0,4,0,6" Text="{Binding BankInvMenuText}" />
+
+                                <Button
+                                    Margin="0,0,0,6"
+                                    Padding="10,5"
+                                    Command="{Binding BankInvDepositSelectedCommand}"
+                                    Content="Deposit Selected" />
+
+                                <TextBlock FontSize="11" Text="Deposit by ID" />
+                                <TextBox Margin="0,4,0,6" Text="{Binding BankInvActionId}" />
+                                <Button
+                                    Margin="0,0,0,6"
+                                    Padding="10,5"
+                                    Command="{Binding BankInvDepositByIdCommand}"
+                                    Content="Deposit ID" />
+
+                                <TextBlock FontSize="11" Text="Deposit by Name" />
+                                <TextBox Margin="0,4,0,6" Text="{Binding BankInvActionName}" />
+                                <Button
+                                    Margin="0,0,0,5"
+                                    Padding="10,5"
+                                    Command="{Binding BankInvDepositByNameCommand}"
+                                    Content="Deposit Name" />
                             </StackPanel>
                         </Border>
 
