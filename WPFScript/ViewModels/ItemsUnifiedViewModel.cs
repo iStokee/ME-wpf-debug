@@ -66,8 +66,12 @@ namespace MESharp.ViewModels
 
 		// Container-specific commands
 		public ICommand InventoryRefreshCommand { get; }
+		public ICommand BankOpenCommand { get; }
+		public ICommand BankLoadLastPresetCommand { get; }
+		public ICommand BankEnterPinCommand { get; }
 		public ICommand BankDepositAllCommand { get; }
 		public ICommand BankDepositExceptIdsCommand { get; }
+		public ICommand BankDepositExceptNamesCommand { get; }
 		public ICommand BankCloseCommand { get; }
 		public ICommand BankWithdrawSelectedCommand { get; }
 		public ICommand BankWithdrawByIdCommand { get; }
@@ -75,6 +79,43 @@ namespace MESharp.ViewModels
 		public ICommand BankInvDepositSelectedCommand { get; }
 		public ICommand BankInvDepositByIdCommand { get; }
 		public ICommand BankInvDepositByNameCommand { get; }
+		public ICommand BankDepositInventoryCommand { get; }
+		public ICommand BankDepositEquipmentCommand { get; }
+		public ICommand BankDepositSummonCommand { get; }
+		public ICommand BankDepositMoneyPouchCommand { get; }
+		public ICommand BankOpenInventoryTabCommand { get; }
+		public ICommand BankOpenBoBTabCommand { get; }
+		public ICommand BankOpenEquipmentTabCommand { get; }
+		public ICommand BankSetTransferTabCommand { get; }
+		public ICommand BankSetPresetTabCommand { get; }
+		public ICommand BankSetQuantity1Command { get; }
+		public ICommand BankSetQuantity5Command { get; }
+		public ICommand BankSetQuantity10Command { get; }
+		public ICommand BankSetQuantityXCommand { get; }
+		public ICommand BankSetQuantityAllCommand { get; }
+		public ICommand BankSetXQuantityCommand { get; }
+		public ICommand BankToggleNoteModeCommand { get; }
+		public ICommand BankSavePresetCommand { get; }
+		public ICommand BankLoadPresetCommand { get; }
+		public ICommand BankSaveSummonPresetCommand { get; }
+		public ICommand BankLoadSummonPresetCommand { get; }
+		public ICommand BankPresetSettingsOpenCommand { get; }
+		public ICommand BankPresetSettingsReturnCommand { get; }
+		public ICommand BankPresetSettingsSelectCommand { get; }
+		public ICommand BankDepositBoxOpenCommand { get; }
+		public ICommand BankDepositBoxCloseCommand { get; }
+		public ICommand BankDepositBoxDepositInventoryCommand { get; }
+		public ICommand BankDepositBoxDepositEquipmentCommand { get; }
+		public ICommand BankDepositBoxDepositMoneyCommand { get; }
+		public ICommand BankDepositBoxDepositAllCommand { get; }
+		public ICommand BankCollectionBoxOpenCommand { get; }
+		public ICommand BankCollectionBoxCloseCommand { get; }
+		public ICommand BankCollectionBoxCollectInvCommand { get; }
+		public ICommand BankCollectionBoxCollectBankCommand { get; }
+		public ICommand BankGetStackByIdCommand { get; }
+		public ICommand BankGetStackByNameCommand { get; }
+		public ICommand BankDoActionByIdCommand { get; }
+		public ICommand BankDoActionByNameCommand { get; }
 		public ICommand EquipmentRefreshCommand { get; }
 		public ICommand EquipmentOpenCommand { get; }
 		public ICommand LootRefreshCommand { get; }
@@ -255,6 +296,90 @@ namespace MESharp.ViewModels
 			set => SetProperty(ref _bankInvActionName, value);
 		}
 
+		private string _bankKeepNames = string.Empty;
+		public string BankKeepNames
+		{
+			get => _bankKeepNames;
+			set => SetProperty(ref _bankKeepNames, value);
+		}
+
+		private string _pinInput = string.Empty;
+		public string PinInput
+		{
+			get => _pinInput;
+			set => SetProperty(ref _pinInput, value);
+		}
+
+		private string _presetNumberInput = string.Empty;
+		public string PresetNumberInput
+		{
+			get => _presetNumberInput;
+			set => SetProperty(ref _presetNumberInput, value);
+		}
+
+		private string _presetSettingsNumberInput = string.Empty;
+		public string PresetSettingsNumberInput
+		{
+			get => _presetSettingsNumberInput;
+			set => SetProperty(ref _presetSettingsNumberInput, value);
+		}
+
+		private string _xQuantityInput = string.Empty;
+		public string XQuantityInput
+		{
+			get => _xQuantityInput;
+			set => SetProperty(ref _xQuantityInput, value);
+		}
+
+		private string _idsInput = string.Empty;
+		public string IdsInput
+		{
+			get => _idsInput;
+			set => SetProperty(ref _idsInput, value);
+		}
+
+		private string _namesInput = string.Empty;
+		public string NamesInput
+		{
+			get => _namesInput;
+			set => SetProperty(ref _namesInput, value);
+		}
+
+		private string _idInput = string.Empty;
+		public string IdInput
+		{
+			get => _idInput;
+			set => SetProperty(ref _idInput, value);
+		}
+
+		private string _nameInput = string.Empty;
+		public string NameInput
+		{
+			get => _nameInput;
+			set => SetProperty(ref _nameInput, value);
+		}
+
+		private int _actionIndex;
+		public int ActionIndex
+		{
+			get => _actionIndex;
+			set => SetProperty(ref _actionIndex, value);
+		}
+
+		private int _offset;
+		public int Offset
+		{
+			get => _offset;
+			set => SetProperty(ref _offset, value);
+		}
+
+		private string _stackResult = string.Empty;
+		public string StackResult
+		{
+			get => _stackResult;
+			set => SetProperty(ref _stackResult, value);
+		}
+
 		// ─── Status Properties ──────────────────────────────────────────────
 		private bool _inventoryIsOpen;
 		private bool _inventoryIsFull;
@@ -299,6 +424,27 @@ namespace MESharp.ViewModels
 			set => SetProperty(ref _bankIsOpen, value);
 		}
 
+		private bool _bankNoteModeEnabled;
+		public bool BankNoteModeEnabled
+		{
+			get => _bankNoteModeEnabled;
+			set => SetProperty(ref _bankNoteModeEnabled, value);
+		}
+
+		private Bank.TransferQuantity _bankQuantitySelected;
+		public Bank.TransferQuantity BankQuantitySelected
+		{
+			get => _bankQuantitySelected;
+			set => SetProperty(ref _bankQuantitySelected, value);
+		}
+
+		private int _bankXQuantity;
+		public int BankXQuantity
+		{
+			get => _bankXQuantity;
+			set => SetProperty(ref _bankXQuantity, value);
+		}
+
 		private bool _equipmentIsOpen;
 		public bool EquipmentIsOpen
 		{
@@ -320,8 +466,12 @@ namespace MESharp.ViewModels
 
 			// Container-specific commands
 			InventoryRefreshCommand = new RelayCommand(_ => { LoadItems(); RefreshInventoryStatus(); });
+			BankOpenCommand = new RelayCommand(_ => BankOpen());
+			BankLoadLastPresetCommand = new RelayCommand(_ => BankLoadLastPreset());
+			BankEnterPinCommand = new RelayCommand(_ => BankEnterPin());
 			BankDepositAllCommand = new RelayCommand(_ => BankDepositAll());
 			BankDepositExceptIdsCommand = new RelayCommand(_ => BankDepositExceptIds());
+			BankDepositExceptNamesCommand = new RelayCommand(_ => BankDepositExceptNames());
 			BankCloseCommand = new RelayCommand(_ => BankClose());
 			BankWithdrawSelectedCommand = new RelayCommand(_ => BankWithdrawSelected());
 			BankWithdrawByIdCommand = new RelayCommand(_ => BankWithdrawById());
@@ -329,6 +479,43 @@ namespace MESharp.ViewModels
 			BankInvDepositSelectedCommand = new RelayCommand(_ => BankInvDepositSelected());
 			BankInvDepositByIdCommand = new RelayCommand(_ => BankInvDepositById());
 			BankInvDepositByNameCommand = new RelayCommand(_ => BankInvDepositByName());
+			BankDepositInventoryCommand = new RelayCommand(_ => BankDepositInventory());
+			BankDepositEquipmentCommand = new RelayCommand(_ => BankDepositEquipment());
+			BankDepositSummonCommand = new RelayCommand(_ => BankDepositSummon());
+			BankDepositMoneyPouchCommand = new RelayCommand(_ => BankDepositMoneyPouch());
+			BankOpenInventoryTabCommand = new RelayCommand(_ => BankOpenTab(Bank.BankTab.Inventory));
+			BankOpenBoBTabCommand = new RelayCommand(_ => BankOpenTab(Bank.BankTab.BeastOfBurden));
+			BankOpenEquipmentTabCommand = new RelayCommand(_ => BankOpenTab(Bank.BankTab.Equipment));
+			BankSetTransferTabCommand = new RelayCommand(_ => BankSetTransferTab(Bank.TransferTab.Transfer));
+			BankSetPresetTabCommand = new RelayCommand(_ => BankSetTransferTab(Bank.TransferTab.Preset));
+			BankSetQuantity1Command = new RelayCommand(_ => BankSetQuantity(Bank.TransferQuantity.One));
+			BankSetQuantity5Command = new RelayCommand(_ => BankSetQuantity(Bank.TransferQuantity.Five));
+			BankSetQuantity10Command = new RelayCommand(_ => BankSetQuantity(Bank.TransferQuantity.Ten));
+			BankSetQuantityXCommand = new RelayCommand(_ => BankSetQuantity(Bank.TransferQuantity.X));
+			BankSetQuantityAllCommand = new RelayCommand(_ => BankSetQuantity(Bank.TransferQuantity.All));
+			BankSetXQuantityCommand = new RelayCommand(_ => BankSetXQuantity());
+			BankToggleNoteModeCommand = new RelayCommand(_ => BankToggleNoteMode());
+			BankSavePresetCommand = new RelayCommand(_ => BankSavePreset());
+			BankLoadPresetCommand = new RelayCommand(_ => BankLoadPreset());
+			BankSaveSummonPresetCommand = new RelayCommand(_ => BankSaveSummonPreset());
+			BankLoadSummonPresetCommand = new RelayCommand(_ => BankLoadSummonPreset());
+			BankPresetSettingsOpenCommand = new RelayCommand(_ => BankPresetSettingsOpen());
+			BankPresetSettingsReturnCommand = new RelayCommand(_ => BankPresetSettingsReturn());
+			BankPresetSettingsSelectCommand = new RelayCommand(_ => BankPresetSettingsSelect());
+			BankDepositBoxOpenCommand = new RelayCommand(_ => BankDepositBoxOpen());
+			BankDepositBoxCloseCommand = new RelayCommand(_ => BankDepositBoxClose());
+			BankDepositBoxDepositInventoryCommand = new RelayCommand(_ => BankDepositBoxDepositInventory());
+			BankDepositBoxDepositEquipmentCommand = new RelayCommand(_ => BankDepositBoxDepositEquipment());
+			BankDepositBoxDepositMoneyCommand = new RelayCommand(_ => BankDepositBoxDepositMoney());
+			BankDepositBoxDepositAllCommand = new RelayCommand(_ => BankDepositBoxDepositAll());
+			BankCollectionBoxOpenCommand = new RelayCommand(_ => BankCollectionBoxOpen());
+			BankCollectionBoxCloseCommand = new RelayCommand(_ => BankCollectionBoxClose());
+			BankCollectionBoxCollectInvCommand = new RelayCommand(_ => BankCollectionBoxCollectInv());
+			BankCollectionBoxCollectBankCommand = new RelayCommand(_ => BankCollectionBoxCollectBank());
+			BankGetStackByIdCommand = new RelayCommand(_ => BankGetStackById());
+			BankGetStackByNameCommand = new RelayCommand(_ => BankGetStackByName());
+			BankDoActionByIdCommand = new RelayCommand(_ => BankDoActionById());
+			BankDoActionByNameCommand = new RelayCommand(_ => BankDoActionByName());
 			EquipmentRefreshCommand = new RelayCommand(_ => { LoadItems(); RefreshEquipmentStatus(); });
 			EquipmentOpenCommand = new RelayCommand(_ => EquipmentOpen());
 			LootRefreshCommand = new RelayCommand(_ => LoadItems());
@@ -420,6 +607,45 @@ namespace MESharp.ViewModels
 			}
 		}
 
+		private void BankOpen()
+		{
+			try
+			{
+				var ok = Bank.Open();
+				StatusMessage = ok ? "Opened bank." : "Failed to open bank.";
+				RefreshBankStatus();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankLoadLastPreset()
+		{
+			try
+			{
+				var ok = Bank.LoadLastPreset();
+				StatusMessage = ok ? "Loaded last preset." : "Failed to load last preset.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankEnterPin()
+		{
+			try
+			{
+				StatusMessage = TryEnterPin();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
 		private void BankDepositExceptIds()
 		{
 			try
@@ -450,6 +676,444 @@ namespace MESharp.ViewModels
 			}
 		}
 
+		private void BankDepositExceptNames()
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(BankKeepNames))
+				{
+					StatusMessage = "Please enter item names to keep.";
+					return;
+				}
+
+				var names = ParseNames(BankKeepNames);
+				if (names.Length == 0)
+				{
+					StatusMessage = "No valid names to keep.";
+					return;
+				}
+
+				Bank.DepositAllExcept(names);
+				StatusMessage = $"Deposited all items except names: {BankKeepNames}";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositInventory()
+		{
+			try
+			{
+				var ok = Bank.DepositInventory();
+				StatusMessage = ok ? "Deposited inventory." : "Deposit inventory failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositEquipment()
+		{
+			try
+			{
+				var ok = Bank.DepositEquipment();
+				StatusMessage = ok ? "Deposited equipment." : "Deposit equipment failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositSummon()
+		{
+			try
+			{
+				var ok = Bank.DepositSummon();
+				StatusMessage = ok ? "Deposited summon." : "Deposit summon failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositMoneyPouch()
+		{
+			try
+			{
+				var ok = Bank.DepositMoneyPouch();
+				StatusMessage = ok ? "Deposited money pouch." : "Deposit money pouch failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankOpenTab(Bank.BankTab tab)
+		{
+			try
+			{
+				var ok = Bank.OpenTab(tab);
+				StatusMessage = ok ? $"Opened {tab} tab." : $"Failed to open {tab} tab.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankSetTransferTab(Bank.TransferTab tab)
+		{
+			try
+			{
+				var ok = Bank.SetTransferTab(tab);
+				StatusMessage = ok ? $"Set transfer tab to {tab}." : $"Failed to set {tab} tab.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankSetQuantity(Bank.TransferQuantity quantity)
+		{
+			try
+			{
+				var ok = Bank.SetQuantity(quantity);
+				BankQuantitySelected = Bank.GetQuantitySelected();
+				StatusMessage = ok ? $"Set quantity {quantity}." : $"Failed to set quantity {quantity}.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankSetXQuantity()
+		{
+			try
+			{
+				StatusMessage = TrySetXQuantity();
+				BankXQuantity = Bank.GetXQuantity();
+				BankQuantitySelected = Bank.GetQuantitySelected();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankToggleNoteMode()
+		{
+			try
+			{
+				var next = !BankNoteModeEnabled;
+				var ok = Bank.SetNoteMode(next);
+				BankNoteModeEnabled = Bank.IsNoteModeEnabled();
+				StatusMessage = ok ? $"Note mode {(BankNoteModeEnabled ? "On" : "Off")}." : "Failed to toggle note mode.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankSavePreset()
+		{
+			try
+			{
+				StatusMessage = TrySavePreset();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankLoadPreset()
+		{
+			try
+			{
+				StatusMessage = TryLoadPreset();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankSaveSummonPreset()
+		{
+			try
+			{
+				var ok = Bank.SaveSummonPreset();
+				StatusMessage = ok ? "Saved summon preset." : "Failed to save summon preset.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankLoadSummonPreset()
+		{
+			try
+			{
+				var ok = Bank.LoadSummonPreset();
+				StatusMessage = ok ? "Loaded summon preset." : "Failed to load summon preset.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankPresetSettingsOpen()
+		{
+			try
+			{
+				var ok = Bank.PresetSettingsOpen();
+				StatusMessage = ok ? "Opened preset settings." : "Failed to open preset settings.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankPresetSettingsReturn()
+		{
+			try
+			{
+				var ok = Bank.PresetSettingsReturnToBank();
+				StatusMessage = ok ? "Returned to bank." : "Failed to return to bank.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankPresetSettingsSelect()
+		{
+			try
+			{
+				StatusMessage = TrySelectPresetSettings();
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositBoxOpen()
+		{
+			try
+			{
+				var ok = Bank.DepositBoxOpen();
+				StatusMessage = ok ? "Opened deposit box." : "Failed to open deposit box.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositBoxClose()
+		{
+			try
+			{
+				var ok = Bank.DepositBoxClose();
+				StatusMessage = ok ? "Closed deposit box." : "Failed to close deposit box.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositBoxDepositInventory()
+		{
+			try
+			{
+				var ok = Bank.DepositBoxDepositInventory();
+				StatusMessage = ok ? "Deposited inventory to box." : "Deposit inventory failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositBoxDepositEquipment()
+		{
+			try
+			{
+				var ok = Bank.DepositBoxDepositEquipment();
+				StatusMessage = ok ? "Deposited equipment to box." : "Deposit equipment failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositBoxDepositMoney()
+		{
+			try
+			{
+				var ok = Bank.DepositBoxDepositMoneyPouch();
+				StatusMessage = ok ? "Deposited money pouch to box." : "Deposit money failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDepositBoxDepositAll()
+		{
+			try
+			{
+				var ok = Bank.DepositBoxDepositAll();
+				StatusMessage = ok ? "Deposited all to box." : "Deposit all failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankCollectionBoxOpen()
+		{
+			try
+			{
+				var ok = Bank.CollectionBoxOpen();
+				StatusMessage = ok ? "Opened collection box." : "Failed to open collection box.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankCollectionBoxClose()
+		{
+			try
+			{
+				var ok = Bank.CollectionBoxClose();
+				StatusMessage = ok ? "Closed collection box." : "Failed to close collection box.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankCollectionBoxCollectInv()
+		{
+			try
+			{
+				var ok = Bank.CollectionBoxCollectToInventory();
+				StatusMessage = ok ? "Collected to inventory." : "Collect to inventory failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankCollectionBoxCollectBank()
+		{
+			try
+			{
+				var ok = Bank.CollectionBoxCollectToBank();
+				StatusMessage = ok ? "Collected to bank." : "Collect to bank failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankGetStackById()
+		{
+			if (!int.TryParse(IdInput, out var id))
+			{
+				StatusMessage = "Enter a valid item ID.";
+				return;
+			}
+			try
+			{
+				var s = Bank.GetStack(id);
+				StackResult = s.ToString();
+				StatusMessage = $"Stack for {id}: {StackResult}";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankGetStackByName()
+		{
+			if (string.IsNullOrWhiteSpace(NameInput))
+			{
+				StatusMessage = "Enter a valid item name.";
+				return;
+			}
+			try
+			{
+				var s = Bank.GetStack(NameInput);
+				StackResult = s.ToString();
+				StatusMessage = $"Stack for {NameInput}: {StackResult}";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDoActionById()
+		{
+			if (!int.TryParse(IdInput, out var id))
+			{
+				StatusMessage = "Enter a valid item ID.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.DoActionById(id, ActionIndex, Offset);
+				StatusMessage = ok ? "Bank action sent." : "Bank action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
+
+		private void BankDoActionByName()
+		{
+			if (string.IsNullOrWhiteSpace(NameInput))
+			{
+				StatusMessage = "Enter a valid item name.";
+				return;
+			}
+			try
+			{
+				var ok = Bank.DoActionByName(NameInput, ActionIndex, Offset);
+				StatusMessage = ok ? "Bank action sent." : "Bank action failed.";
+			}
+			catch (Exception ex)
+			{
+				StatusMessage = $"Error: {ex.Message}";
+			}
+		}
 		private void BankClose()
 		{
 			try
@@ -572,6 +1236,58 @@ namespace MESharp.ViewModels
 			}
 		}
 
+		private static int[] ParseIds(string s)
+		{
+			if (string.IsNullOrWhiteSpace(s)) return Array.Empty<int>();
+			var parts = s.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var list = new System.Collections.Generic.List<int>(parts.Length);
+			foreach (var p in parts)
+				if (int.TryParse(p.Trim(), out var id))
+					list.Add(id);
+			return list.ToArray();
+		}
+
+		private static string[] ParseNames(string s)
+		{
+			if (string.IsNullOrWhiteSpace(s)) return Array.Empty<string>();
+			return s.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+					.Select(x => x.Trim()).ToArray();
+		}
+
+		private string TryEnterPin()
+		{
+			if (string.IsNullOrWhiteSpace(PinInput) || PinInput.Length != 4) return "Enter 4 digits.";
+			if (!int.TryParse(PinInput[0].ToString(), out var d1)) return "Invalid PIN.";
+			if (!int.TryParse(PinInput[1].ToString(), out var d2)) return "Invalid PIN.";
+			if (!int.TryParse(PinInput[2].ToString(), out var d3)) return "Invalid PIN.";
+			if (!int.TryParse(PinInput[3].ToString(), out var d4)) return "Invalid PIN.";
+			return Bank.EnterPin(d1, d2, d3, d4) ? "PIN sent." : "Failed to send PIN.";
+		}
+
+		private string TrySetXQuantity()
+		{
+			if (!int.TryParse(XQuantityInput, out var qty) || qty <= 0) return "Invalid X quantity.";
+			return Bank.SetXQuantity(qty) ? "Set X quantity." : "Failed to set X quantity.";
+		}
+
+		private string TrySavePreset()
+		{
+			if (!int.TryParse(PresetNumberInput, out var number)) return "Invalid preset.";
+			return Bank.SavePreset(number) ? "Preset saved." : "Failed to save preset.";
+		}
+
+		private string TryLoadPreset()
+		{
+			if (!int.TryParse(PresetNumberInput, out var number)) return "Invalid preset.";
+			return Bank.LoadPreset(number) ? "Preset loaded." : "Failed to load preset.";
+		}
+
+		private string TrySelectPresetSettings()
+		{
+			if (!int.TryParse(PresetSettingsNumberInput, out var preset)) return "Invalid preset.";
+			return Bank.PresetSettingsSelectPreset(preset) ? "Preset selected." : "Failed to select preset.";
+		}
+
 		private void EquipmentOpen()
 		{
 			try
@@ -605,6 +1321,9 @@ namespace MESharp.ViewModels
 			try
 			{
 				BankIsOpen = Bank.IsOpen;
+				BankNoteModeEnabled = Bank.IsNoteModeEnabled();
+				BankQuantitySelected = Bank.GetQuantitySelected();
+				BankXQuantity = Bank.GetXQuantity();
 			}
 			catch { /* ignore */ }
 		}

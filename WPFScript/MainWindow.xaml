@@ -34,6 +34,105 @@
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:ObjectEqualsConverter x:Key="ObjectEqualsConverter" />
 
+            <!--  Local fallback for title bar buttons (ensures resources exist in script host)  -->
+            <Style x:Key="WindowControlButton" TargetType="Button">
+                <Setter Property="Width" Value="40" />
+                <Setter Property="Height" Value="28" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style
+                x:Key="CloseWindowButton"
+                BasedOn="{StaticResource WindowControlButton}"
+                TargetType="Button">
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource DangerHoverBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource DangerHoverBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource DangerPressedBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource DangerPressedBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--  Local fallback for section help buttons  -->
+            <Style x:Key="HeaderHelpButton" TargetType="Button">
+                <Setter Property="Width" Value="22" />
+                <Setter Property="Height" Value="22" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="{DynamicResource App.MutedBrush}" />
+                        <Setter Property="Background" Value="Transparent" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
             <!--  DataTemplates for Views  -->
             <DataTemplate DataType="{x:Type vm:GameViewModel}">
                 <views:GameView />
@@ -52,11 +151,11 @@
             </DataTemplate>
             <!--<DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
                 <views:EquipmentView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:BankViewModel}">
+            </DataTemplate>-->
+            <!--<DataTemplate DataType="{x:Type vm:BankViewModel}">
                 <views:BankView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:LootViewModel}">
+            </DataTemplate>-->
+            <!--<DataTemplate DataType="{x:Type vm:LootViewModel}">
                 <views:LootView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:MaterialCacheViewModel}">
@@ -64,7 +163,7 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TradeWindowViewModel}">
                 <views:TradeWindowView />
-            </DataTemplate> -->
+            </DataTemplate>-->
             <DataTemplate DataType="{x:Type vm:ItemsUnifiedViewModel}">
                 <views:ItemsUnifiedView />
             </DataTemplate>
@@ -262,7 +361,7 @@
                                     Margin="0,0,6,0"
                                     VerticalAlignment="Center"
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                                Kind="AccountMultiple" />
+                                    Kind="AccountMultiple" />
                                 <TextBlock Text="Players" />
                             </StackPanel>
                         </ToggleButton>

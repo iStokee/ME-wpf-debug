@@ -17,12 +17,10 @@
   </Target>
 
   <ItemGroup>
-    <Compile Remove="ViewModels\BankViewModel.cs" />
     <Compile Remove="ViewModels\EquipmentViewModel.cs" />
     <Compile Remove="ViewModels\LootViewModel.cs" />
     <Compile Remove="ViewModels\MaterialCacheViewModel.cs" />
     <Compile Remove="ViewModels\TradeWindowViewModel.cs" />
-    <Compile Remove="Views\BankView.xaml.cs" />
     <Compile Remove="Views\EquipmentView.xaml.cs" />
     <Compile Remove="Views\LootView.xaml.cs" />
     <Compile Remove="Views\MaterialCacheView.xaml.cs" />
@@ -31,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="Views\BankView.xaml" />
     <Page Remove="Views\EquipmentView.xaml" />
     <Page Remove="Views\LootView.xaml" />
     <Page Remove="Views\MaterialCacheView.xaml" />

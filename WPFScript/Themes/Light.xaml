@@ -889,9 +889,12 @@
         </Style.Triggers>
     </Style>
     <!--  Default scrollbars use the shared base style  -->
-    <Style TargetType="ScrollBar" BasedOn="{StaticResource AppScrollBarBase}" />
+    <Style BasedOn="{StaticResource AppScrollBarBase}" TargetType="ScrollBar" />
     <!--  Retain keyed access for explicit usage if needed  -->
-    <Style x:Key="ScrollBar" TargetType="ScrollBar" BasedOn="{StaticResource AppScrollBarBase}" />
+    <Style
+        x:Key="ScrollBar"
+        BasedOn="{StaticResource AppScrollBarBase}"
+        TargetType="ScrollBar" />
 
     <!--  ScrollViewer style to ensure scrollbars use our theme  -->
     <Style TargetType="ScrollViewer">
