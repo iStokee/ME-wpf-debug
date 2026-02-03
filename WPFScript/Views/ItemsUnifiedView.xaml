@@ -21,7 +21,10 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="5">
+    <Grid
+        Margin="5"
+        behaviors:GridColumnLayoutBehavior.LayoutKey="items-unified-view-columns"
+        behaviors:GridColumnLayoutBehavior.ColumnIndexes="0,2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1.5*" />
             <ColumnDefinition Width="6" />
@@ -29,7 +32,11 @@
         </Grid.ColumnDefinitions>
 
         <!--  Main Content Area  -->
-        <Grid Grid.Column="0" Margin="0,0,10,0">
+        <Grid
+            Grid.Column="0"
+            Margin="0,0,10,0"
+            behaviors:PanelLayoutBehavior.PageKey="items-unified-view"
+            behaviors:PanelLayoutBehavior.ColumnKey="left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -96,6 +103,7 @@
             <!--  Container Selection and Actions  -->
             <Border
                 Grid.Row="1"
+                behaviors:PanelLayoutBehavior.PanelKey="container-selection-actions"
                 Margin="0,0,0,10"
                 Padding="10"
                 Background="{DynamicResource App.CardBrush}"
@@ -167,6 +175,7 @@
             <!--  Items Table  -->
             <Border
                 Grid.Row="2"
+                behaviors:PanelLayoutBehavior.PanelKey="items-table"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
                 <Expander Header="Items Table" IsExpanded="True">
@@ -265,8 +274,15 @@
                 HorizontalContentAlignment="Stretch"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10" HorizontalAlignment="Stretch">
-                    <Expander Header="Item Actions" IsExpanded="True">
+                <StackPanel
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    behaviors:PanelLayoutBehavior.PageKey="items-unified-view"
+                    behaviors:PanelLayoutBehavior.ColumnKey="right">
+                    <Expander
+                        Header="Item Actions"
+                        IsExpanded="True"
+                        behaviors:PanelLayoutBehavior.PanelKey="item-actions">
                         <StackPanel Margin="0,10,0,0">
                     <TextBlock
                         Margin="0,0,0,4"

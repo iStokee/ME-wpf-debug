@@ -2,6 +2,7 @@
     x:Class="MESharp.Views.PlayersView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:MESharp.Views.Behaviors"
     xmlns:conv="clr-namespace:MESharp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -20,14 +21,22 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="5">
+    <Grid
+        Margin="5"
+        behaviors:GridColumnLayoutBehavior.LayoutKey="players-view-columns"
+        behaviors:GridColumnLayoutBehavior.ColumnIndexes="0,2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="6" />
             <ColumnDefinition Width="320" />
         </Grid.ColumnDefinitions>
 
         <!--  Main Content Area  -->
-        <Grid Grid.Column="0" Margin="0,0,5,0">
+        <Grid
+            Grid.Column="0"
+            Margin="0,0,5,0"
+            behaviors:PanelLayoutBehavior.PageKey="players-view"
+            behaviors:PanelLayoutBehavior.ColumnKey="left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -47,6 +56,7 @@
             <!--  LocalPlayer Status Card  -->
             <Border
                 Grid.Row="1"
+                behaviors:PanelLayoutBehavior.PanelKey="local-player-status"
                 Margin="0,0,0,10"
                 Padding="12"
                 Background="{DynamicResource App.CardBrush}"
@@ -800,9 +810,18 @@
             </Border>
         </Grid>
 
+        <GridSplitter
+            Grid.Column="1"
+            Width="6"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{DynamicResource App.BorderBrush}"
+            ResizeBehavior="PreviousAndNext"
+            ResizeDirection="Columns" />
+
         <!--  Action Panel  -->
         <Border
-            Grid.Column="1"
+            Grid.Column="2"
             Width="320"
             Margin="6,0,0,0"
             Background="{DynamicResource App.CardBrush}"

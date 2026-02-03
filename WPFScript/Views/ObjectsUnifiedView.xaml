@@ -20,14 +20,22 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="5">
+    <Grid
+        Margin="5"
+        behaviors:GridColumnLayoutBehavior.LayoutKey="objects-unified-view-columns"
+        behaviors:GridColumnLayoutBehavior.ColumnIndexes="0,2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="6" />
+            <ColumnDefinition Width="320" />
         </Grid.ColumnDefinitions>
 
         <!--  Main Content Area  -->
-        <Grid Grid.Column="0" Margin="0,0,10,0">
+        <Grid
+            Grid.Column="0"
+            Margin="0,0,10,0"
+            behaviors:PanelLayoutBehavior.PageKey="objects-unified-view"
+            behaviors:PanelLayoutBehavior.ColumnKey="left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -47,6 +55,7 @@
             <!--  Object Type Selection and Actions  -->
             <Border
                 Grid.Row="1"
+                behaviors:PanelLayoutBehavior.PanelKey="type-selection-actions"
                 Margin="0,0,0,10"
                 Padding="10"
                 Background="{DynamicResource App.CardBrush}"
@@ -144,6 +153,7 @@
             <!--  Objects Table  -->
             <Border
                 Grid.Row="2"
+                behaviors:PanelLayoutBehavior.PanelKey="objects-table"
                 Margin="0,0,0,10"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
@@ -254,6 +264,7 @@
             <!--  Status Bar  -->
             <Border
                 Grid.Row="3"
+                behaviors:PanelLayoutBehavior.PanelKey="status"
                 Padding="10"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
@@ -318,49 +329,30 @@
             </Border>
         </Grid>
 
-        <!--  Toggle Button  -->
-        <ToggleButton
+        <GridSplitter
             Grid.Column="1"
-            Width="24"
-            Height="60"
-            Margin="5,0,0,0"
-            VerticalAlignment="Top"
-            IsChecked="{Binding IsSidePanelCollapsed, Mode=TwoWay}"
-            Style="{StaticResource {x:Type ToggleButton}}"
-            ToolTip="Toggle Side Panel">
-            <iconPacks:PackIconMaterial Kind="ChevronLeft">
-                <iconPacks:PackIconMaterial.Style>
-                    <Style TargetType="iconPacks:PackIconMaterial">
-                        <Setter Property="Kind" Value="ChevronLeft" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
-                                <Setter Property="Kind" Value="ChevronRight" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </iconPacks:PackIconMaterial.Style>
-            </iconPacks:PackIconMaterial>
-        </ToggleButton>
+            Width="6"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{DynamicResource App.BorderBrush}"
+            ResizeBehavior="PreviousAndNext"
+            ResizeDirection="Columns" />
 
-        <!--  Flyout Panel  -->
+        <!--  Side Panel  -->
         <Border
             Grid.Column="2"
             Margin="5,0,0,0"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="5">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Width" Value="320" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSidePanelCollapsed}" Value="True">
-                            <Setter Property="Width" Value="0" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10">
-                    <Expander Header="Object Actions" IsExpanded="True">
+                <StackPanel
+                    Margin="10"
+                    behaviors:PanelLayoutBehavior.PageKey="objects-unified-view"
+                    behaviors:PanelLayoutBehavior.ColumnKey="right">
+                    <Expander
+                        Header="Object Actions"
+                        IsExpanded="True"
+                        behaviors:PanelLayoutBehavior.PanelKey="object-actions">
                         <StackPanel Margin="0,10,0,0">
                             <!--  Panel Header  -->
                             <TextBlock
