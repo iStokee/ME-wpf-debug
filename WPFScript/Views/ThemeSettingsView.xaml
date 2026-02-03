@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MESharp.Views"
+             xmlns:behaviors="clr-namespace:MESharp.Views.Behaviors"
              xmlns:conv="clr-namespace:MESharp.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:controls="clr-namespace:MESharp.Views.Controls"
@@ -23,7 +24,7 @@
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="24">
+        <StackPanel Margin="24" behaviors:PanelLayoutBehavior.PageKey="theme-settings-view">
         <controls:SectionHeader
             Margin="0,0,0,16"
             Title="Theme Settings"
@@ -33,95 +34,94 @@
 
         <!--  Theme Mode Toggle  -->
         <Border
+            behaviors:PanelLayoutBehavior.PanelKey="theme-mode"
             Margin="0,0,0,16"
             Padding="16"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="8">
-            <StackPanel>
-                <StackPanel.Resources>
-                    <Style x:Key="SegmentToggle" TargetType="ToggleButton">
-                        <Setter Property="Width" Value="220" />
-                        <Setter Property="Height" Value="36" />
-                        <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
-                        <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ToggleButton">
-                                    <Grid ClipToBounds="True">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Border
-                                            Grid.ColumnSpan="2"
-                                            Background="{DynamicResource App.BackgroundBrush}"
-                                            BorderBrush="{DynamicResource App.BorderBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="18" />
-                                        <!--  sliding thumb  -->
-                                        <Border
-                                            x:Name="thumb"
-                                            Grid.Column="0"
-                                            Width="110"
-                                            Height="32"
-                                            Margin="2"
-                                            Background="{DynamicResource PrimarySoftBrush}"
-                                            CornerRadius="16" />
-                                        <StackPanel
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal">
-                                            <iconPacks:PackIconMaterial
-                                                Width="18"
-                                                Height="18"
-                                                Margin="0,0,4,0"
-                                                Foreground="{DynamicResource App.ForegroundBrush}"
-                                                Kind="WeatherSunny" />
-                                            <TextBlock Text="Light" />
-                                        </StackPanel>
-                                        <StackPanel
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal">
-                                            <iconPacks:PackIconMaterial
-                                                Width="18"
-                                                Height="18"
-                                                Margin="0,0,4,0"
-                                                Foreground="{DynamicResource App.ForegroundBrush}"
-                                                Kind="WeatherNight" />
-                                            <TextBlock Text="Dark" />
-                                        </StackPanel>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="thumb" Property="Grid.Column" Value="1" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </StackPanel.Resources>
-                <ToggleButton IsChecked="{Binding IsDark}" Style="{StaticResource SegmentToggle}" />
-
-
-            </StackPanel>
+            <Expander Header="Theme Mode" IsExpanded="True">
+                <StackPanel Margin="0,10,0,0">
+                    <StackPanel.Resources>
+                        <Style x:Key="SegmentToggle" TargetType="ToggleButton">
+                            <Setter Property="Width" Value="220" />
+                            <Setter Property="Height" Value="36" />
+                            <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid ClipToBounds="True">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                Grid.ColumnSpan="2"
+                                                Background="{DynamicResource App.BackgroundBrush}"
+                                                BorderBrush="{DynamicResource App.BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="18" />
+                                            <!--  sliding thumb  -->
+                                            <Border
+                                                x:Name="thumb"
+                                                Grid.Column="0"
+                                                Width="110"
+                                                Height="32"
+                                                Margin="2"
+                                                Background="{DynamicResource PrimarySoftBrush}"
+                                                CornerRadius="16" />
+                                            <StackPanel
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="18"
+                                                    Height="18"
+                                                    Margin="0,0,4,0"
+                                                    Foreground="{DynamicResource App.ForegroundBrush}"
+                                                    Kind="WeatherSunny" />
+                                                <TextBlock Text="Light" />
+                                            </StackPanel>
+                                            <StackPanel
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="18"
+                                                    Height="18"
+                                                    Margin="0,0,4,0"
+                                                    Foreground="{DynamicResource App.ForegroundBrush}"
+                                                    Kind="WeatherNight" />
+                                                <TextBlock Text="Dark" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="thumb" Property="Grid.Column" Value="1" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </StackPanel.Resources>
+                    <ToggleButton IsChecked="{Binding IsDark}" Style="{StaticResource SegmentToggle}" />
+                </StackPanel>
+            </Expander>
         </Border>
 
         <!--  Default Themes: palette grid  -->
         <Border
+            behaviors:PanelLayoutBehavior.PanelKey="default-themes"
             Margin="0,0,0,16"
             Padding="16"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="8">
-            <StackPanel>
-                <TextBlock
-                    Margin="0,0,0,12"
-                    FontWeight="SemiBold"
-                    Text="Default Themes" />
+            <Expander Header="Default Themes" IsExpanded="True">
+                <StackPanel Margin="0,10,0,0">
                 <ItemsControl ItemsSource="{Binding AvailableColors}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -167,20 +167,19 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+                </StackPanel>
+            </Expander>
         </Border>
 
         <!--  Custom Themes: color picker + saved colors grid  -->
         <Border
+            behaviors:PanelLayoutBehavior.PanelKey="custom-themes"
             Margin="0,0,0,16"
             Padding="16"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="8">
-            <StackPanel>
-                <TextBlock
-                    Margin="0,0,0,12"
-                    FontWeight="SemiBold"
-                    Text="Custom Themes" />
+            <Expander Header="Custom Themes" IsExpanded="True">
+                <StackPanel Margin="0,10,0,0">
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding PickCustomColorCommand}">
                         <StackPanel Orientation="Horizontal">
@@ -279,7 +278,8 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+                </StackPanel>
+            </Expander>
         </Border>
     </StackPanel>
 </ScrollViewer>

@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MESharp.Converters;
+using MESharp.ViewModels;
 
 namespace MESharp.Views
 {
@@ -25,5 +13,34 @@ namespace MESharp.Views
 		{
 			InitializeComponent();
 		}
-	}
+
+        private void SkillsTable_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            if (DataContext is not SkillsViewModel vm)
+            {
+                return;
+            }
+
+            if (!vm.TrySetSortFromMember(e.Column.SortMemberPath, e.Column.SortDirection))
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            if (sender is not DataGrid grid)
+            {
+                return;
+            }
+
+            foreach (var column in grid.Columns)
+            {
+                column.SortDirection = null;
+            }
+
+            e.Column.SortDirection = vm.SortDescending
+                ? ListSortDirection.Descending
+                : ListSortDirection.Ascending;
+        }
+    }
 }

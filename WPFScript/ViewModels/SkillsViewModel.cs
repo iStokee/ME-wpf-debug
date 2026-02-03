@@ -1,130 +1,264 @@
-﻿using MESharp.API;
+using MESharp.API;
 using MESharp.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
-using MESharp.Views;
-using MESharp.Converters;
 
 namespace MESharp.ViewModels
 {
-	internal class SkillsViewModel : INotifyPropertyChanged
-	{
-		private readonly SkillSession _session;
-		private readonly DateTime _sessionStart;
-		private readonly DispatcherTimer _updateTimer;
+    internal class SkillsViewModel : INotifyPropertyChanged
+    {
+        private enum SkillsDisplayMode
+        {
+            List,
+            Grid,
+            Table
+        }
 
-		public ObservableCollection<SkillModel> AllSkills { get; }
-		public ICollectionView SkillsView { get; }
+        private readonly SkillSession _session;
+        private readonly DispatcherTimer _updateTimer;
 
-		// strings
-		//private string _sessionRuntimeString = "--:--:--";
-		//public string SessionRuntimeString
-		//{
-		//	get => _sessionRuntimeString;
-		//	private set
-		//	{
-		//		if (_sessionRuntimeString == value) return;
-		//		_sessionRuntimeString = value;
-		//		OnPropertyChanged();
-		//	}
-		//}
+        public ObservableCollection<SkillModel> AllSkills { get; }
+        public ICollectionView SkillsView { get; }
 
-		// bools 
-		private bool _isListView = true;
-		public bool IsListView
-		{
-			get => _isListView;
-			set
-			{
-				if (_isListView == value) return;
-				_isListView = value;
-				OnPropertyChanged();
-				SkillsView.Refresh();
-			}
-		}
+        public ObservableCollection<string> SortOptions { get; } = new ObservableCollection<string>
+        {
+            "Skill Name",
+            "Level",
+            "Total XP",
+            "XP Gained",
+            "XP / Hour",
+            "XP To Next",
+            "ETA",
+            "Active First"
+        };
 
-		private bool _highlightXpGain;
-		public bool HighlightXpGain
-		{
-			get => _highlightXpGain;
-			private set
-			{
-				if (_highlightXpGain == value) return;
-				_highlightXpGain = value;
-				OnPropertyChanged();
-			}
-		}
+        private SkillsDisplayMode _displayMode = SkillsDisplayMode.List;
 
-		private bool _showOnlyActive;
-		public bool ShowOnlyActive
-		{
-			get => _showOnlyActive;
-			set
-			{
-				if (_showOnlyActive == value) return;
-				_showOnlyActive = value;
-				OnPropertyChanged();
-				SkillsView.Refresh();
-			}
-		}
+        public bool IsListView
+        {
+            get => _displayMode == SkillsDisplayMode.List;
+            set
+            {
+                if (value)
+                {
+                    SetDisplayMode(SkillsDisplayMode.List);
+                }
+            }
+        }
 
+        public bool IsGridView
+        {
+            get => _displayMode == SkillsDisplayMode.Grid;
+            set
+            {
+                if (value)
+                {
+                    SetDisplayMode(SkillsDisplayMode.Grid);
+                }
+            }
+        }
 
-		public SkillsViewModel()
-		{
-							   
-			_sessionStart = DateTime.UtcNow;
-			_session      = new SkillSession();
+        public bool IsTableView
+        {
+            get => _displayMode == SkillsDisplayMode.Table;
+            set
+            {
+                if (value)
+                {
+                    SetDisplayMode(SkillsDisplayMode.Table);
+                }
+            }
+        }
 
-			// build our skill cards
-			AllSkills = new ObservableCollection<SkillModel>(
-				Enum.GetValues(typeof(SkillName))
-					.Cast<SkillName>()
-					.Select(name => new SkillModel(name, _session))
-			);
+        private bool _showOnlyActive;
+        public bool ShowOnlyActive
+        {
+            get => _showOnlyActive;
+            set
+            {
+                if (_showOnlyActive == value) return;
+                _showOnlyActive = value;
+                OnPropertyChanged();
+                SkillsView.Refresh();
+            }
+        }
 
-			SkillsView = CollectionViewSource.GetDefaultView(AllSkills);
-			SkillsView.Filter = o =>
-			{
-				var vm = (SkillModel)o;
-				return !ShowOnlyActive || vm.XpGained > 0;
-			};
-			SkillsView.SortDescriptions.Add(
-				new SortDescription(nameof(SkillModel.XpGained),
-									ListSortDirection.Descending)
-			);
+        private string _selectedSortOption = "XP Gained";
+        public string SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                if (_selectedSortOption == value) return;
+                _selectedSortOption = value;
+                OnPropertyChanged();
+                ApplySorting();
+            }
+        }
 
-			// timer to refresh XP *and* our runtime clock
-			_updateTimer = new DispatcherTimer(
-				TimeSpan.FromSeconds(1),
-				DispatcherPriority.Background,
-				(s, e) => RefreshAll(),
-				Dispatcher.CurrentDispatcher
-			);
-			_updateTimer.Start();
-		}
+        private bool _sortDescending = true;
+        public bool SortDescending
+        {
+            get => _sortDescending;
+            set
+            {
+                if (_sortDescending == value) return;
+                _sortDescending = value;
+                OnPropertyChanged();
+                ApplySorting();
+            }
+        }
 
-		private void RefreshAll()
-		{
-			foreach (var vm in AllSkills)
-				vm.Update();
+        public SkillsViewModel()
+        {
+            _session = new SkillSession();
 
-			//// update the session‐timer string
-			//var elapsed = DateTime.UtcNow - _sessionStart;
-			//SessionRuntimeString = elapsed.ToString(@"hh\:mm\:ss");
+            AllSkills = new ObservableCollection<SkillModel>(
+                Enum.GetValues(typeof(SkillName))
+                    .Cast<SkillName>()
+                    .Select(name => new SkillModel(name, _session))
+            );
 
-			SkillsView.Refresh();
-		}
+            SkillsView = CollectionViewSource.GetDefaultView(AllSkills);
+            SkillsView.Filter = o =>
+            {
+                var vm = (SkillModel)o;
+                return !ShowOnlyActive || vm.XpGained > 0;
+            };
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged([CallerMemberName] string propName = null)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-	}
+            ApplySorting();
+
+            _updateTimer = new DispatcherTimer(
+                TimeSpan.FromSeconds(1),
+                DispatcherPriority.Background,
+                (_, _) => RefreshAll(),
+                Dispatcher.CurrentDispatcher
+            );
+            _updateTimer.Start();
+        }
+
+        private void RefreshAll()
+        {
+            foreach (var vm in AllSkills)
+            {
+                vm.Update();
+            }
+
+            SkillsView.Refresh();
+        }
+
+        private void ApplySorting()
+        {
+            ApplySorting(SelectedSortOption, SortDescending);
+        }
+
+        private void ApplySorting(string sortOption, bool sortDescending)
+        {
+            SkillsView.SortDescriptions.Clear();
+
+            var direction = sortDescending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            var propertyName = sortOption switch
+            {
+                "Skill Name" => nameof(SkillModel.Name),
+                "Level" => nameof(SkillModel.LevelValue),
+                "Total XP" => nameof(SkillModel.Xp),
+                "XP Gained" => nameof(SkillModel.XpGained),
+                "XP / Hour" => nameof(SkillModel.XpPerHour),
+                "XP To Next" => nameof(SkillModel.XpToNext),
+                "ETA" => nameof(SkillModel.EtaMinutes),
+                "Active First" => nameof(SkillModel.IsActive),
+                _ => nameof(SkillModel.XpGained)
+            };
+
+            SkillsView.SortDescriptions.Add(new SortDescription(propertyName, direction));
+
+            if (propertyName != nameof(SkillModel.Name))
+            {
+                SkillsView.SortDescriptions.Add(new SortDescription(nameof(SkillModel.Name), ListSortDirection.Ascending));
+            }
+
+            SkillsView.Refresh();
+        }
+
+        public bool TrySetSortFromMember(string sortMemberPath, ListSortDirection? currentDirection)
+        {
+            if (string.IsNullOrWhiteSpace(sortMemberPath))
+            {
+                return false;
+            }
+
+            var option = sortMemberPath switch
+            {
+                nameof(SkillModel.Name) => "Skill Name",
+                nameof(SkillModel.LevelValue) => "Level",
+                nameof(SkillModel.Xp) => "Total XP",
+                nameof(SkillModel.XpGained) => "XP Gained",
+                nameof(SkillModel.XpPerHour) => "XP / Hour",
+                nameof(SkillModel.XpToNext) => "XP To Next",
+                nameof(SkillModel.EtaMinutes) => "ETA",
+                nameof(SkillModel.IsActive) => "Active First",
+                _ => null
+            };
+
+            if (option is null)
+            {
+                return false;
+            }
+
+            bool descending;
+            if (SelectedSortOption == option)
+            {
+                descending = currentDirection != ListSortDirection.Descending;
+            }
+            else
+            {
+                descending = option != "Skill Name";
+            }
+
+            SetSort(option, descending);
+            return true;
+        }
+
+        private void SetSort(string option, bool descending)
+        {
+            bool changed = false;
+            if (_selectedSortOption != option)
+            {
+                _selectedSortOption = option;
+                OnPropertyChanged(nameof(SelectedSortOption));
+                changed = true;
+            }
+
+            if (_sortDescending != descending)
+            {
+                _sortDescending = descending;
+                OnPropertyChanged(nameof(SortDescending));
+                changed = true;
+            }
+
+            if (changed)
+            {
+                ApplySorting(_selectedSortOption, _sortDescending);
+            }
+        }
+
+        private void SetDisplayMode(SkillsDisplayMode mode)
+        {
+            if (_displayMode == mode) return;
+            _displayMode = mode;
+            OnPropertyChanged(nameof(IsListView));
+            OnPropertyChanged(nameof(IsGridView));
+            OnPropertyChanged(nameof(IsTableView));
+            SkillsView.Refresh();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
 }

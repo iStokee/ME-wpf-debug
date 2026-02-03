@@ -2,16 +2,20 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 using MahApps.Metro.IconPacks;
 
 namespace MESharp.Views.Controls
 {
     public partial class SectionHeader : UserControl
     {
+        private bool _updatingExpansionState;
+
         public SectionHeader()
         {
             InitializeComponent();
             TryApplyDefaultIconBrush();
+            Loaded += (_, __) => UpdateExpandStateFromView();
         }
 
         public static readonly DependencyProperty TitleProperty =
@@ -55,6 +59,15 @@ namespace MESharp.Views.Controls
 
         public static readonly DependencyProperty RightContentProperty =
             DependencyProperty.Register(nameof(RightContent), typeof(object), typeof(SectionHeader), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty ShowExpandCollapseAllProperty =
+            DependencyProperty.Register(nameof(ShowExpandCollapseAll), typeof(bool), typeof(SectionHeader), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty AreSectionsExpandedProperty =
+            DependencyProperty.Register(nameof(AreSectionsExpanded), typeof(bool), typeof(SectionHeader), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty ExpandCollapseToolTipProperty =
+            DependencyProperty.Register(nameof(ExpandCollapseToolTip), typeof(string), typeof(SectionHeader), new PropertyMetadata("Expand or collapse all sections"));
 
         public string Title
         {
@@ -140,6 +153,24 @@ namespace MESharp.Views.Controls
             set => SetValue(RightContentProperty, value);
         }
 
+        public bool ShowExpandCollapseAll
+        {
+            get => (bool)GetValue(ShowExpandCollapseAllProperty);
+            set => SetValue(ShowExpandCollapseAllProperty, value);
+        }
+
+        public bool AreSectionsExpanded
+        {
+            get => (bool)GetValue(AreSectionsExpandedProperty);
+            set => SetValue(AreSectionsExpandedProperty, value);
+        }
+
+        public string ExpandCollapseToolTip
+        {
+            get => (string)GetValue(ExpandCollapseToolTipProperty);
+            set => SetValue(ExpandCollapseToolTipProperty, value);
+        }
+
         private void TryApplyDefaultIconBrush()
         {
             if (IconForeground != null)
@@ -151,6 +182,90 @@ namespace MESharp.Views.Controls
             {
                 IconForeground = brush;
             }
+        }
+
+        private void OnExpandCollapseToggleChanged(object sender, RoutedEventArgs e)
+        {
+            if (_updatingExpansionState)
+            {
+                return;
+            }
+
+            ApplyExpandState(AreSectionsExpanded);
+        }
+
+        private void ApplyExpandState(bool expand)
+        {
+            var scope = FindOwningViewScope();
+            if (scope == null)
+            {
+                return;
+            }
+
+            _updatingExpansionState = true;
+            try
+            {
+                foreach (var expander in FindVisualChildren<Expander>(scope))
+                {
+                    expander.IsExpanded = expand;
+                }
+
+                AreSectionsExpanded = expand;
+            }
+            finally
+            {
+                _updatingExpansionState = false;
+            }
+        }
+
+        private void UpdateExpandStateFromView()
+        {
+            var scope = FindOwningViewScope();
+            if (scope == null)
+            {
+                return;
+            }
+
+            var expanders = FindVisualChildren<Expander>(scope);
+            if (expanders.Count == 0)
+            {
+                return;
+            }
+
+            AreSectionsExpanded = expanders.TrueForAll(x => x.IsExpanded);
+        }
+
+        private DependencyObject? FindOwningViewScope()
+        {
+            DependencyObject? current = this;
+            while (current != null)
+            {
+                current = VisualTreeHelper.GetParent(current);
+                if (current is UserControl uc && uc != this)
+                {
+                    return uc;
+                }
+            }
+
+            return Window.GetWindow(this);
+        }
+
+        private static System.Collections.Generic.List<T> FindVisualChildren<T>(DependencyObject root) where T : DependencyObject
+        {
+            var result = new System.Collections.Generic.List<T>();
+            var count = VisualTreeHelper.GetChildrenCount(root);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is T match)
+                {
+                    result.Add(match);
+                }
+
+                result.AddRange(FindVisualChildren<T>(child));
+            }
+
+            return result;
         }
     }
 }

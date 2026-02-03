@@ -2,6 +2,7 @@
     x:Class="MESharp.Views.GrandExchangeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:MESharp.Views.Behaviors"
     xmlns:conv="clr-namespace:MESharp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -40,13 +41,15 @@
             </Grid.ColumnDefinitions>
 
             <ScrollViewer Grid.Column="0" Margin="0,0,10,0" VerticalScrollBarVisibility="Auto">
-                <StackPanel>
+                <StackPanel behaviors:PanelLayoutBehavior.PageKey="grand-exchange-left-view">
                     <Border
+                        behaviors:PanelLayoutBehavior.PanelKey="status"
                         Margin="0,0,0,10"
                         Padding="12"
                         Background="{DynamicResource App.CardBrush}"
                         CornerRadius="5">
-                        <StackPanel>
+                        <Expander Header="Status" IsExpanded="True">
+                            <StackPanel Margin="0,10,0,0">
                             <DockPanel Margin="0,0,0,8">
                                 <TextBlock
                                     DockPanel.Dock="Left"
@@ -127,15 +130,18 @@
                                 <Button Margin="0,0,6,0" Command="{Binding BackCommand}" Content="Back" />
                                 <Button Margin="0,0,0,0" Command="{Binding CollectCommand}" Content="Collect" />
                             </UniformGrid>
-                        </StackPanel>
+                            </StackPanel>
+                        </Expander>
                     </Border>
 
                     <Border
+                        behaviors:PanelLayoutBehavior.PanelKey="slot-actions"
                         Margin="0,0,0,10"
                         Padding="12"
                         Background="{DynamicResource App.CardBrush}"
                         CornerRadius="5">
-                        <StackPanel>
+                        <Expander Header="Slot Actions" IsExpanded="True">
+                            <StackPanel Margin="0,10,0,0">
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="SemiBold"
@@ -161,15 +167,18 @@
                                 <TextBox Width="80" Margin="8,0,0,0" Text="{Binding FindItemId}" />
                                 <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding FindOrderCommand}" Content="Find" />
                             </StackPanel>
-                        </StackPanel>
+                            </StackPanel>
+                        </Expander>
                     </Border>
 
                     <Border
+                        behaviors:PanelLayoutBehavior.PanelKey="place-order"
                         Margin="0,0,0,10"
                         Padding="12"
                         Background="{DynamicResource App.CardBrush}"
                         CornerRadius="5">
-                        <StackPanel>
+                        <Expander Header="Place Order" IsExpanded="False">
+                            <StackPanel Margin="0,10,0,0">
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="SemiBold"
@@ -206,14 +215,17 @@
                             </StackPanel>
 
                             <Button Margin="0,10,0,0" Command="{Binding PlaceOrderCommand}" Content="Place Order" />
-                        </StackPanel>
+                            </StackPanel>
+                        </Expander>
                     </Border>
 
                     <Border
+                        behaviors:PanelLayoutBehavior.PanelKey="manual-controls"
                         Padding="12"
                         Background="{DynamicResource App.CardBrush}"
                         CornerRadius="5">
-                        <StackPanel>
+                        <Expander Header="Manual Controls" IsExpanded="False">
+                            <StackPanel Margin="0,10,0,0">
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="SemiBold"
@@ -251,7 +263,8 @@
                                 <TextBox Width="80" Margin="8,0,0,0" Text="{Binding DelayOffset}" />
                                 <Button Margin="8,0,0,0" Padding="8,3" Command="{Binding ApplyDelayCommand}" Content="Apply" />
                             </StackPanel>
-                        </StackPanel>
+                            </StackPanel>
+                        </Expander>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
@@ -261,7 +274,8 @@
                 Padding="12"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
-                <Grid>
+                <Expander Header="Slots" IsExpanded="True">
+                    <Grid Margin="0,10,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -294,7 +308,8 @@
                             <DataGridTextColumn Header="Value" Binding="{Binding CompletedValue}" Width="80" />
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
+                    </Grid>
+                </Expander>
             </Border>
         </Grid>
     </Grid>

@@ -11,6 +11,7 @@
     <UserControl.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:BoolToStringConverter x:Key="BoolToStringConverter" />
     </UserControl.Resources>
 
     <Border
@@ -61,6 +62,36 @@
                     VerticalAlignment="Center"
                     Content="{Binding RightContent, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Visibility="{Binding RightContent, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullToVisibilityConverter}}" />
+                <ToggleButton
+                    MinWidth="118"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding AreSectionsExpanded, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                    Checked="OnExpandCollapseToggleChanged"
+                    Unchecked="OnExpandCollapseToggleChanged"
+                    Style="{StaticResource PanelToggleButton}"
+                    ToolTip="{Binding ExpandCollapseToolTip, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Visibility="{Binding ShowExpandCollapseAll, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Width="14"
+                            Height="14"
+                            Margin="0,0,6,0"
+                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}">
+                            <iconPacks:PackIconMaterial.Style>
+                                <Style TargetType="iconPacks:PackIconMaterial">
+                                    <Setter Property="Kind" Value="UnfoldMoreHorizontal" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AreSectionsExpanded, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                            <Setter Property="Kind" Value="UnfoldLessHorizontal" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </iconPacks:PackIconMaterial.Style>
+                        </iconPacks:PackIconMaterial>
+                        <TextBlock Text="{Binding AreSectionsExpanded, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Collapse All|Expand All'}" />
+                    </StackPanel>
+                </ToggleButton>
                 <Button
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
