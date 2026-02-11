@@ -200,6 +200,7 @@ namespace MESharp
                     app = Application.Current;
                     _app = app; // Update static field for this ALC
                     initialized = true;
+                    EnsureThemeResources(app);
 
                     // Re-register shutdown handler with the NEW ShutdownMonitor token
                     // (the old registration is tied to the old, disposed token)
@@ -223,6 +224,7 @@ namespace MESharp
                     Console.WriteLine("[Managed] Reusing existing Application from static field (same ALC)");
                     app = _app;
                     initialized = true;
+                    EnsureThemeResources(app);
                 }
                 // PRIORITY 3: Create new instance (first load ever in this AppDomain)
                 else
@@ -320,11 +322,12 @@ namespace MESharp
             }
 
             app.Resources.MergedDictionaries.Clear();
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name ?? "MESharp_DebugUtil";
 
             var fallbackUris = new[]
             {
-                "pack://application:,,,/WPFScript;component/Themes/Light.xaml",
-                "pack://application:,,,/WPFScript;component/Themes/ItemFlagResources.xaml"
+                $"pack://application:,,,/{assemblyName};component/Themes/Light.xaml",
+                $"pack://application:,,,/{assemblyName};component/Themes/ItemFlagResources.xaml"
             };
 
             foreach (var uri in fallbackUris)
@@ -356,6 +359,25 @@ namespace MESharp
             EnsureResource(app, "PrimaryBrush", () => CreateFrozenBrush(primaryColor));
             EnsureResource(app, "PrimaryForegroundBrush", () => CreateFrozenBrush(Colors.White));
             EnsureResource(app, "PrimarySoftBrush", () => CreateFrozenBrush(Color.FromArgb(0x33, 0x3F, 0x51, 0xB5)));
+        }
+
+        private static void EnsureThemeResources(Application app)
+        {
+            try
+            {
+                if (app.Resources.Contains("PrimaryCommandButton") && app.Resources.Contains("SecondaryCommandButton"))
+                {
+                    return;
+                }
+
+                Console.WriteLine("[Managed] Ensuring theme resources for reused Application.");
+                BootstrapResources(app);
+                TryApplyTheme();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Managed] EnsureThemeResources failed: " + ex.Message);
+            }
         }
 
         private static SolidColorBrush CreateFrozenBrush(Color color)

@@ -104,6 +104,7 @@
             <Border
                 Grid.Row="1"
                 behaviors:PanelLayoutBehavior.PanelKey="container-selection-actions"
+                behaviors:PanelLayoutBehavior.IsHeightResizable="False"
                 Margin="0,0,0,10"
                 Padding="10"
                 Background="{DynamicResource App.CardBrush}"
@@ -176,6 +177,7 @@
             <Border
                 Grid.Row="2"
                 behaviors:PanelLayoutBehavior.PanelKey="items-table"
+                behaviors:PanelLayoutBehavior.IsHeightResizable="False"
                 Background="{DynamicResource App.CardBrush}"
                 CornerRadius="5">
                 <Expander Header="Items Table" IsExpanded="True">
@@ -279,11 +281,17 @@
                     HorizontalAlignment="Stretch"
                     behaviors:PanelLayoutBehavior.PageKey="items-unified-view"
                     behaviors:PanelLayoutBehavior.ColumnKey="right">
-                    <Expander
-                        Header="Item Actions"
-                        IsExpanded="True"
-                        behaviors:PanelLayoutBehavior.PanelKey="item-actions">
-                        <StackPanel Margin="0,10,0,0">
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="10"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        CornerRadius="5"
+                        behaviors:PanelLayoutBehavior.PanelKey="item-actions"
+                        behaviors:PanelLayoutBehavior.IsHeightResizable="False">
+                        <Expander
+                            Header="Item Actions"
+                            IsExpanded="True">
+                            <StackPanel Margin="0,10,0,0">
                     <TextBlock
                         Margin="0,0,0,4"
                         FontSize="16"
@@ -491,6 +499,57 @@
                                 Command="{Binding ItemUseOnItemCommand}"
                                 Content="Use Item On Item"
                                 Style="{StaticResource AccentButton}" />
+
+                            <Separator Margin="0,10,0,10" />
+
+                            <Expander Header="Advanced Inventory Actions" IsExpanded="False">
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Item id:" />
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="8,0,0,6" Orientation="Horizontal">
+                                        <TextBox Width="120" Margin="0,0,8,0" Text="{Binding InventoryActionItemId}" />
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding InventoryDoActionByIdCommand}" Content="DoAction (ID)" />
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding InventoryRubByIdCommand}" Content="Rub (ID)" />
+                                        <Button Padding="10,4" Command="{Binding InventoryResolveRootCommand}" Content="Resolve Root" />
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Item name:" />
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="8,0,0,6" Orientation="Horizontal">
+                                        <TextBox Width="220" Margin="0,0,8,0" Text="{Binding InventoryActionItemName}" />
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding InventoryDoActionByNameCommand}" Content="DoAction (Name)" />
+                                        <Button Padding="10,4" Command="{Binding InventoryRubByNameCommand}" Content="Rub (Name)" />
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Menu index:" />
+                                    <TextBox Grid.Row="2" Grid.Column="1" Margin="8,0,0,6" Width="120" Text="{Binding InventoryActionMenuIndex}" />
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Offset/route:" />
+                                    <ComboBox
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="8,0,0,6"
+                                        ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                                        ItemsSource="{Binding InventoryActionOffsetOptions}"
+                                        SelectedItem="{Binding InventoryActionSelectedOffset}"
+                                        Style="{StaticResource AppComboBox}"
+                                        DisplayMemberPath="DisplayName" />
+
+                                    <StackPanel Grid.Row="4" Grid.Column="1" Margin="8,0,0,0" Orientation="Horizontal">
+                                        <Button Padding="10,4" Command="{Binding InventoryDoActionBySlotCommand}" Content="DoAction (By Slot Fallback)" />
+                                    </StackPanel>
+                                </Grid>
+                            </Expander>
                         </StackPanel>
                     </Border>
 
@@ -1371,8 +1430,9 @@
                         </StackPanel>
                     </Border>
 
-                        </StackPanel>
-                    </Expander>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Border>

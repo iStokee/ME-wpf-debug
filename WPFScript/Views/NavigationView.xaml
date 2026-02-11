@@ -54,7 +54,6 @@
         <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -95,58 +94,9 @@
             </controls:SectionHeader.RightContent>
         </controls:SectionHeader>
 
-        <!--  Live status  -->
-        <Border
-            Grid.Row="1"
-            Style="{StaticResource NavigationPanelCard}">
-            <Expander Header="Live Status" IsExpanded="True">
-                <Grid Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0">
-                    <TextBlock FontWeight="SemiBold" Text="Tile position" />
-                    <TextBlock
-                        Margin="0,4,0,0"
-                        FontFamily="Consolas"
-                        FontSize="13"
-                        Text="{Binding TilePosition}" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="1">
-                    <TextBlock FontWeight="SemiBold" Text="Exact position" />
-                    <TextBlock
-                        Margin="0,4,0,0"
-                        FontFamily="Consolas"
-                        FontSize="13"
-                        Text="{Binding ExactPosition}" />
-                </StackPanel>
-
-                <StackPanel
-                    Grid.Column="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <Ellipse
-                        Width="14"
-                        Height="14"
-                        Margin="0,0,6,0"
-                        Fill="{Binding IsMoving, Converter={StaticResource BoolToColorConverter}}" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="{Binding IsMoving, Converter={StaticResource BoolToStringConverter}}" />
-                </StackPanel>
-                </Grid>
-            </Expander>
-        </Border>
-
         <!--  Main content  -->
         <Grid
-            Grid.Row="2"
+            Grid.Row="1"
             behaviors:GridColumnLayoutBehavior.LayoutKey="navigation-view-columns"
             behaviors:GridColumnLayoutBehavior.ColumnIndexes="0,2">
             <Grid.ColumnDefinitions>
@@ -160,6 +110,55 @@
                 Margin="0,0,8,0"
                 behaviors:PanelLayoutBehavior.PageKey="navigation-view"
                 behaviors:PanelLayoutBehavior.ColumnKey="left">
+                <!--  Live status (dockable)  -->
+                <Border
+                    behaviors:PanelLayoutBehavior.PanelKey="live-status"
+                    Style="{StaticResource NavigationPanelCard}">
+                    <Expander Header="Live Status" IsExpanded="True">
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock FontWeight="SemiBold" Text="Tile position" />
+                                <TextBlock
+                                    Margin="0,4,0,0"
+                                    FontFamily="Consolas"
+                                    FontSize="13"
+                                    Text="{Binding TilePosition}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock FontWeight="SemiBold" Text="Exact position" />
+                                <TextBlock
+                                    Margin="0,4,0,0"
+                                    FontFamily="Consolas"
+                                    FontSize="13"
+                                    Text="{Binding ExactPosition}" />
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Column="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <Ellipse
+                                    Width="14"
+                                    Height="14"
+                                    Margin="0,0,6,0"
+                                    Fill="{Binding IsMoving, Converter={StaticResource BoolToColorConverter}}" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="{Binding IsMoving, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Moving|Idle'}" />
+                            </StackPanel>
+                        </Grid>
+                    </Expander>
+                </Border>
+
                 <!--  Walk to tile  -->
                 <Border
                     behaviors:PanelLayoutBehavior.PanelKey="walk-to-tile"
@@ -466,6 +465,29 @@
                                         Padding="6"
                                         Text="{Binding RouteName, UpdateSourceTrigger=PropertyChanged}" />
 
+                                    <UniformGrid Margin="0,0,0,8" Columns="4">
+                                        <StackPanel Margin="0,0,8,0">
+                                            <TextBlock FontWeight="SemiBold" Text="Area radius" />
+                                            <TextBox Margin="0,4,0,0" Padding="6" Text="{Binding WaypointAreaRadius, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,8,0">
+                                            <TextBlock FontWeight="SemiBold" Text="Arrival dist" />
+                                            <TextBox Margin="0,4,0,0" Padding="6" Text="{Binding WaypointArrivalDistance, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,8,0">
+                                            <TextBlock FontWeight="SemiBold" Text="Timeout (ms)" />
+                                            <TextBox Margin="0,4,0,0" Padding="6" Text="{Binding WaypointTimeoutMs, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock FontWeight="SemiBold" Text="Jitter" />
+                                            <TextBox Margin="0,4,0,0" Padding="6" Text="{Binding WaypointJitterTiles, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                    </UniformGrid>
+                                    <CheckBox
+                                        Margin="0,0,0,8"
+                                        IsChecked="{Binding WaypointChainWhileMoving}"
+                                        Content="Allow waypoint chaining while still moving" />
+
                                     <WrapPanel Margin="0,0,0,8">
                                         <Button Command="{Binding AddCurrentWaypointCommand}" Style="{StaticResource SecondaryCommandButton}">
                                             <StackPanel Orientation="Horizontal">
@@ -508,21 +530,93 @@
                                         </Button>
                                     </WrapPanel>
 
-                                    <ListBox
+                                    <WrapPanel Margin="0,0,0,8">
+                                        <Button Command="{Binding InsertWaypointAboveCommand}" Style="{StaticResource SecondaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="ArrowUpBoldBoxOutline" />
+                                                <TextBlock Text="Insert above" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button
+                                            Margin="8,0,0,0"
+                                            Command="{Binding InsertWaypointBelowCommand}"
+                                            Style="{StaticResource SecondaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="ArrowDownBoldBoxOutline" />
+                                                <TextBlock Text="Insert below" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button
+                                            Margin="8,0,0,0"
+                                            Command="{Binding MoveWaypointUpCommand}"
+                                            Style="{StaticResource SecondaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="ArrowUpThick" />
+                                                <TextBlock Text="Move up" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button
+                                            Margin="8,0,0,0"
+                                            Command="{Binding MoveWaypointDownCommand}"
+                                            Style="{StaticResource SecondaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="ArrowDownThick" />
+                                                <TextBlock Text="Move down" />
+                                            </StackPanel>
+                                        </Button>
+                                    </WrapPanel>
+
+                                    <DataGrid
                                         MaxHeight="220"
                                         Background="{DynamicResource App.BackgroundBrush}"
                                         BorderBrush="{DynamicResource PrimarySoftBrush}"
                                         BorderThickness="1"
+                                        AutoGenerateColumns="False"
+                                        CanUserAddRows="True"
+                                        CanUserDeleteRows="True"
+                                        HeadersVisibility="Column"
                                         ItemsSource="{Binding CurrentRoute}"
-                                        SelectedItem="{Binding SelectedWaypoint}">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock FontFamily="Consolas" Text="{Binding}" />
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
+                                        SelectedItem="{Binding SelectedWaypoint}"
+                                        SelectionMode="Single">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="*" Binding="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Header="Label" />
+                                            <DataGridTextColumn Width="66" Binding="{Binding X, UpdateSourceTrigger=PropertyChanged}" Header="X" />
+                                            <DataGridTextColumn Width="66" Binding="{Binding Y, UpdateSourceTrigger=PropertyChanged}" Header="Y" />
+                                            <DataGridTextColumn Width="54" Binding="{Binding Z, UpdateSourceTrigger=PropertyChanged}" Header="Z" />
+                                            <DataGridTextColumn Width="56" Binding="{Binding AreaRadius, UpdateSourceTrigger=PropertyChanged}" Header="Area" />
+                                            <DataGridTextColumn Width="62" Binding="{Binding ArrivalDistance, UpdateSourceTrigger=PropertyChanged}" Header="Arrive" />
+                                            <DataGridTextColumn Width="84" Binding="{Binding TimeoutMs, UpdateSourceTrigger=PropertyChanged}" Header="Timeout" />
+                                            <DataGridTextColumn Width="58" Binding="{Binding JitterTiles, UpdateSourceTrigger=PropertyChanged}" Header="Jitter" />
+                                            <DataGridCheckBoxColumn Width="70" Binding="{Binding ChainWhileMoving, UpdateSourceTrigger=PropertyChanged}" Header="Chain" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
                                     <TextBlock
                                         Margin="0,8,0,0"
+                                        Style="{StaticResource NavigationSubtleText}"
+                                        Text="Tip: table supports full CRUD. Add new rows at bottom, edit directly, delete row, and reorder with move buttons." />
+
+                                    <TextBlock
+                                        Margin="0,4,0,0"
                                         Text="No waypoints yet. Add from current tile or target."
                                         Visibility="Collapsed">
                                         <TextBlock.Style>
@@ -536,7 +630,6 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-
                                     <Button
                                         Margin="0,8,0,0"
                                         HorizontalAlignment="Left"
@@ -552,6 +645,40 @@
                                             <TextBlock Text="Remove selected" />
                                         </StackPanel>
                                     </Button>
+
+                                    <WrapPanel Margin="0,8,0,0">
+                                        <Button Command="{Binding RunCurrentRouteCommand}" Style="{StaticResource PrimaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="PlayCircleOutline" />
+                                                <TextBlock Text="Run current route" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button
+                                            Margin="8,0,0,0"
+                                            Command="{Binding StopRouteCommand}"
+                                            Style="{StaticResource SecondaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="StopCircleOutline" />
+                                                <TextBlock Text="Stop" />
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBlock
+                                            Margin="12,8,0,0"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Consolas"
+                                            Style="{StaticResource NavigationSubtleText}"
+                                            Text="{Binding RouteExecutionStatus}" />
+                                    </WrapPanel>
                                 </StackPanel>
                             </Border>
 
@@ -596,6 +723,20 @@
                                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                                     Kind="FileSend" />
                                                 <TextBlock Text="Load into path" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button
+                                            Margin="8,0,0,0"
+                                            Command="{Binding RunSelectedRouteCommand}"
+                                            Style="{StaticResource SecondaryCommandButton}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <iconPacks:PackIconMaterial
+                                                    Width="16"
+                                                    Height="16"
+                                                    Margin="0,0,6,0"
+                                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                    Kind="PlayOutline" />
+                                                <TextBlock Text="Run saved" />
                                             </StackPanel>
                                         </Button>
                                     </WrapPanel>
@@ -755,11 +896,72 @@
                         </StackPanel>
                         </StackPanel>
                     </Expander>
-                </Border>
+	                </Border>
 
-                <Border
-                    behaviors:PanelLayoutBehavior.PanelKey="activity-log"
-                    Style="{StaticResource NavigationPanelCard}">
+                    <Border
+                        behaviors:PanelLayoutBehavior.PanelKey="api-teleports"
+                        Style="{StaticResource NavigationPanelCard}">
+                        <Expander Header="Teleports (API)" IsExpanded="False">
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock FontWeight="SemiBold" Text="Spellbook" />
+                                <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                    <TextBox Width="90" Padding="6" Text="{Binding ApiSpellbookIndex}" />
+                                    <Button Margin="8,0,0,0" Padding="10,4" Command="{Binding ApiSpellbookByIndexCommand}" Content="Cast Index" />
+                                </StackPanel>
+
+                                <StackPanel Margin="0,10,0,0">
+                                    <TextBlock FontWeight="SemiBold" Text="Teleport by name" />
+                                    <TextBox Margin="0,4,0,0" Padding="6" Text="{Binding ApiTeleportName, UpdateSourceTrigger=PropertyChanged}" />
+                                    <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding ApiSpellbookByNameCommand}" Content="Spellbook" />
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding ApiSpiritTreeCommand}" Content="Spirit Tree" />
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding ApiGliderCommand}" Content="Glider" />
+                                        <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding ApiFairyCommand}" Content="Fairy" />
+                                        <Button Padding="10,4" Command="{Binding ApiQuiver4Command}" Content="Quiver4" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <Separator Margin="0,10,0,10" />
+
+                                <TextBlock FontWeight="SemiBold" Text="Jewelry" />
+                                <TextBlock Margin="0,6,0,0" Style="{StaticResource NavigationSubtleText}" Text="Uses Teleports.Jewelry (item + 1/2 locations + menu level + offset)." />
+                                <TextBox Margin="0,6,0,0" Padding="6" Text="{Binding ApiJewelryItemName}" />
+                                <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                    <TextBox Width="150" Padding="6" Text="{Binding ApiJewelryLocation1}" />
+                                    <TextBox Width="150" Margin="8,0,0,0" Padding="6" Text="{Binding ApiJewelryLocation2}" />
+                                </StackPanel>
+                                <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                    <TextBox Width="90" Padding="6" Text="{Binding ApiJewelryMenuLevel}" />
+                                    <TextBox Width="140" Margin="8,0,0,0" Padding="6" Text="{Binding ApiJewelryOffset}" />
+                                    <Button Margin="8,0,0,0" Padding="10,4" Command="{Binding ApiJewelryTeleportCommand}" Content="Teleport" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+
+                    <Border
+                        behaviors:PanelLayoutBehavior.PanelKey="api-minimap"
+                        Style="{StaticResource NavigationPanelCard}">
+                        <Expander Header="Minimap (API)" IsExpanded="False">
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock FontWeight="SemiBold" Text="Click icon" />
+                                <TextBox Margin="0,4,0,0" Padding="6" Text="{Binding ApiMinimapIconId}" />
+                                <TextBlock Margin="0,10,0,0" FontWeight="SemiBold" Text="Click icon at" />
+                                <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                    <TextBox Width="90" Padding="6" Text="{Binding ApiMinimapX}" />
+                                    <TextBox Width="90" Margin="8,0,0,0" Padding="6" Text="{Binding ApiMinimapY}" />
+                                </StackPanel>
+                                <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                    <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding ApiMinimapClickIconCommand}" Content="Click Icon" />
+                                    <Button Padding="10,4" Command="{Binding ApiMinimapClickIconAtCommand}" Content="Click Icon At" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
+	
+	                <Border
+	                    behaviors:PanelLayoutBehavior.PanelKey="activity-log"
+	                    Style="{StaticResource NavigationPanelCard}">
                     <Expander Header="Activity Log" IsExpanded="False">
                         <StackPanel Margin="0,10,0,0">
                         <StackPanel Orientation="Horizontal">

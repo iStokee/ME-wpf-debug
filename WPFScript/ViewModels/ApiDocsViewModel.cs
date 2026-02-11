@@ -11,6 +11,30 @@ namespace MESharp.ViewModels
 {
     public class ApiDocsViewModel : INotifyPropertyChanged, IActivatableViewModel
     {
+        private static readonly HashSet<string> DedicatedPanelApiClasses = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Game",
+            "Chat",
+            "Skills",
+            "Players",
+            "LocalPlayer",
+            "Traversal",
+            "Movement",
+            "LodestoneData",
+            "Inventory",
+            "Bank",
+            "Equipment",
+            "Loot",
+            "MaterialCache",
+            "TradeWindow",
+            "Familiar",
+            "GrandExchange",
+            "Objects",
+            "Npcs",
+            "Interfaces",
+            "Varbits"
+        };
+
         public ObservableCollection<ApiClassInfo> ApiClasses { get; private set; }
 
         private ApiClassInfo _selectedClass;
@@ -84,7 +108,8 @@ namespace MESharp.ViewModels
                     {
                         ClassType = t,
                         Name = t.Name,
-                        Namespace = t.Namespace ?? "Unknown"
+                        Namespace = t.Namespace ?? "Unknown",
+                        HasDedicatedPanel = DedicatedPanelApiClasses.Contains(t.Name)
                     })
                     .ToList();
 
@@ -95,6 +120,10 @@ namespace MESharp.ViewModels
                 if (inventoryClass != null)
                 {
                     SelectedClass = inventoryClass;
+                }
+                else if (ApiClasses.Count > 0)
+                {
+                    SelectedClass = ApiClasses[0];
                 }
             }
             catch (Exception ex)
@@ -141,5 +170,6 @@ namespace MESharp.ViewModels
         public Type ClassType { get; init; }
         public string Name { get; init; }
         public string Namespace { get; init; }
+        public bool HasDedicatedPanel { get; init; }
     }
 }

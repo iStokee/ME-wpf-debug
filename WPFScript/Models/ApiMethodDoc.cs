@@ -14,5 +14,5 @@ namespace MESharp.Models
 		public string Category { get; internal set; }
 		public string Signature { get; internal set; }
 		public string ReturnDescription { get; internal set; }
-	}
+    }
 }

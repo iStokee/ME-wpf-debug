@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -14,6 +16,8 @@ namespace MESharp.ViewModels
     public class NavigationViewModel : BaseViewModel, IDisposable
     {
         private readonly DispatcherTimer _refreshTimer;
+        private readonly Random _random = new();
+        private CancellationTokenSource? _routeRunCts;
 
         public ObservableCollection<string> ActivityLog { get; } = new();
         public ObservableCollection<LodestoneOption> Lodestones { get; }
@@ -43,10 +47,30 @@ namespace MESharp.ViewModels
         private string _lodestoneSearch = "Varrock";
         private int _teleportTimeoutMs = 12000;
 
+        // ─── API Utilities (moved from ApiUtilities) ───────────────────────
+        private int _apiMinimapIconId;
+        private int _apiMinimapX = 640;
+        private int _apiMinimapY = 120;
+
+        private int _apiSpellbookIndex;
+        private string _apiTeleportName = "Varrock";
+        private string _apiJewelryItemName = "Ring of duelling";
+        private string _apiJewelryLocation1 = "Castle Wars";
+        private string _apiJewelryLocation2 = string.Empty;
+        private int _apiJewelryMenuLevel = 1;
+        private int _apiJewelryOffset = Objects.Offsets.GeneralInterfaceChooseOption;
+
         // Route builder
         private string _routeName = "New route";
         private RouteDefinition? _selectedRoute;
         private RouteWaypoint? _selectedWaypoint;
+        private int _waypointAreaRadius = 1;
+        private int _waypointArrivalDistance = 2;
+        private int _waypointTimeoutMs = 9000;
+        private int _waypointJitterTiles = 1;
+        private bool _waypointChainWhileMoving = true;
+        private bool _isRouteRunning;
+        private string _routeExecutionStatus = "Idle";
 
         public string TilePosition { get => _tilePosition; set => SetProperty(ref _tilePosition, value); }
         public string ExactPosition { get => _exactPosition; set => SetProperty(ref _exactPosition, value); }
@@ -66,9 +90,28 @@ namespace MESharp.ViewModels
         public LodestoneOption? SelectedLodestone { get => _selectedLodestone; set => SetProperty(ref _selectedLodestone, value); }
         public string LodestoneSearch { get => _lodestoneSearch; set => SetProperty(ref _lodestoneSearch, value); }
         public int TeleportTimeoutMs { get => _teleportTimeoutMs; set => SetProperty(ref _teleportTimeoutMs, value); }
+
+        public int ApiMinimapIconId { get => _apiMinimapIconId; set => SetProperty(ref _apiMinimapIconId, value); }
+        public int ApiMinimapX { get => _apiMinimapX; set => SetProperty(ref _apiMinimapX, value); }
+        public int ApiMinimapY { get => _apiMinimapY; set => SetProperty(ref _apiMinimapY, value); }
+
+        public int ApiSpellbookIndex { get => _apiSpellbookIndex; set => SetProperty(ref _apiSpellbookIndex, value); }
+        public string ApiTeleportName { get => _apiTeleportName; set => SetProperty(ref _apiTeleportName, value); }
+        public string ApiJewelryItemName { get => _apiJewelryItemName; set => SetProperty(ref _apiJewelryItemName, value); }
+        public string ApiJewelryLocation1 { get => _apiJewelryLocation1; set => SetProperty(ref _apiJewelryLocation1, value); }
+        public string ApiJewelryLocation2 { get => _apiJewelryLocation2; set => SetProperty(ref _apiJewelryLocation2, value); }
+        public int ApiJewelryMenuLevel { get => _apiJewelryMenuLevel; set => SetProperty(ref _apiJewelryMenuLevel, value); }
+        public int ApiJewelryOffset { get => _apiJewelryOffset; set => SetProperty(ref _apiJewelryOffset, value); }
         public string RouteName { get => _routeName; set { SetProperty(ref _routeName, value); RefreshCommandStates(); } }
         public RouteDefinition? SelectedRoute { get => _selectedRoute; set { SetProperty(ref _selectedRoute, value); RefreshCommandStates(); } }
         public RouteWaypoint? SelectedWaypoint { get => _selectedWaypoint; set { SetProperty(ref _selectedWaypoint, value); RefreshCommandStates(); } }
+        public int WaypointAreaRadius { get => _waypointAreaRadius; set => SetProperty(ref _waypointAreaRadius, value); }
+        public int WaypointArrivalDistance { get => _waypointArrivalDistance; set => SetProperty(ref _waypointArrivalDistance, value); }
+        public int WaypointTimeoutMs { get => _waypointTimeoutMs; set => SetProperty(ref _waypointTimeoutMs, value); }
+        public int WaypointJitterTiles { get => _waypointJitterTiles; set => SetProperty(ref _waypointJitterTiles, value); }
+        public bool WaypointChainWhileMoving { get => _waypointChainWhileMoving; set => SetProperty(ref _waypointChainWhileMoving, value); }
+        public bool IsRouteRunning { get => _isRouteRunning; set { SetProperty(ref _isRouteRunning, value); RefreshCommandStates(); } }
+        public string RouteExecutionStatus { get => _routeExecutionStatus; set => SetProperty(ref _routeExecutionStatus, value); }
         public string RouteStorePath => RouteStore.GetStorePath();
 
         public ICommand RefreshCommand { get; }
@@ -80,6 +123,15 @@ namespace MESharp.ViewModels
         public ICommand WaitWhileMovingCommand { get; }
         public ICommand TeleportSelectedCommand { get; }
         public ICommand TeleportByNameCommand { get; }
+        public ICommand ApiMinimapClickIconCommand { get; }
+        public ICommand ApiMinimapClickIconAtCommand { get; }
+        public ICommand ApiSpellbookByIndexCommand { get; }
+        public ICommand ApiSpellbookByNameCommand { get; }
+        public ICommand ApiJewelryTeleportCommand { get; }
+        public ICommand ApiSpiritTreeCommand { get; }
+        public ICommand ApiGliderCommand { get; }
+        public ICommand ApiFairyCommand { get; }
+        public ICommand ApiQuiver4Command { get; }
         public ICommand UseCurrentTileCommand { get; }
         public ICommand NudgeXPositiveCommand { get; }
         public ICommand NudgeXNegativeCommand { get; }
@@ -89,10 +141,17 @@ namespace MESharp.ViewModels
         public ICommand NudgeZNegativeCommand { get; }
         public ICommand AddCurrentWaypointCommand { get; }
         public ICommand AddTargetWaypointCommand { get; }
+        public ICommand InsertWaypointAboveCommand { get; }
+        public ICommand InsertWaypointBelowCommand { get; }
+        public ICommand MoveWaypointUpCommand { get; }
+        public ICommand MoveWaypointDownCommand { get; }
         public ICommand RemoveWaypointCommand { get; }
         public ICommand ClearRouteCommand { get; }
         public ICommand SaveRouteCommand { get; }
         public ICommand LoadRouteCommand { get; }
+        public ICommand RunCurrentRouteCommand { get; }
+        public ICommand RunSelectedRouteCommand { get; }
+        public ICommand StopRouteCommand { get; }
 
         public NavigationViewModel()
         {
@@ -108,6 +167,15 @@ namespace MESharp.ViewModels
             WaitWhileMovingCommand = new RelayCommand(_ => WaitWhileMoving());
             TeleportSelectedCommand = new RelayCommand(_ => TeleportSelected(), _ => SelectedLodestone != null);
             TeleportByNameCommand = new RelayCommand(_ => TeleportByName(), _ => !string.IsNullOrWhiteSpace(LodestoneSearch));
+            ApiMinimapClickIconCommand = new RelayCommand(_ => ApiMinimapClickIcon());
+            ApiMinimapClickIconAtCommand = new RelayCommand(_ => ApiMinimapClickIconAt());
+            ApiSpellbookByIndexCommand = new RelayCommand(_ => ApiSpellbookByIndex());
+            ApiSpellbookByNameCommand = new RelayCommand(_ => ApiSpellbookByName(), _ => !string.IsNullOrWhiteSpace(ApiTeleportName));
+            ApiJewelryTeleportCommand = new RelayCommand(_ => ApiJewelryTeleport(), _ => !string.IsNullOrWhiteSpace(ApiJewelryItemName));
+            ApiSpiritTreeCommand = new RelayCommand(_ => ApiSpiritTree(), _ => !string.IsNullOrWhiteSpace(ApiTeleportName));
+            ApiGliderCommand = new RelayCommand(_ => ApiGlider(), _ => !string.IsNullOrWhiteSpace(ApiTeleportName));
+            ApiFairyCommand = new RelayCommand(_ => ApiFairy(), _ => !string.IsNullOrWhiteSpace(ApiTeleportName));
+            ApiQuiver4Command = new RelayCommand(_ => ApiQuiver4(), _ => !string.IsNullOrWhiteSpace(ApiTeleportName));
             UseCurrentTileCommand = new RelayCommand(_ => UseCurrentTile());
             NudgeXPositiveCommand = new RelayCommand(_ => TargetX = Adjust(TargetX, _nudgeStep));
             NudgeXNegativeCommand = new RelayCommand(_ => TargetX = Adjust(TargetX, -_nudgeStep));
@@ -117,10 +185,17 @@ namespace MESharp.ViewModels
             NudgeZNegativeCommand = new RelayCommand(_ => TargetZ = Adjust(TargetZ, -_nudgeStep));
             AddCurrentWaypointCommand = new RelayCommand(_ => AddWaypointFromCurrent());
             AddTargetWaypointCommand = new RelayCommand(_ => AddWaypointFromTarget());
+            InsertWaypointAboveCommand = new RelayCommand(_ => InsertWaypointAbove(), _ => SelectedWaypoint != null);
+            InsertWaypointBelowCommand = new RelayCommand(_ => InsertWaypointBelow(), _ => SelectedWaypoint != null);
+            MoveWaypointUpCommand = new RelayCommand(_ => MoveWaypointUp(), _ => CanMoveSelectedWaypoint(-1));
+            MoveWaypointDownCommand = new RelayCommand(_ => MoveWaypointDown(), _ => CanMoveSelectedWaypoint(1));
             RemoveWaypointCommand = new RelayCommand(_ => RemoveSelectedWaypoint(), _ => SelectedWaypoint != null);
             ClearRouteCommand = new RelayCommand(_ => ClearRoute());
             SaveRouteCommand = new RelayCommand(_ => SaveRoute(), _ => CurrentRoute.Any() && !string.IsNullOrWhiteSpace(RouteName));
             LoadRouteCommand = new RelayCommand(_ => LoadRoute(), _ => SelectedRoute != null);
+            RunCurrentRouteCommand = new RelayCommand(_ => RunCurrentRoute(), _ => CurrentRoute.Any() && !IsRouteRunning);
+            RunSelectedRouteCommand = new RelayCommand(_ => RunSelectedRoute(), _ => SelectedRoute != null && !IsRouteRunning);
+            StopRouteCommand = new RelayCommand(_ => StopRoute(), _ => IsRouteRunning);
 
             _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
             {
@@ -129,6 +204,7 @@ namespace MESharp.ViewModels
             _refreshTimer.Tick += OnRefreshTick;
             _refreshTimer.Start();
 
+            CurrentRoute.CollectionChanged += (_, __) => RefreshCommandStates();
             LoadRoutes();
             RefreshPosition();
             AddLog("Navigation tester ready.");
@@ -168,6 +244,132 @@ namespace MESharp.ViewModels
             {
                 LastStatus = $"WalkTo error: {ex.Message}";
                 AddLog(LastStatus);
+            }
+        }
+
+        private void ApiMinimapClickIcon()
+        {
+            try
+            {
+                var ok = Minimap.ClickIcon(ApiMinimapIconId);
+                LastStatus = ok ? $"Minimap.ClickIcon({ApiMinimapIconId}): OK" : "Minimap.ClickIcon: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Minimap.ClickIcon error: {ex.Message}";
+            }
+        }
+
+        private void ApiMinimapClickIconAt()
+        {
+            try
+            {
+                var ok = Minimap.ClickIconAt(ApiMinimapIconId, ApiMinimapX, ApiMinimapY);
+                LastStatus = ok ? $"Minimap.ClickIconAt({ApiMinimapIconId},{ApiMinimapX},{ApiMinimapY}): OK" : "Minimap.ClickIconAt: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Minimap.ClickIconAt error: {ex.Message}";
+            }
+        }
+
+        private void ApiSpellbookByIndex()
+        {
+            try
+            {
+                var ok = Teleports.Spellbook(ApiSpellbookIndex);
+                LastStatus = ok ? $"Teleports.Spellbook({ApiSpellbookIndex}): OK" : "Teleports.Spellbook(index): Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.Spellbook(index) error: {ex.Message}";
+            }
+        }
+
+        private void ApiSpellbookByName()
+        {
+            try
+            {
+                var ok = Teleports.Spellbook(ApiTeleportName);
+                LastStatus = ok ? $"Teleports.Spellbook('{ApiTeleportName}'): OK" : "Teleports.Spellbook(name): Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.Spellbook(name) error: {ex.Message}";
+            }
+        }
+
+        private void ApiJewelryTeleport()
+        {
+            try
+            {
+                var ok = Teleports.Jewelry(ApiJewelryItemName, ApiJewelryLocation1, ApiJewelryLocation2, ApiJewelryMenuLevel, ApiJewelryOffset);
+                LastStatus = ok ? "Teleports.Jewelry: OK" : "Teleports.Jewelry: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.Jewelry error: {ex.Message}";
+            }
+        }
+
+        private void ApiSpiritTree()
+        {
+            try
+            {
+                var ok = Teleports.SpiritTree(ApiTeleportName);
+                LastStatus = ok ? "Teleports.SpiritTree: OK" : "Teleports.SpiritTree: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.SpiritTree error: {ex.Message}";
+            }
+        }
+
+        private void ApiGlider()
+        {
+            try
+            {
+                var ok = Teleports.Glider(ApiTeleportName);
+                LastStatus = ok ? "Teleports.Glider: OK" : "Teleports.Glider: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.Glider error: {ex.Message}";
+            }
+        }
+
+        private void ApiFairy()
+        {
+            try
+            {
+                var ok = Teleports.Fairy(ApiTeleportName);
+                LastStatus = ok ? "Teleports.Fairy: OK" : "Teleports.Fairy: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.Fairy error: {ex.Message}";
+            }
+        }
+
+        private void ApiQuiver4()
+        {
+            try
+            {
+                var ok = Teleports.Quiver4(ApiTeleportName);
+                LastStatus = ok ? "Teleports.Quiver4: OK" : "Teleports.Quiver4: Failed.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Teleports.Quiver4 error: {ex.Message}";
             }
         }
 
@@ -386,8 +588,8 @@ namespace MESharp.ViewModels
             try
             {
                 var tile = LocalPlayer.GetTilePosition();
-                CurrentRoute.Add(new RouteWaypoint { X = tile.x, Y = tile.y, Z = tile.z });
-                LastStatus = $"Added waypoint {tile.x},{tile.y},{tile.z}.";
+                CurrentRoute.Add(BuildWaypoint(tile.x, tile.y, tile.z));
+                LastStatus = $"Added waypoint {tile.x},{tile.y},{tile.z} (area r{Math.Max(0, WaypointAreaRadius)}).";
                 RefreshCommandStates();
             }
             catch (Exception ex)
@@ -404,8 +606,8 @@ namespace MESharp.ViewModels
                 return;
             }
 
-            CurrentRoute.Add(new RouteWaypoint { X = x, Y = y, Z = z });
-            LastStatus = $"Added waypoint {x},{y},{z} from target.";
+            CurrentRoute.Add(BuildWaypoint(x, y, z));
+            LastStatus = $"Added waypoint {x},{y},{z} from target (area r{Math.Max(0, WaypointAreaRadius)}).";
             RefreshCommandStates();
         }
 
@@ -414,6 +616,84 @@ namespace MESharp.ViewModels
             if (SelectedWaypoint == null) return;
             CurrentRoute.Remove(SelectedWaypoint);
             SelectedWaypoint = null;
+            RefreshCommandStates();
+        }
+
+        private void InsertWaypointAbove()
+        {
+            if (SelectedWaypoint == null)
+            {
+                return;
+            }
+
+            var index = CurrentRoute.IndexOf(SelectedWaypoint);
+            if (index < 0)
+            {
+                return;
+            }
+
+            var waypoint = CloneWaypoint(SelectedWaypoint);
+            CurrentRoute.Insert(index, waypoint);
+            SelectedWaypoint = waypoint;
+            LastStatus = $"Inserted waypoint above row {index + 1}.";
+            RefreshCommandStates();
+        }
+
+        private void InsertWaypointBelow()
+        {
+            if (SelectedWaypoint == null)
+            {
+                return;
+            }
+
+            var index = CurrentRoute.IndexOf(SelectedWaypoint);
+            if (index < 0)
+            {
+                return;
+            }
+
+            var waypoint = CloneWaypoint(SelectedWaypoint);
+            var insertIndex = Math.Min(CurrentRoute.Count, index + 1);
+            CurrentRoute.Insert(insertIndex, waypoint);
+            SelectedWaypoint = waypoint;
+            LastStatus = $"Inserted waypoint below row {index + 1}.";
+            RefreshCommandStates();
+        }
+
+        private void MoveWaypointUp() => MoveSelectedWaypoint(-1);
+
+        private void MoveWaypointDown() => MoveSelectedWaypoint(1);
+
+        private bool CanMoveSelectedWaypoint(int direction)
+        {
+            if (SelectedWaypoint == null)
+            {
+                return false;
+            }
+
+            var currentIndex = CurrentRoute.IndexOf(SelectedWaypoint);
+            if (currentIndex < 0)
+            {
+                return false;
+            }
+
+            var targetIndex = currentIndex + direction;
+            return targetIndex >= 0 && targetIndex < CurrentRoute.Count;
+        }
+
+        private void MoveSelectedWaypoint(int direction)
+        {
+            if (!CanMoveSelectedWaypoint(direction) || SelectedWaypoint == null)
+            {
+                return;
+            }
+
+            var currentIndex = CurrentRoute.IndexOf(SelectedWaypoint);
+            var targetIndex = currentIndex + direction;
+
+            CurrentRoute.Move(currentIndex, targetIndex);
+            SelectedWaypoint = CurrentRoute[targetIndex];
+            LastStatus = $"Moved waypoint to row {targetIndex + 1}.";
             RefreshCommandStates();
         }
 
@@ -441,14 +721,27 @@ namespace MESharp.ViewModels
 
             var route = new RouteDefinition
             {
+                SchemaVersion = RouteDefinition.CurrentSchemaVersion,
                 Name = name,
+                Description = $"Built from navigation tooling at {DateTime.Now:g}",
+                Category = "custom",
+                CreatedAt = DateTime.UtcNow,
                 SavedAt = DateTime.UtcNow,
-                Waypoints = CurrentRoute.Select(w => new RouteWaypoint { X = w.X, Y = w.Y, Z = w.Z }).ToList()
+                Waypoints = CurrentRoute.Select(CloneWaypoint).ToList()
             };
 
             var existing = SavedRoutes.FirstOrDefault(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (existing != null)
             {
+                route.CreatedAt = existing.CreatedAt == default ? route.CreatedAt : existing.CreatedAt;
+                if (!string.IsNullOrWhiteSpace(existing.Description))
+                {
+                    route.Description = existing.Description;
+                }
+                if (!string.IsNullOrWhiteSpace(existing.Category))
+                {
+                    route.Category = existing.Category;
+                }
                 var index = SavedRoutes.IndexOf(existing);
                 SavedRoutes[index] = route;
             }
@@ -476,13 +769,46 @@ namespace MESharp.ViewModels
             CurrentRoute.Clear();
             foreach (var wp in route.Waypoints)
             {
-                CurrentRoute.Add(new RouteWaypoint { X = wp.X, Y = wp.Y, Z = wp.Z });
+                CurrentRoute.Add(CloneWaypoint(wp));
             }
 
             PathInput = string.Join(Environment.NewLine, route.Waypoints.Select(w => w.ToString()));
             LastStatus = $"Loaded route '{route.Name}' into path input.";
             AddLog(LastStatus);
             RefreshCommandStates();
+        }
+
+        private RouteWaypoint BuildWaypoint(int x, int y, int z)
+        {
+            return new RouteWaypoint
+            {
+                X = x,
+                Y = y,
+                Z = z,
+                AreaRadius = WaypointAreaRadius,
+                ArrivalDistance = WaypointArrivalDistance,
+                TimeoutMs = WaypointTimeoutMs,
+                JitterTiles = WaypointJitterTiles,
+                ChainWhileMoving = WaypointChainWhileMoving
+            };
+        }
+
+        private static RouteWaypoint CloneWaypoint(RouteWaypoint source)
+        {
+            var clone = new RouteWaypoint
+            {
+                Label = source.Label,
+                X = source.X,
+                Y = source.Y,
+                Z = source.Z,
+                AreaRadius = source.AreaRadius,
+                ArrivalDistance = source.ArrivalDistance,
+                TimeoutMs = source.TimeoutMs,
+                JitterTiles = source.JitterTiles,
+                ChainWhileMoving = source.ChainWhileMoving
+            };
+            clone.Normalize();
+            return clone;
         }
 
         private void LoadRoutes()
@@ -497,6 +823,140 @@ namespace MESharp.ViewModels
             {
                 SelectedRoute = SavedRoutes.First();
             }
+        }
+
+        private void RunCurrentRoute()
+        {
+            if (!CurrentRoute.Any())
+            {
+                LastStatus = "Current route is empty.";
+                return;
+            }
+
+            _ = RunRouteAsync(RouteName, CurrentRoute.Select(CloneWaypoint).ToList());
+        }
+
+        private void RunSelectedRoute()
+        {
+            var route = SelectedRoute;
+            if (route == null)
+            {
+                LastStatus = "Select a saved route.";
+                return;
+            }
+
+            _ = RunRouteAsync(route.Name, route.Waypoints.Select(CloneWaypoint).ToList());
+        }
+
+        private async Task RunRouteAsync(string routeName, IReadOnlyList<RouteWaypoint> waypoints)
+        {
+            if (IsRouteRunning)
+            {
+                return;
+            }
+
+            _routeRunCts?.Cancel();
+            _routeRunCts?.Dispose();
+            _routeRunCts = new CancellationTokenSource();
+            var ct = _routeRunCts.Token;
+
+            IsRouteRunning = true;
+            RouteExecutionStatus = $"Running {routeName}";
+            AddLog($"Route run started: {routeName} ({waypoints.Count} waypoints).");
+
+            try
+            {
+                for (var i = 0; i < waypoints.Count; i++)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    var waypoint = waypoints[i];
+                    waypoint.Normalize();
+                    RouteExecutionStatus = $"WP {i + 1}/{waypoints.Count}: {waypoint}";
+
+                    var clickX = waypoint.X;
+                    var clickY = waypoint.Y;
+                    if (waypoint.AreaRadius > 0)
+                    {
+                        clickX += _random.Next(-waypoint.AreaRadius, waypoint.AreaRadius + 1);
+                        clickY += _random.Next(-waypoint.AreaRadius, waypoint.AreaRadius + 1);
+                    }
+
+                    var clicked = Traversal.ClickTo(clickX, clickY, waypoint.Z, waypoint.JitterTiles);
+                    if (!clicked)
+                    {
+                        LastStatus = $"Route '{routeName}' failed: click rejected at waypoint {i + 1}.";
+                        AddLog(LastStatus);
+                        return;
+                    }
+
+                    var reached = await WaitForWaypointAdvanceAsync(waypoint, ct);
+                    if (!reached)
+                    {
+                        LastStatus = $"Route '{routeName}' timed out at waypoint {i + 1}.";
+                        AddLog(LastStatus);
+                        return;
+                    }
+
+                    await Task.Delay(95, ct);
+                }
+
+                LastStatus = $"Route '{routeName}' completed ({waypoints.Count} waypoints).";
+                AddLog(LastStatus);
+            }
+            catch (OperationCanceledException)
+            {
+                LastStatus = $"Route '{routeName}' cancelled.";
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Route '{routeName}' error: {ex.Message}";
+                AddLog(LastStatus);
+            }
+            finally
+            {
+                IsRouteRunning = false;
+                RouteExecutionStatus = "Idle";
+                _routeRunCts?.Dispose();
+                _routeRunCts = null;
+            }
+        }
+
+        private async Task<bool> WaitForWaypointAdvanceAsync(RouteWaypoint waypoint, CancellationToken ct)
+        {
+            var start = Environment.TickCount64;
+            var timeout = Math.Max(1000, waypoint.TimeoutMs);
+
+            while (!ct.IsCancellationRequested && Environment.TickCount64 - start <= timeout)
+            {
+                var tile = LocalPlayer.GetTilePosition();
+                var inArea = waypoint.IsWithinArea(tile.x, tile.y, tile.z);
+                var dx = Math.Abs(waypoint.X - tile.x);
+                var dy = Math.Abs(waypoint.Y - tile.y);
+                var withinDistance = Math.Max(dx, dy) <= Math.Max(0, waypoint.ArrivalDistance);
+
+                // Preferred advancement: inside waypoint area and close enough.
+                if (inArea && withinDistance)
+                {
+                    return true;
+                }
+
+                // Optional chaining: allow next waypoint click while still moving after entering area.
+                if (waypoint.ChainWhileMoving && inArea && LocalPlayer.IsMoving())
+                {
+                    return true;
+                }
+
+                await Task.Delay(85, ct);
+            }
+
+            return false;
+        }
+
+        private void StopRoute()
+        {
+            _routeRunCts?.Cancel();
+            RouteExecutionStatus = "Stopping...";
         }
 
         private void RefreshCommandStates() => System.Windows.Input.CommandManager.InvalidateRequerySuggested();
@@ -539,6 +999,9 @@ namespace MESharp.ViewModels
         {
             try { _refreshTimer.Stop(); } catch { /* ignored */ }
             _refreshTimer.Tick -= OnRefreshTick;
+            try { _routeRunCts?.Cancel(); } catch { /* ignored */ }
+            try { _routeRunCts?.Dispose(); } catch { /* ignored */ }
+            _routeRunCts = null;
         }
 
         private void OnRefreshTick(object? sender, EventArgs e) => RefreshPosition();

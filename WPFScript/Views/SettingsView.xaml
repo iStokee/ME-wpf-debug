@@ -37,11 +37,11 @@
             ShowHelp="False" />
 
         <!--  Theme Mode Toggle  -->
-        <Border
-            Margin="0,0,0,16"
-            Padding="16"
-            Background="{DynamicResource App.CardBrush}"
-            CornerRadius="8">
+	        <Border
+	            Margin="0,0,0,16"
+	            Padding="16"
+	            Background="{DynamicResource App.CardBrush}"
+	            CornerRadius="8">
             <StackPanel>
                 <StackPanel.Resources>
                     <Style x:Key="SegmentToggle" TargetType="ToggleButton">
@@ -283,7 +283,37 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </StackPanel>
-        </Border>
+	        </Border>
+
+            <Border
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="{DynamicResource App.CardBrush}"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontWeight="SemiBold"
+                        Text="Developer" />
+
+                    <TextBlock
+                        Margin="0,0,0,6"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="ScriptHost utilities for hot-reload testing." />
+
+                    <TextBlock FontWeight="SemiBold" Text="Reload managed script path" />
+                    <TextBox Margin="0,4,0,8" Text="{Binding ReloadScriptPath}" />
+                    <Button Padding="10,6" Command="{Binding ReloadManagedScriptCommand}" Content="Reload Managed Script" />
+
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        FontFamily="Consolas"
+                        FontSize="11"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="{Binding DevStatus}" />
+                </StackPanel>
+            </Border>
     </StackPanel>
 </ScrollViewer>
 </UserControl>

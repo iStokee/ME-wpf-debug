@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -13,7 +14,7 @@ namespace MESharp.Views.Behaviors
     public static class PanelLayoutBehavior
     {
         private const string DragFormatPrefix = "MESharp.PanelLayout.PanelKey";
-        private const double DefaultMinPanelHeight = 140d;
+        private const double DefaultMinPanelHeight = 220d;
         private const double ResizeHandleHeight = 10d;
         private static readonly Thickness DefaultPanelSpacing = new(0, 0, 0, 10);
 
@@ -49,6 +50,13 @@ namespace MESharp.Views.Behaviors
                 typeof(PanelLayoutBehavior),
                 new PropertyMetadata(DefaultMinPanelHeight));
 
+        public static readonly DependencyProperty IsHeightResizableProperty =
+            DependencyProperty.RegisterAttached(
+                "IsHeightResizable",
+                typeof(bool),
+                typeof(PanelLayoutBehavior),
+                new PropertyMetadata(true));
+
         private static readonly DependencyProperty TrackerProperty =
             DependencyProperty.RegisterAttached(
                 "Tracker",
@@ -81,6 +89,9 @@ namespace MESharp.Views.Behaviors
 
         public static double GetMinPanelHeight(DependencyObject obj) => (double)obj.GetValue(MinPanelHeightProperty);
         public static void SetMinPanelHeight(DependencyObject obj, double value) => obj.SetValue(MinPanelHeightProperty, value);
+
+        public static bool GetIsHeightResizable(DependencyObject obj) => (bool)obj.GetValue(IsHeightResizableProperty);
+        public static void SetIsHeightResizable(DependencyObject obj, bool value) => obj.SetValue(IsHeightResizableProperty, value);
 
         private static void OnPageKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -295,6 +306,19 @@ namespace MESharp.Views.Behaviors
                     ApplyOrderedKeyedChildren(panel, plannedByPanel[panel]);
                 }
 
+                // Always clear stale heights on panels that are marked non-resizable,
+                // even if there is no persisted placement entry for them.
+                foreach (var panel in panels)
+                {
+                    foreach (var child in GetOrderedKeyedChildren(panel).OfType<FrameworkElement>())
+                    {
+                        if (!GetIsHeightResizable(child))
+                        {
+                            child.ClearValue(FrameworkElement.HeightProperty);
+                        }
+                    }
+                }
+
                 foreach (var panel in panels)
                 {
                     foreach (var child in GetOrderedKeyedChildren(panel).OfType<FrameworkElement>())
@@ -305,9 +329,13 @@ namespace MESharp.Views.Behaviors
                             continue;
                         }
 
-                        if (placement.Height.HasValue)
+                        if (GetIsHeightResizable(child) && placement.Height.HasValue)
                         {
                             child.Height = Math.Max(GetMinPanelHeight(child), placement.Height.Value);
+                        }
+                        else if (!GetIsHeightResizable(child))
+                        {
+                            child.ClearValue(FrameworkElement.HeightProperty);
                         }
 
                         if (placement.IsExpanded.HasValue)
@@ -485,8 +513,13 @@ namespace MESharp.Views.Behaviors
                 return;
             }
 
+            if (IsInteractiveControlInPath(e.OriginalSource as DependencyObject, clicked))
+            {
+                return;
+            }
+
             var clickPos = e.GetPosition(clicked);
-            if (IsInResizeGrip(clicked, clickPos))
+            if (GetIsHeightResizable(clicked) && IsInResizeGrip(clicked, clickPos))
             {
                 tracker.IsResizing = true;
                 tracker.ResizingElement = clicked;
@@ -561,7 +594,9 @@ namespace MESharp.Views.Behaviors
             }
 
             var hovered = FindAncestorWithPanelKey(e.OriginalSource as DependencyObject);
-            if (hovered != null && IsInResizeGrip(hovered, e.GetPosition(hovered)))
+            if (hovered != null &&
+                !IsInteractiveControlInPath(e.OriginalSource as DependencyObject, hovered) &&
+                IsInResizeGrip(hovered, e.GetPosition(hovered)))
             {
                 panel.Cursor = Cursors.SizeNS;
             }
@@ -846,7 +881,7 @@ namespace MESharp.Views.Behaviors
                         PanelKey = key,
                         ColumnKey = columnKey,
                         Order = order++,
-                        Height = GetSavedHeight(child),
+                        Height = GetIsHeightResizable(child) ? GetSavedHeight(child) : null,
                         IsExpanded = expander?.IsExpanded
                     });
                 }
@@ -1026,6 +1061,52 @@ namespace MESharp.Views.Behaviors
         private static bool IsInResizeGrip(FrameworkElement panelElement, Point relativePos)
         {
             return panelElement.ActualHeight > 0 && relativePos.Y >= panelElement.ActualHeight - ResizeHandleHeight;
+        }
+
+        private static bool IsInteractiveControlInPath(DependencyObject? start, DependencyObject panelElement)
+        {
+            var current = start;
+            while (current != null && current != panelElement)
+            {
+                if (current is TextBoxBase ||
+                    current is ComboBox ||
+                    current is Selector ||
+                    current is ButtonBase ||
+                    current is Slider ||
+                    current is ScrollBar ||
+                    current is Thumb ||
+                    current is DataGrid ||
+                    current is DataGridColumnHeader ||
+                    current is PasswordBox)
+                {
+                    return true;
+                }
+
+                current = GetParentObject(current);
+            }
+
+            return false;
+        }
+
+        private static DependencyObject? GetParentObject(DependencyObject child)
+        {
+            var visualParent = VisualTreeHelper.GetParent(child);
+            if (visualParent != null)
+            {
+                return visualParent;
+            }
+
+            if (child is FrameworkElement fe)
+            {
+                return fe.Parent;
+            }
+
+            if (child is FrameworkContentElement fce)
+            {
+                return fce.Parent;
+            }
+
+            return null;
         }
 
         private static void EndResize(Panel panel, LayoutTracker tracker, bool save)

@@ -21,6 +21,16 @@ namespace MESharp.ViewModels
         private string _statusMessage = "Ready";
         private Players.Player _selectedPlayer;
 
+        // ─── Utilities (moved from ApiUtilities) ───────────────────────────
+        private string _abilityName = "Surge";
+        private int _abilityActionIndex;
+        private int _abilityOffset = Objects.Offsets.GeneralInterfaceRoute;
+        private bool _abilityExactMatch;
+        private bool _abilityRequireEnabled = true;
+        private bool _abilityRequireNotOnCooldown = true;
+
+        private int _familiarOrder = 1;
+
         public PlayersViewModel()
         {
             Players = new ObservableCollection<Players.Player>();
@@ -33,6 +43,19 @@ namespace MESharp.ViewModels
             FollowCommand = new RelayCommand(_ => DoFollow(), _ => SelectedPlayer != null);
             TradeCommand = new RelayCommand(_ => DoTrade(), _ => SelectedPlayer != null);
             ExamineCommand = new RelayCommand(_ => DoExamine(), _ => SelectedPlayer != null);
+
+            AbilityUseCommand = new RelayCommand(_ => Run(() =>
+                Abilities.Use(AbilityName, AbilityActionIndex, AbilityOffset, AbilityExactMatch), "Abilities.Use"));
+            AbilityUseIfReadyCommand = new RelayCommand(_ => Run(() =>
+                Abilities.UseIfReady(AbilityName, AbilityActionIndex, AbilityOffset, AbilityRequireEnabled, AbilityRequireNotOnCooldown, AbilityExactMatch), "Abilities.UseIfReady"));
+
+            QuickHealCommand = new RelayCommand(_ => Run(ActionButtons.QuickHeal, "ActionButtons.QuickHeal"));
+            AutoRetaliateCommand = new RelayCommand(_ => Run(ActionButtons.AutoRetaliate, "ActionButtons.AutoRetaliate"));
+            QuickPrayerCommand = new RelayCommand(_ => Run(ActionButtons.QuickPrayer, "ActionButtons.QuickPrayer"));
+            FamiliarButtonCommand = new RelayCommand(_ => Run(() => ActionButtons.Familiar(FamiliarOrder), "ActionButtons.Familiar"));
+
+            SessionLogoutMiniCommand = new RelayCommand(_ => Run(Session.LogoutMini, "Session.LogoutMini"));
+            SessionLobbyCommand = new RelayCommand(_ => Run(Session.Lobby, "Session.Lobby"));
 
             _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
             _refreshTimer.Tick += (s, e) => RefreshLocalPlayerAndPlayers();
@@ -79,8 +102,26 @@ namespace MESharp.ViewModels
             set { _statusMessage = value; OnPropertyChanged(); }
         }
 
+        public string AbilityName { get => _abilityName; set { _abilityName = value; OnPropertyChanged(); } }
+        public int AbilityActionIndex { get => _abilityActionIndex; set { _abilityActionIndex = value; OnPropertyChanged(); } }
+        public int AbilityOffset { get => _abilityOffset; set { _abilityOffset = value; OnPropertyChanged(); } }
+        public bool AbilityExactMatch { get => _abilityExactMatch; set { _abilityExactMatch = value; OnPropertyChanged(); } }
+        public bool AbilityRequireEnabled { get => _abilityRequireEnabled; set { _abilityRequireEnabled = value; OnPropertyChanged(); } }
+        public bool AbilityRequireNotOnCooldown { get => _abilityRequireNotOnCooldown; set { _abilityRequireNotOnCooldown = value; OnPropertyChanged(); } }
+
+        public int FamiliarOrder { get => _familiarOrder; set { _familiarOrder = value; OnPropertyChanged(); } }
+
         public int PlayerCount => Players.Count;
         public bool HasPlayers => Players.Count > 0;
+
+        public ICommand AbilityUseCommand { get; }
+        public ICommand AbilityUseIfReadyCommand { get; }
+        public ICommand QuickHealCommand { get; }
+        public ICommand AutoRetaliateCommand { get; }
+        public ICommand QuickPrayerCommand { get; }
+        public ICommand FamiliarButtonCommand { get; }
+        public ICommand SessionLogoutMiniCommand { get; }
+        public ICommand SessionLobbyCommand { get; }
 
         // LocalPlayer Properties
         private bool _isLoggedIn;
@@ -476,6 +517,19 @@ namespace MESharp.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"Error: {ex.Message}";
+            }
+        }
+
+        private void Run(Func<bool> action, string label)
+        {
+            try
+            {
+                var ok = action();
+                StatusMessage = $"{label}: {(ok ? "OK" : "Failed")}";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"{label} error: {ex.Message}";
             }
         }
 

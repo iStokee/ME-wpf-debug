@@ -200,15 +200,44 @@ namespace MESharp.ViewModels
 			}
 		}
 
-		private bool _isObjectsSelected;
-		public bool IsObjectsSelected
-		{
-			get => _isObjectsSelected;
-			set => SetProperty(ref _isObjectsSelected, value);
-		}
+			private bool _isObjectsSelected;
+			public bool IsObjectsSelected
+			{
+				get => _isObjectsSelected;
+				set => SetProperty(ref _isObjectsSelected, value);
+			}
 
-		// ─── NPC-specific properties ────────────────────────────────────────
-		private bool _showOnlyAlive;
+			private bool _isGroundItemSelected;
+			public bool IsGroundItemSelected
+			{
+				get => _isGroundItemSelected;
+				set => SetProperty(ref _isGroundItemSelected, value);
+			}
+
+			// ─── Ground item action tuning ──────────────────────────────────────
+			private int _groundMaxDistance = 20;
+			public int GroundMaxDistance
+			{
+				get => _groundMaxDistance;
+				set => SetProperty(ref _groundMaxDistance, value);
+			}
+
+			private int _groundRoute = Objects.Offsets.GeneralRouteUseOn;
+			public int GroundRoute
+			{
+				get => _groundRoute;
+				set => SetProperty(ref _groundRoute, value);
+			}
+
+			private bool _groundUseRoute;
+			public bool GroundUseRoute
+			{
+				get => _groundUseRoute;
+				set => SetProperty(ref _groundUseRoute, value);
+			}
+
+			// ─── NPC-specific properties ────────────────────────────────────────
+			private bool _showOnlyAlive;
 		public bool ShowOnlyAlive
 		{
 			get => _showOnlyAlive;
@@ -329,13 +358,14 @@ namespace MESharp.ViewModels
 			RefreshOffsetOptions();
 		}
 
-		private void UpdateObjectTypeVisibility()
-		{
-			var activeTypes = GetActiveTypes();
-			IsNpcSelected = activeTypes.Contains(GameObjectType.NPC);
-			IsObjectsSelected = activeTypes.Contains(GameObjectType.Object) || activeTypes.Contains(GameObjectType.Object12);
-			RefreshOffsetOptions();
-		}
+			private void UpdateObjectTypeVisibility()
+			{
+				var activeTypes = GetActiveTypes();
+				IsNpcSelected = activeTypes.Contains(GameObjectType.NPC);
+				IsObjectsSelected = activeTypes.Contains(GameObjectType.Object) || activeTypes.Contains(GameObjectType.Object12);
+				IsGroundItemSelected = activeTypes.Contains(GameObjectType.GroundItem);
+				RefreshOffsetOptions();
+			}
 
 		private void RefreshOffsetOptions()
 		{
@@ -650,60 +680,80 @@ namespace MESharp.ViewModels
 			return !string.IsNullOrWhiteSpace(FilterText) || SelectedObject != null;
 		}
 
-		private void DoAction()
-		{
-			try
+			private void DoAction()
 			{
-				bool npcResult = false;
-				bool objectResult = false;
-				var token = FilterText?.Trim() ?? string.Empty;
-				var activeTypes = GetActiveTypes();
-				var shouldTryNpc = activeTypes.Count == 0 || activeTypes.Contains(GameObjectType.NPC) ||
-					(SelectedObject?.Type == (int)Objects.ObjectKind.Npc);
-				var shouldTryObjects = activeTypes.Count == 0 ||
-					activeTypes.Any(t => t != GameObjectType.NPC) ||
-					(SelectedObject != null && SelectedObject.Type != (int)Objects.ObjectKind.Npc);
-				var offset = SelectedOffset?.Value ?? 0;
-
-				if (!string.IsNullOrWhiteSpace(token))
+				try
 				{
-					if (int.TryParse(token, out var id))
-					{
-						if (shouldTryNpc)
-							npcResult |= Npcs.DoActionByIds(new[] { id }, SelectedActionIndex, offset);
+					bool npcResult = false;
+					bool objectResult = false;
+					bool groundResult = false;
+					var token = FilterText?.Trim() ?? string.Empty;
+					var activeTypes = GetActiveTypes();
+					var shouldTryNpc = activeTypes.Count == 0 || activeTypes.Contains(GameObjectType.NPC) ||
+						(SelectedObject?.Type == (int)Objects.ObjectKind.Npc);
+					var shouldTryGround = activeTypes.Count == 0 || activeTypes.Contains(GameObjectType.GroundItem) ||
+						(SelectedObject?.Type == (int)Objects.ObjectKind.GroundItem);
+					var shouldTryObjects = activeTypes.Count == 0 ||
+						activeTypes.Any(t => t != GameObjectType.NPC && t != GameObjectType.GroundItem) ||
+						(SelectedObject != null && SelectedObject.Type != (int)Objects.ObjectKind.Npc);
+					var offset = SelectedOffset?.Value ?? 0;
 
-						if (shouldTryObjects)
-							objectResult |= Objects.DoActionByIds(new[] { id }, SelectedActionIndex, offset);
+					if (!string.IsNullOrWhiteSpace(token))
+					{
+						if (int.TryParse(token, out var id))
+						{
+							if (shouldTryNpc)
+								npcResult |= Npcs.DoActionByIds(new[] { id }, SelectedActionIndex, offset);
+
+							if (shouldTryGround)
+							{
+								if (GroundUseRoute)
+									groundResult |= GroundItems.DoActionByIdsRoute(new[] { id }, SelectedActionIndex, GroundRoute, GroundMaxDistance);
+								else
+									groundResult |= GroundItems.DoActionByIds(new[] { id }, SelectedActionIndex, GroundMaxDistance);
+							}
+
+							if (shouldTryObjects)
+								objectResult |= Objects.DoActionByIds(new[] { id }, SelectedActionIndex, offset);
+						}
+						else
+						{
+							if (shouldTryNpc)
+								npcResult |= Npcs.DoActionByNames(new[] { token }, SelectedActionIndex, offset);
+
+							if (shouldTryObjects)
+								objectResult |= Objects.DoActionByNames(new[] { token }, SelectedActionIndex, offset);
+						}
+					}
+					else if (SelectedObject != null)
+					{
+						if (SelectedObject.Type == (int)Objects.ObjectKind.Npc)
+						{
+							npcResult = Npcs.DoActionByNames(new[] { SelectedObject.Name }, SelectedActionIndex, offset);
+						}
+						else if (SelectedObject.Type == (int)Objects.ObjectKind.GroundItem)
+						{
+							if (GroundUseRoute)
+								groundResult = GroundItems.DoActionByIdsRoute(new[] { SelectedObject.Id }, SelectedActionIndex, GroundRoute, GroundMaxDistance);
+							else
+								groundResult = GroundItems.DoActionByIds(new[] { SelectedObject.Id }, SelectedActionIndex, GroundMaxDistance);
+						}
+						else
+						{
+							objectResult = SelectedObject.DoAction(SelectedActionIndex, offset);
+						}
 					}
 					else
 					{
-						if (shouldTryNpc)
-							npcResult |= Npcs.DoActionByNames(new[] { token }, SelectedActionIndex, offset);
-
-						if (shouldTryObjects)
-							objectResult |= Objects.DoActionByNames(new[] { token }, SelectedActionIndex, offset);
-					}
-				}
-				else if (SelectedObject != null)
-				{
-					if (SelectedObject.Type == (int)Objects.ObjectKind.Npc)
-					{
-						npcResult = Npcs.DoActionByNames(new[] { SelectedObject.Name }, SelectedActionIndex, offset);
+						StatusMessage = "Select an object or provide a filter before executing an action.";
+						return;
 					}
 
-					objectResult = SelectedObject.DoAction(SelectedActionIndex, offset);
-				}
-				else
-				{
-					StatusMessage = "Select an object or provide a filter before executing an action.";
-					return;
-				}
+					var ok = npcResult || objectResult || groundResult;
 
-				var ok = npcResult || objectResult;
-
-				StatusMessage = ok ? "Action executed." : "Action failed.";
-			}
-			catch (Exception ex)
+					StatusMessage = ok ? "Action executed." : "Action failed.";
+				}
+				catch (Exception ex)
 			{
 				StatusMessage = $"Error: {ex.Message}";
 			}

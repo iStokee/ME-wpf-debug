@@ -602,6 +602,45 @@
                                 </StackPanel>
                             </Border>
 
+                            <Border Margin="0,10,0,0" Style="{StaticResource InterfacePanelCard}">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <iconPacks:PackIconMaterial
+                                            Width="16"
+                                            Height="16"
+                                            Margin="0,0,6,0"
+                                            VerticalAlignment="Center"
+                                            Foreground="{DynamicResource PrimaryBrush}"
+                                            Kind="ChatProcessingOutline" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource InterfacePanelTitle}"
+                                            Text="Dialogs" />
+                                    </DockPanel>
+
+                                    <TextBlock
+                                        Margin="0,4,0,8"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                        Text="Helpers for dialog continue/select. (Moved from Utilities.)" />
+
+                                    <TextBlock Style="{StaticResource InterfacePanelSectionTitle}" Text="Option Text" />
+                                    <TextBox Margin="0,4,0,10" Text="{Binding DialogOptionText}" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button
+                                            Margin="0,0,8,0"
+                                            Padding="10,4"
+                                            Command="{Binding DialogSelectCommand}"
+                                            Content="Select" />
+                                        <Button
+                                            Padding="10,4"
+                                            Command="{Binding DialogContinueCommand}"
+                                            Content="Continue" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
                             <Border Style="{StaticResource InterfacePanelCard}">
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource InterfacePanelSectionTitle}" Text="Actions" />

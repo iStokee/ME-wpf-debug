@@ -1,6 +1,7 @@
 using MESharp.API;
 using MESharp.Commands;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -64,9 +65,15 @@ namespace MESharp.ViewModels
 		public ICommand ClearCommand { get; }
 		public ICommand ToggleSidePanelCommand { get; }
 
-		// Container-specific commands
-		public ICommand InventoryRefreshCommand { get; }
-		public ICommand BankOpenCommand { get; }
+			// Container-specific commands
+			public ICommand InventoryRefreshCommand { get; }
+			public ICommand InventoryDoActionByIdCommand { get; }
+			public ICommand InventoryDoActionByNameCommand { get; }
+			public ICommand InventoryDoActionBySlotCommand { get; }
+			public ICommand InventoryRubByIdCommand { get; }
+			public ICommand InventoryRubByNameCommand { get; }
+			public ICommand InventoryResolveRootCommand { get; }
+			public ICommand BankOpenCommand { get; }
 		public ICommand BankLoadLastPresetCommand { get; }
 		public ICommand BankEnterPinCommand { get; }
 		public ICommand BankDepositAllCommand { get; }
@@ -411,15 +418,46 @@ namespace MESharp.ViewModels
 			set => SetProperty(ref _inventoryItemSelected, value);
 		}
 
-		public int InventoryFreeSlots
-		{
-			get => _inventoryFreeSlots;
-			set => SetProperty(ref _inventoryFreeSlots, value);
-		}
+			public int InventoryFreeSlots
+			{
+				get => _inventoryFreeSlots;
+				set => SetProperty(ref _inventoryFreeSlots, value);
+			}
 
-		private bool _bankIsOpen;
-		public bool BankIsOpen
-		{
+			// ─── Inventory Advanced Actions (moved from API Utilities) ───────────
+			private int _inventoryActionItemId = 15707;
+			public int InventoryActionItemId
+			{
+				get => _inventoryActionItemId;
+				set => SetProperty(ref _inventoryActionItemId, value);
+			}
+
+			private string _inventoryActionItemName = "Ring of kinship";
+			public string InventoryActionItemName
+			{
+				get => _inventoryActionItemName;
+				set => SetProperty(ref _inventoryActionItemName, value);
+			}
+
+			private int _inventoryActionMenuIndex = 2;
+			public int InventoryActionMenuIndex
+			{
+				get => _inventoryActionMenuIndex;
+				set => SetProperty(ref _inventoryActionMenuIndex, value);
+			}
+
+			public IReadOnlyList<ActionOffsetOption> InventoryActionOffsetOptions { get; }
+
+			private ActionOffsetOption _inventoryActionSelectedOffset;
+			public ActionOffsetOption InventoryActionSelectedOffset
+			{
+				get => _inventoryActionSelectedOffset;
+				set => SetProperty(ref _inventoryActionSelectedOffset, value);
+			}
+	
+			private bool _bankIsOpen;
+			public bool BankIsOpen
+			{
 			get => _bankIsOpen;
 			set => SetProperty(ref _bankIsOpen, value);
 		}
@@ -452,23 +490,38 @@ namespace MESharp.ViewModels
 			set => SetProperty(ref _equipmentIsOpen, value);
 		}
 
-		public ItemsUnifiedViewModel()
-		{
-			LoadItemsCommand = new RelayCommand(_ => LoadItems());
-			ClearCommand = new RelayCommand(_ =>
+			public ItemsUnifiedViewModel()
 			{
-				Items.Clear();
+				InventoryActionOffsetOptions = ActionOffsets.All
+					.Where(o => o.Category == ActionOffsets.OffsetCategory.Interface)
+					.OrderBy(o => o.Label)
+					.Select(o => new ActionOffsetOption(o))
+					.ToList();
+				InventoryActionSelectedOffset = InventoryActionOffsetOptions.FirstOrDefault(o => o.Value == Objects.Offsets.GeneralInterfaceRoute)
+					?? InventoryActionOffsetOptions.FirstOrDefault()
+					?? new ActionOffsetOption(ActionOffsets.All.First());
+
+				LoadItemsCommand = new RelayCommand(_ => LoadItems());
+				ClearCommand = new RelayCommand(_ =>
+				{
+					Items.Clear();
 				SelectedItem = null;
 				ItemCount = 0;
 				StatusMessage = "Cleared.";
 			});
 			ToggleSidePanelCommand = new RelayCommand(_ => IsSidePanelCollapsed = !IsSidePanelCollapsed);
 
-			// Container-specific commands
-			InventoryRefreshCommand = new RelayCommand(_ => { LoadItems(); RefreshInventoryStatus(); });
-			BankOpenCommand = new RelayCommand(_ => BankOpen());
-			BankLoadLastPresetCommand = new RelayCommand(_ => BankLoadLastPreset());
-			BankEnterPinCommand = new RelayCommand(_ => BankEnterPin());
+				// Container-specific commands
+				InventoryRefreshCommand = new RelayCommand(_ => { LoadItems(); RefreshInventoryStatus(); });
+				InventoryDoActionByIdCommand = new RelayCommand(_ => InventoryDoActionById());
+				InventoryDoActionByNameCommand = new RelayCommand(_ => InventoryDoActionByName());
+				InventoryDoActionBySlotCommand = new RelayCommand(_ => InventoryDoActionBySlotFallback());
+				InventoryRubByIdCommand = new RelayCommand(_ => InventoryRubById());
+				InventoryRubByNameCommand = new RelayCommand(_ => InventoryRubByName());
+				InventoryResolveRootCommand = new RelayCommand(_ => InventoryResolveRoot());
+				BankOpenCommand = new RelayCommand(_ => BankOpen());
+				BankLoadLastPresetCommand = new RelayCommand(_ => BankLoadLastPreset());
+				BankEnterPinCommand = new RelayCommand(_ => BankEnterPin());
 			BankDepositAllCommand = new RelayCommand(_ => BankDepositAll());
 			BankDepositExceptIdsCommand = new RelayCommand(_ => BankDepositExceptIds());
 			BankDepositExceptNamesCommand = new RelayCommand(_ => BankDepositExceptNames());
@@ -1303,23 +1356,118 @@ namespace MESharp.ViewModels
 		}
 
 		// ─── Status Refresh Methods ─────────────────────────────────────────
-		private void RefreshInventoryStatus()
-		{
-			try
+			private void RefreshInventoryStatus()
 			{
-				InventoryIsOpen = Inventory.IsOpen;
-				InventoryIsFull = Inventory.IsFull;
-				InventoryIsEmpty = Inventory.IsEmpty;
-				InventoryItemSelected = Inventory.IsItemSelected;
-				InventoryFreeSlots = Inventory.FreeSlots;
+				try
+				{
+					InventoryIsOpen = Inventory.IsOpen;
+					InventoryIsFull = Inventory.IsFull;
+					InventoryIsEmpty = Inventory.IsEmpty;
+					InventoryItemSelected = Inventory.IsItemSelected;
+					InventoryFreeSlots = Inventory.FreeSlots;
+				}
+				catch { /* ignore */ }
 			}
-			catch { /* ignore */ }
-		}
 
-		private void RefreshBankStatus()
-		{
-			try
+			private void InventoryDoActionById()
 			{
+				try
+				{
+					var ok = Inventory.DoAction(InventoryActionItemId, InventoryActionMenuIndex, InventoryActionSelectedOffset?.Value ?? Objects.Offsets.GeneralInterfaceRoute);
+					StatusMessage = ok ? "Inventory.DoAction(id): OK" : "Inventory.DoAction(id): Failed";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"Inventory.DoAction(id) error: {ex.Message}";
+				}
+			}
+
+			private void InventoryDoActionByName()
+			{
+				if (string.IsNullOrWhiteSpace(InventoryActionItemName))
+				{
+					StatusMessage = "Enter an item name.";
+					return;
+				}
+				try
+				{
+					var ok = Inventory.DoAction(InventoryActionItemName, InventoryActionMenuIndex, InventoryActionSelectedOffset?.Value ?? Objects.Offsets.GeneralInterfaceRoute);
+					StatusMessage = ok ? "Inventory.DoAction(name): OK" : "Inventory.DoAction(name): Failed";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"Inventory.DoAction(name) error: {ex.Message}";
+				}
+			}
+
+			private void InventoryDoActionBySlotFallback()
+			{
+				try
+				{
+					var item = Inventory.FindById(InventoryActionItemId).FirstOrDefault();
+					if (item == null)
+					{
+						StatusMessage = "Item not found in inventory.";
+						return;
+					}
+
+					var ok = InventoryInterfaces.DoActionBySlot(item.Id, item.Slot, InventoryActionMenuIndex, InventoryActionSelectedOffset?.Value ?? Objects.Offsets.GeneralInterfaceRoute);
+					StatusMessage = ok ? "InventoryInterfaces.DoActionBySlot: OK" : "InventoryInterfaces.DoActionBySlot: Failed";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"InventoryInterfaces.DoActionBySlot error: {ex.Message}";
+				}
+			}
+
+			private void InventoryRubById()
+			{
+				try
+				{
+					var ok = Inventory.Rub(InventoryActionItemId);
+					StatusMessage = ok ? "Inventory.Rub(id): OK" : "Inventory.Rub(id): Failed";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"Inventory.Rub(id) error: {ex.Message}";
+				}
+			}
+
+			private void InventoryRubByName()
+			{
+				if (string.IsNullOrWhiteSpace(InventoryActionItemName))
+				{
+					StatusMessage = "Enter an item name.";
+					return;
+				}
+				try
+				{
+					var ok = Inventory.Rub(InventoryActionItemName);
+					StatusMessage = ok ? "Inventory.Rub(name): OK" : "Inventory.Rub(name): Failed";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"Inventory.Rub(name) error: {ex.Message}";
+				}
+			}
+
+			private void InventoryResolveRoot()
+			{
+				try
+				{
+					var id = InventoryInterfaces.ResolveInventoryRoot();
+					StatusMessage = $"Inventory root resolved: id1={id.Id1}, id2={id.Id2}, id3={id.Id3}";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"ResolveInventoryRoot error: {ex.Message}";
+				}
+			}
+	
+			private void RefreshBankStatus()
+			{
+				try
+				{
 				BankIsOpen = Bank.IsOpen;
 				BankNoteModeEnabled = Bank.IsNoteModeEnabled();
 				BankQuantitySelected = Bank.GetQuantitySelected();

@@ -349,11 +349,17 @@
                     Margin="10"
                     behaviors:PanelLayoutBehavior.PageKey="objects-unified-view"
                     behaviors:PanelLayoutBehavior.ColumnKey="right">
-                    <Expander
-                        Header="Object Actions"
-                        IsExpanded="True"
-                        behaviors:PanelLayoutBehavior.PanelKey="object-actions">
-                        <StackPanel Margin="0,10,0,0">
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="10"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        CornerRadius="5"
+                        behaviors:PanelLayoutBehavior.PanelKey="object-actions"
+                        behaviors:PanelLayoutBehavior.IsHeightResizable="False">
+                        <Expander
+                            Header="Object Actions"
+                            IsExpanded="True">
+                            <StackPanel Margin="0,10,0,0">
                             <!--  Panel Header  -->
                             <TextBlock
                                 Margin="0,0,0,10"
@@ -521,11 +527,59 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
-                    </Border>
+	                    </Border>
 
-                    <!--  Objects-specific Controls  -->
-                    <Border
-                        Margin="0,0,0,10"
+                        <!-- Ground-item Controls -->
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="10"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="5"
+                            Visibility="{Binding IsGroundItemSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Ground Item Actions" />
+                                <TextBlock
+                                    Margin="0,0,0,8"
+                                    FontSize="11"
+                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                    Text="Uses GroundItems.DoActionByIds / DoActionByIdsRoute"
+                                    TextWrapping="Wrap" />
+
+                                <CheckBox
+                                    Margin="0,0,0,6"
+                                    Content="Use Route"
+                                    IsChecked="{Binding GroundUseRoute}" />
+
+                                <TextBlock Margin="0,0,0,4" FontSize="12" Text="Route (if enabled):" />
+                                <TextBox Margin="0,0,0,8" Text="{Binding GroundRoute}" />
+
+                                <TextBlock Margin="0,0,0,4" FontSize="12" Text="Max distance:" />
+                                <TextBox Margin="0,0,0,8" Text="{Binding GroundMaxDistance}" />
+
+                                <TextBlock Margin="0,0,0,4" FontSize="12" Text="Action Index:" />
+                                <ComboBox
+                                    Margin="0,0,0,5"
+                                    ItemContainerStyle="{StaticResource AppComboBoxItem}"
+                                    ItemsSource="{Binding ActionIndices}"
+                                    SelectedItem="{Binding SelectedActionIndex}"
+                                    Style="{StaticResource AppComboBox}" />
+
+                                <Button
+                                    Margin="0,5,0,0"
+                                    Padding="10,5"
+                                    Command="{Binding DoActionCommand}"
+                                    Content="Perform Action"
+                                    Style="{StaticResource AccentButton}" />
+                            </StackPanel>
+                        </Border>
+	
+	                    <!--  Objects-specific Controls  -->
+	                    <Border
+	                        Margin="0,0,0,10"
                         Padding="10"
                         Background="{DynamicResource App.BackgroundBrush}"
                         CornerRadius="5"
@@ -583,8 +637,9 @@
                                 Style="{StaticResource AccentButton}" />
                         </StackPanel>
                     </Border>
-                        </StackPanel>
-                    </Expander>
+                            </StackPanel>
+                        </Expander>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Border>

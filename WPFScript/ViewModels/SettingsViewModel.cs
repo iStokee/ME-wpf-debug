@@ -1,6 +1,9 @@
-﻿using MESharp.Models;
+﻿using MESharp.API;
+using MESharp.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
@@ -63,6 +66,22 @@ namespace MESharp.ViewModels
         public RelayCommand GenerateRandomColorsCommand { get; }
         public ICommand SelectThemeCommand { get; }
 
+        private string _reloadScriptPath = string.Empty;
+        public string ReloadScriptPath
+        {
+            get => _reloadScriptPath;
+            set => SetProperty(ref _reloadScriptPath, value);
+        }
+
+        private string _devStatus = string.Empty;
+        public string DevStatus
+        {
+            get => _devStatus;
+            set => SetProperty(ref _devStatus, value);
+        }
+
+        public ICommand ReloadManagedScriptCommand { get; }
+
         public SettingsViewModel()
         {
             AvailableColors = new ObservableCollection<ColorOption>(ColorOption.Defaults());
@@ -70,7 +89,28 @@ namespace MESharp.ViewModels
             RemoveCustomColorCommand = new RelayCommand(hex => RemoveCustomColor(hex as string));
             GenerateRandomColorsCommand = new RelayCommand(_ => GenerateRandomColors());
             SelectThemeCommand = new RelayCommand(opt => { if (opt is ColorOption co) SelectedPrimary = co; });
+            ReloadManagedScriptCommand = new RelayCommand(_ => ReloadManagedScript());
             LoadCurrentSettings();
+        }
+
+        private void ReloadManagedScript()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ReloadScriptPath))
+                {
+                    DevStatus = "ScriptHost.ReloadManagedScript: path is empty.";
+                    return;
+                }
+
+                var full = Path.GetFullPath(ReloadScriptPath);
+                ScriptHost.ReloadManagedScript(full);
+                DevStatus = $"ScriptHost.ReloadManagedScript: dispatched for '{full}'.";
+            }
+            catch (Exception ex)
+            {
+                DevStatus = $"ScriptHost.ReloadManagedScript error: {ex.Message}";
+            }
         }
 
         private void LoadCurrentSettings()

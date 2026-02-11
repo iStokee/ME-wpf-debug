@@ -846,11 +846,11 @@
                         Foreground="{DynamicResource App.SubtleForegroundBrush}"
                         Text="{Binding SelectedPlayer.Name, TargetNullValue='Select a player from the list'}" />
 
-                    <Border
-                        Padding="20"
-                        Background="{DynamicResource App.BackgroundBrush}"
-                        CornerRadius="6">
-                        <StackPanel>
+	                    <Border
+	                        Padding="20"
+	                        Background="{DynamicResource App.BackgroundBrush}"
+	                        CornerRadius="6">
+	                        <StackPanel>
                             <TextBlock
                                 Margin="0,0,0,14"
                                 FontSize="12"
@@ -891,20 +891,104 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Command="{Binding ExamineCommand}" Style="{StaticResource SecondaryCommandButton}">
-                                <StackPanel Orientation="Horizontal">
-                                    <iconPacks:PackIconMaterial
-                                        Margin="0,0,10,0"
+	                            <Button Command="{Binding ExamineCommand}" Style="{StaticResource SecondaryCommandButton}">
+	                                <StackPanel Orientation="Horizontal">
+	                                    <iconPacks:PackIconMaterial
+	                                        Margin="0,0,10,0"
                                         VerticalAlignment="Center"
                                         Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                                         Kind="Magnify" />
                                     <TextBlock VerticalAlignment="Center" Text="Examine" />
                                 </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
-    </Grid>
-</UserControl>
+	                            </Button>
+	                        </StackPanel>
+	                    </Border>
+
+                        <Border
+                            Margin="0,14,0,0"
+                            Padding="20"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="6">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,10"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="Abilities" />
+
+                                <TextBlock FontSize="11" Text="Ability name:" />
+                                <TextBox Margin="0,4,0,10" Text="{Binding AbilityName}" />
+
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Width="100">
+                                        <TextBlock FontSize="11" Text="Action idx:" />
+                                        <TextBox Margin="0,4,8,0" Text="{Binding AbilityActionIndex}" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock FontSize="11" Text="Offset:" />
+                                        <TextBox Margin="0,4,0,0" Text="{Binding AbilityOffset}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,10,0,10">
+                                    <CheckBox Content="Exact match" IsChecked="{Binding AbilityExactMatch}" />
+                                    <CheckBox Content="Require enabled" IsChecked="{Binding AbilityRequireEnabled}" />
+                                    <CheckBox Content="Not on cooldown" IsChecked="{Binding AbilityRequireNotOnCooldown}" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding AbilityUseCommand}" Content="Use" />
+                                    <Button Padding="10,4" Command="{Binding AbilityUseIfReadyCommand}" Content="Use If Ready" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border
+                            Margin="0,14,0,0"
+                            Padding="20"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="6">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,10"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="Action Buttons" />
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding QuickHealCommand}" Content="Quick Heal" />
+                                    <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding AutoRetaliateCommand}" Content="Auto Retaliate" />
+                                    <Button Padding="10,4" Command="{Binding QuickPrayerCommand}" Content="Quick Prayer" />
+                                </StackPanel>
+
+                                <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="Familiar order:" />
+                                    <TextBox Width="70" Margin="8,0,8,0" Text="{Binding FamiliarOrder}" />
+                                    <Button Padding="10,4" Command="{Binding FamiliarButtonCommand}" Content="Familiar Button" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border
+                            Margin="0,14,0,0"
+                            Padding="20"
+                            Background="{DynamicResource App.BackgroundBrush}"
+                            CornerRadius="6">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,10"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="Session" />
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="0,0,8,0" Padding="10,4" Command="{Binding SessionLogoutMiniCommand}" Content="Logout Mini" />
+                                    <Button Padding="10,4" Command="{Binding SessionLobbyCommand}" Content="Lobby" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+	                </StackPanel>
+	            </ScrollViewer>
+	        </Border>
+	    </Grid>
+	</UserControl>

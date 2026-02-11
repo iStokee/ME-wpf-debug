@@ -21,6 +21,7 @@ namespace MESharp.ViewModels
         ObjectsUnified,
         Interfaces,
         Varbit,
+        ApiDocs,
         Help
     }
 
@@ -56,6 +57,7 @@ namespace MESharp.ViewModels
                     OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
                     OnPropertyChanged(nameof(IsInterfacesSelected));
                     OnPropertyChanged(nameof(IsVarbitSelected));
+                    OnPropertyChanged(nameof(IsApiDocsSelected));
                     OnPropertyChanged(nameof(IsHelpSelected));
                     OnPropertyChanged(nameof(CurrentPageName));
                     OnPropertyChanged(nameof(IsSidePanelVisible));
@@ -76,6 +78,7 @@ namespace MESharp.ViewModels
         public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
         public bool IsInterfacesSelected => CurrentPage == AppPage.Interfaces;
         public bool IsVarbitSelected => CurrentPage == AppPage.Varbit;
+        public bool IsApiDocsSelected => CurrentPage == AppPage.ApiDocs;
         public bool IsHelpSelected => CurrentPage == AppPage.Help;
 
         public ICommand ShowGameCommand { get; }
@@ -88,6 +91,7 @@ namespace MESharp.ViewModels
         public ICommand ShowObjectsUnifiedCommand { get; }
         public ICommand ShowInterfacesCommand { get; }
         public ICommand ShowVarbitCommand { get; }
+        public ICommand ShowApiDocsCommand { get; }
         public ICommand ShowHelpCommand { get; }
 
         private string _sessionRuntimeString = "--:--:--";
@@ -111,6 +115,7 @@ namespace MESharp.ViewModels
             ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
             ShowInterfacesCommand     = new RelayCommand(_ => ShowInterfaces());
             ShowVarbitCommand         = new RelayCommand(_ => ShowVarbit());
+            ShowApiDocsCommand        = new RelayCommand(_ => ShowApiDocs());
             ShowHelpCommand           = new RelayCommand(_ => ShowHelp());
 
             _sessionTimerHandler = (_, __) => UpdateSessionTime();
@@ -140,6 +145,7 @@ namespace MESharp.ViewModels
         private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
         private void ShowInterfaces() => SwitchView(AppPage.Interfaces, () => new InterfacesViewModel());
         private void ShowVarbit() => SwitchView(AppPage.Varbit, () => new VarbitViewModel());
+        private void ShowApiDocs() => SwitchView(AppPage.ApiDocs, () => new ApiDocsViewModel());
         private void ShowHelp() => SwitchView(AppPage.Help, () => new HelpViewModel());
 
         private void SwitchView(AppPage page, Func<object> factory)

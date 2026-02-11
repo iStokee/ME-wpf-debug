@@ -62,6 +62,15 @@
     </Reference>
   </ItemGroup>
 
+  <!-- Copy XML docs next to the debug util so the API browser can show summaries/params/returns. -->
+  <ItemGroup>
+    <None Include="..\..\..\..\ME\x64\Build_DLL\csharp_interop.xml"
+          Condition="Exists('..\..\..\..\ME\x64\Build_DLL\csharp_interop.xml')"
+          Link="csharp_interop.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="CopyInteropDependencies" AfterTargets="ResolveReferences">
     <ItemGroup>
       <HotReloadDependencies Include="@(ReferenceCopyLocalPaths)" Condition=" '%(ReferenceCopyLocalPaths.Extension)' == '.dll' " />

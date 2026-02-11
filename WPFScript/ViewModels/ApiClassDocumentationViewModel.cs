@@ -1,10 +1,11 @@
+using MESharp.Models;
+using MESharp.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MESharp.Models;
-using MESharp.Services;
 
 namespace MESharp.ViewModels
 {
@@ -22,10 +23,10 @@ namespace MESharp.ViewModels
         public ApiClassDocumentationViewModel(Type classType)
         {
             ClassName = classType.Name;
-            Namespace = classType.Namespace;
+            Namespace = classType.Namespace ?? string.Empty;
 
             Summary = XmlDocProvider.GetSummary(classType) ?? $"Provides access to {classType.Name}-related information and actions.";
-            Description = XmlDocProvider.GetRemarks(classType) ?? $"The {classType.Name} class is a key component of the MESharp API, offering a suite of tools to interact with the game's {classType.Name.ToLower()} system.";
+            Description = XmlDocProvider.GetRemarks(classType) ?? $"The {classType.Name} class is a key component of the MESharp API, offering a suite of tools to interact with the game's {classType.Name.ToLowerInvariant()} system.";
             Category = "Core API";
 
             LoadProperties(classType);
@@ -49,7 +50,7 @@ namespace MESharp.ViewModels
                 var propDoc = new ApiPropertyDoc
                 {
                     Name = prop.Name,
-                    Type = prop.PropertyType.Name,
+                    Type = GetFriendlyTypeName(prop.PropertyType),
                     IsStatic = prop.GetGetMethod()?.IsStatic ?? false,
                     IsReadOnly = !prop.CanWrite,
                     Summary = XmlDocProvider.GetSummary(prop) ?? $"Gets the {prop.Name}.",
@@ -62,7 +63,7 @@ namespace MESharp.ViewModels
         private void LoadMethods(Type classType)
         {
             var methods = classType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                   .Where(m => m.DeclaringType == classType && !m.IsSpecialName); // Exclude property getters/setters
+                                   .Where(m => m.DeclaringType == classType && !m.IsSpecialName);
 
             foreach (var method in methods)
             {
@@ -76,15 +77,84 @@ namespace MESharp.ViewModels
                 var methodDoc = new ApiMethodDoc
                 {
                     Name = method.Name,
-                    ReturnType = method.ReturnType.Name,
+                    ReturnType = GetFriendlyTypeName(method.ReturnType),
                     IsStatic = method.IsStatic,
                     Summary = XmlDocProvider.GetSummary(method) ?? $"Performs an action related to {method.Name}.",
                     ParametersDisplay = GetParametersDisplay(method),
                     Parameters = GetParameters(method),
-                    Examples = examples
+                    Examples = examples,
+                    Signature = BuildSignature(method),
+                    ReturnDescription = XmlDocProvider.GetReturns(method) ?? string.Empty
                 };
+
                 Methods.Add(methodDoc);
             }
+        }
+
+        private static string GetFriendlyTypeName(Type type)
+        {
+            var underlying = Nullable.GetUnderlyingType(type);
+            if (underlying != null)
+            {
+                return $"{GetFriendlyTypeName(underlying)}?";
+            }
+
+            if (type.IsArray)
+            {
+                return $"{GetFriendlyTypeName(type.GetElementType()!)}[]";
+            }
+
+            if (type.IsGenericType)
+            {
+                var genericDef = type.GetGenericTypeDefinition();
+                if (genericDef == typeof(IEnumerable<>))
+                {
+                    return $"IEnumerable<{GetFriendlyTypeName(type.GetGenericArguments()[0])}>";
+                }
+
+                if (genericDef == typeof(IReadOnlyList<>))
+                {
+                    return $"IReadOnlyList<{GetFriendlyTypeName(type.GetGenericArguments()[0])}>";
+                }
+
+                if (genericDef == typeof(IList<>))
+                {
+                    return $"IList<{GetFriendlyTypeName(type.GetGenericArguments()[0])}>";
+                }
+
+                if (genericDef == typeof(List<>))
+                {
+                    return $"List<{GetFriendlyTypeName(type.GetGenericArguments()[0])}>";
+                }
+            }
+
+            return type.Name;
+        }
+
+        private static string BuildSignature(MethodInfo method)
+        {
+            var sb = new StringBuilder();
+            sb.Append("public ");
+            if (method.IsStatic) sb.Append("static ");
+
+            sb.Append(GetFriendlyTypeName(method.ReturnType));
+            sb.Append(' ');
+            sb.Append(method.Name);
+            sb.Append('(');
+
+            var parameters = method.GetParameters();
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var p = parameters[i];
+                sb.Append(GetFriendlyTypeName(p.ParameterType));
+                sb.Append(' ');
+                sb.Append(p.Name ?? $"arg{i}");
+
+                if (i < parameters.Length - 1) sb.Append(", ");
+            }
+
+            sb.Append(')');
+            return sb.ToString();
         }
 
         private string GetParametersDisplay(MethodInfo method)
@@ -94,9 +164,9 @@ namespace MESharp.ViewModels
 
             var sb = new StringBuilder();
             sb.Append("(");
-            for (int i = 0; i < parameters.Length; i++)
+            for (var i = 0; i < parameters.Length; i++)
             {
-                sb.Append($"{parameters[i].ParameterType.Name} {parameters[i].Name}");
+                sb.Append($"{GetFriendlyTypeName(parameters[i].ParameterType)} {parameters[i].Name}");
                 if (i < parameters.Length - 1) sb.Append(", ");
             }
             sb.Append(")");
@@ -107,9 +177,9 @@ namespace MESharp.ViewModels
         {
             return method.GetParameters().Select(p => new ApiParameterDoc
             {
-                Name = p.Name,
-                Type = p.ParameterType.Name,
-                Description = XmlDocProvider.GetParamDoc(method, p.Name) ?? "Parameter description placeholder."
+                Name = p.Name ?? "arg",
+                Type = GetFriendlyTypeName(p.ParameterType),
+                Description = XmlDocProvider.GetParamDoc(method, p.Name ?? string.Empty) ?? string.Empty
             }).ToList();
         }
     }

@@ -205,7 +205,7 @@ namespace MESharp.ViewModels
             set => SetProperty(ref _keepHighlight, value);
         }
 
-        private int _highlightDurationMs = 1000;
+        private int _highlightDurationMs = 10000;
         public int HighlightDurationMs
         {
             get => _highlightDurationMs;
@@ -231,6 +231,14 @@ namespace MESharp.ViewModels
         public ObservableCollection<InterfaceOverrideEntry> Overrides { get; } = new ObservableCollection<InterfaceOverrideEntry>();
 
         public bool HasInterfaces => AllInterfaces.Count > 0;
+
+        // ─── Dialog helpers (moved from ApiUtilities) ──────────────────────
+        private string _dialogOptionText = "Continue";
+        public string DialogOptionText
+        {
+            get => _dialogOptionText;
+            set => SetProperty(ref _dialogOptionText, value);
+        }
         
         public ICommand LoadInterfacesCommand { get; }
         public ICommand ClearCommand { get; }
@@ -242,6 +250,8 @@ namespace MESharp.ViewModels
         public ICommand LoadOverridesCommand { get; }
         public ICommand HighlightSelectedCommand { get; }
         public ICommand ClearHighlightCommand { get; }
+        public ICommand DialogSelectCommand { get; }
+        public ICommand DialogContinueCommand { get; }
 
         public InterfacesViewModel()
         {
@@ -262,6 +272,9 @@ namespace MESharp.ViewModels
             LoadOverridesCommand = new RelayCommand(_ => LoadOverrides());
             HighlightSelectedCommand = new RelayCommand(_ => HighlightSelectionNow(), _ => SelectedInterface != null);
             ClearHighlightCommand = new RelayCommand(_ => DebugDraw.Clear("InterfaceSelection"));
+
+            DialogSelectCommand = new RelayCommand(_ => RunDialog(() => Dialogs.SelectOption(DialogOptionText), "Dialogs.SelectOption"));
+            DialogContinueCommand = new RelayCommand(_ => RunDialog(Dialogs.Continue, "Dialogs.Continue"));
 
             _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
@@ -357,6 +370,19 @@ namespace MESharp.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"Error: {ex.Message}";
+            }
+        }
+
+        private void RunDialog(Func<bool> action, string label)
+        {
+            try
+            {
+                var ok = action();
+                StatusMessage = $"{label}: {(ok ? "OK" : "Failed")}";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"{label} error: {ex.Message}";
             }
         }
 

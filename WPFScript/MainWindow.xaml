@@ -133,6 +133,67 @@
                 </Style.Triggers>
             </Style>
 
+            <!--  Local fallback command button styles (protects hot-reload when theme dictionaries aren't ready)  -->
+            <Style x:Key="PrimaryCommandButton" TargetType="Button">
+                <Setter Property="Padding" Value="12,7" />
+                <Setter Property="Margin" Value="0,0,8,0" />
+                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Opacity" Value="0.92" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.6" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style
+                x:Key="SecondaryCommandButton"
+                BasedOn="{StaticResource PrimaryCommandButton}"
+                TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Opacity" Value="0.92" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.6" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
             <!--  DataTemplates for Views  -->
             <DataTemplate DataType="{x:Type vm:GameViewModel}">
                 <views:GameView />
@@ -448,6 +509,21 @@
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                                     Kind="MonitorDashboard" />
                                 <TextBlock Text="Interfaces" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowApiDocsCommand}"
+                            IsChecked="{Binding IsApiDocsSelected, Mode=OneWay}"
+                            ToolTip="Browse MESharp API documentation">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="BookOpenPageVariant" />
+                                <TextBlock Text="API Docs" />
                             </StackPanel>
                         </ToggleButton>
 

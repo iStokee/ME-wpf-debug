@@ -193,6 +193,30 @@
                                                     Foreground="{DynamicResource App.SubtleForegroundBrush}"
                                                     Text="{Binding Namespace}"
                                                     TextTrimming="CharacterEllipsis" />
+                                                <Border
+                                                    Margin="0,4,0,0"
+                                                    Padding="5,2"
+                                                    HorizontalAlignment="Left"
+                                                    Background="{DynamicResource PrimarySoftBrush}"
+                                                    BorderBrush="{DynamicResource PrimaryBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HasDedicatedPanel}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock
+                                                        FontSize="9"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{DynamicResource PrimaryBrush}"
+                                                        Text="NO DEBUG TAB" />
+                                                </Border>
                                             </StackPanel>
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -453,6 +477,7 @@
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
 
                                             <!--  Method Signature  -->
@@ -497,9 +522,19 @@
                                                 <Run FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" Text="{Binding ReturnType, Mode=OneWay}" />
                                             </TextBlock>
 
-                                            <!--  Summary  -->
+                                            <!--  Return Description  -->
                                             <TextBlock
                                                 Grid.Row="2"
+                                                Margin="0,6,0,0"
+                                                FontSize="12"
+                                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                Text="{Binding ReturnDescription}"
+                                                TextWrapping="Wrap"
+                                                Visibility="{Binding ReturnDescription, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                                            <!--  Summary  -->
+                                            <TextBlock
+                                                Grid.Row="3"
                                                 Margin="0,12,0,0"
                                                 FontSize="13"
                                                 Foreground="{DynamicResource App.ForegroundBrush}"
@@ -508,7 +543,7 @@
 
                                             <!--  Parameters  -->
                                             <StackPanel
-                                                Grid.Row="3"
+                                                Grid.Row="4"
                                                 Margin="0,12,0,0"
                                                 Visibility="{Binding Parameters.Count, Converter={StaticResource NullToVisibilityConverter}}">
                                                 <TextBlock
@@ -556,7 +591,7 @@
 
                                             <!--  Examples  -->
                                             <ItemsControl
-                                                Grid.Row="4"
+                                                Grid.Row="5"
                                                 Margin="0,16,0,0"
                                                 ItemsSource="{Binding Examples}"
                                                 Visibility="{Binding Examples.Count, Converter={StaticResource NullToVisibilityConverter}}">
