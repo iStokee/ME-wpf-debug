@@ -14,7 +14,7 @@ namespace MESharp.Views.Controls
         public SectionHeader()
         {
             InitializeComponent();
-            TryApplyDefaultIconBrush();
+            ApplyDefaultIconBrushReference();
             Loaded += (_, __) => UpdateExpandStateFromView();
         }
 
@@ -31,13 +31,13 @@ namespace MESharp.Views.Controls
             DependencyProperty.Register(nameof(IconForeground), typeof(Brush), typeof(SectionHeader), new PropertyMetadata(null));
 
         public static readonly DependencyProperty IconSizeProperty =
-            DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(SectionHeader), new PropertyMetadata(26d));
+            DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(SectionHeader), new PropertyMetadata(18d));
 
         public static readonly DependencyProperty TitleFontSizeProperty =
             DependencyProperty.Register(nameof(TitleFontSize), typeof(double), typeof(SectionHeader), new PropertyMetadata(20d));
 
         public static readonly DependencyProperty HeaderPaddingProperty =
-            DependencyProperty.Register(nameof(HeaderPadding), typeof(Thickness), typeof(SectionHeader), new PropertyMetadata(new Thickness(12)));
+            DependencyProperty.Register(nameof(HeaderPadding), typeof(Thickness), typeof(SectionHeader), new PropertyMetadata(new Thickness(14, 12, 14, 12)));
 
         public static readonly DependencyProperty HeaderCornerRadiusProperty =
             DependencyProperty.Register(nameof(HeaderCornerRadius), typeof(CornerRadius), typeof(SectionHeader), new PropertyMetadata(new CornerRadius(6)));
@@ -171,17 +171,16 @@ namespace MESharp.Views.Controls
             set => SetValue(ExpandCollapseToolTipProperty, value);
         }
 
-        private void TryApplyDefaultIconBrush()
+        private void ApplyDefaultIconBrushReference()
         {
-            if (IconForeground != null)
+            // Use a dynamic resource reference so icon color follows theme changes.
+            // A one-time brush lookup can capture stale startup colors (e.g. default blue).
+            if (ReadLocalValue(IconForegroundProperty) != DependencyProperty.UnsetValue)
             {
                 return;
             }
 
-            if (Application.Current?.Resources["PrimaryBrush"] is Brush brush)
-            {
-                IconForeground = brush;
-            }
+            SetResourceReference(IconForegroundProperty, "PrimaryBrush");
         }
 
         private void OnExpandCollapseToggleChanged(object sender, RoutedEventArgs e)

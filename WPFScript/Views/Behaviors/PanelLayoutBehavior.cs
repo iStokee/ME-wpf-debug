@@ -21,6 +21,7 @@ namespace MESharp.Views.Behaviors
         private static readonly Dictionary<string, List<Panel>> PanelsByPageKey = new(StringComparer.Ordinal);
         private static readonly HashSet<string> PendingApplyPages = new(StringComparer.Ordinal);
         private static readonly HashSet<string> ApplyingPages = new(StringComparer.Ordinal);
+        private static readonly object ApplyingPagesSync = new();
 
         public static readonly DependencyProperty PageKeyProperty =
             DependencyProperty.RegisterAttached(
@@ -248,7 +249,7 @@ namespace MESharp.Views.Behaviors
                 return;
             }
 
-            ApplyingPages.Add(pageKey);
+            BeginApplying(pageKey);
             try
             {
                 var placements = PanelLayoutStore.GetPlacements(pageKey);
@@ -258,7 +259,10 @@ namespace MESharp.Views.Behaviors
                     return;
                 }
 
-                var placementByKey = placements.ToDictionary(x => x.PanelKey, x => x, StringComparer.Ordinal);
+                // Be resilient to malformed persisted data with duplicate panel keys.
+                var placementByKey = placements
+                    .GroupBy(x => x.PanelKey, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => g.OrderBy(x => x.Order).First(), StringComparer.Ordinal);
                 var allKeyed = panels
                     .SelectMany(GetOrderedKeyedChildren)
                     .GroupBy(GetPanelKey, StringComparer.Ordinal)
@@ -304,6 +308,9 @@ namespace MESharp.Views.Behaviors
                 foreach (var panel in panels)
                 {
                     ApplyOrderedKeyedChildren(panel, plannedByPanel[panel]);
+                    AttachPanelMenus(panel);
+                    AttachDragDrop(panel);
+                    AttachExpansionTracking(panel);
                 }
 
                 // Always clear stale heights on panels that are marked non-resizable,
@@ -351,7 +358,7 @@ namespace MESharp.Views.Behaviors
             }
             finally
             {
-                ApplyingPages.Remove(pageKey);
+                EndApplying(pageKey);
             }
         }
 
@@ -403,20 +410,20 @@ namespace MESharp.Views.Behaviors
                 var menu = new ContextMenu();
 
                 var moveUp = new MenuItem { Header = "Move Panel Up" };
-                moveUp.Click += (_, __) => MovePanel(panel, child, -1);
+                moveUp.Click += (_, __) => MovePanel(GetCurrentOrFallbackPanel(child, panel), child, -1);
 
                 var moveDown = new MenuItem { Header = "Move Panel Down" };
-                moveDown.Click += (_, __) => MovePanel(panel, child, +1);
+                moveDown.Click += (_, __) => MovePanel(GetCurrentOrFallbackPanel(child, panel), child, +1);
 
                 var resetHeight = new MenuItem { Header = "Reset Panel Height" };
                 resetHeight.Click += (_, __) =>
                 {
                     child.ClearValue(FrameworkElement.HeightProperty);
-                    SaveCurrentLayout(panel);
+                    SaveCurrentLayout(GetCurrentOrFallbackPanel(child, panel));
                 };
 
                 var reset = new MenuItem { Header = "Reset Panel Order" };
-                reset.Click += (_, __) => ResetPanelOrder(panel);
+                reset.Click += (_, __) => ResetPanelOrder(GetCurrentOrFallbackPanel(child, panel));
 
                 menu.Items.Add(moveUp);
                 menu.Items.Add(moveDown);
@@ -427,7 +434,8 @@ namespace MESharp.Views.Behaviors
 
                 menu.Opened += (_, __) =>
                 {
-                    var keyed = GetOrderedKeyedChildren(panel).ToList();
+                    var activePanel = GetCurrentOrFallbackPanel(child, panel);
+                    var keyed = GetOrderedKeyedChildren(activePanel).ToList();
                     var idx = keyed.IndexOf(child);
                     moveUp.IsEnabled = idx > 0;
                     moveDown.IsEnabled = idx >= 0 && idx < keyed.Count - 1;
@@ -777,9 +785,15 @@ namespace MESharp.Views.Behaviors
             targetOrdered.Insert(insertIndex, source);
 
             ApplyOrderedKeyedChildren(targetPanel, targetOrdered);
+            AttachPanelMenus(targetPanel);
+            AttachDragDrop(targetPanel);
+            AttachExpansionTracking(targetPanel);
             if (sourcePanel != targetPanel)
             {
                 ApplyOrderedKeyedChildren(sourcePanel, sourceOrdered);
+                AttachPanelMenus(sourcePanel);
+                AttachDragDrop(sourcePanel);
+                AttachExpansionTracking(sourcePanel);
             }
 
             SaveCurrentLayout(targetPanel);
@@ -851,7 +865,7 @@ namespace MESharp.Views.Behaviors
         private static void SaveCurrentLayout(Panel panel)
         {
             var pageKey = GetPageKey(panel);
-            if (string.IsNullOrWhiteSpace(pageKey) || ApplyingPages.Contains(pageKey))
+            if (string.IsNullOrWhiteSpace(pageKey) || IsApplying(pageKey))
             {
                 return;
             }
@@ -984,27 +998,34 @@ namespace MESharp.Views.Behaviors
         {
             ApplyDefaultPanelSpacing(orderedKeyed);
 
-            var nonKeyed = panel.Children.Cast<UIElement>()
-                .Where(x => string.IsNullOrWhiteSpace(GetPanelKey(x)))
-                .ToList();
+            var originalChildren = panel.Children.Cast<UIElement>().ToList();
+            var keyedQueue = new Queue<UIElement>(orderedKeyed);
+            var rebuilt = new List<UIElement>(originalChildren.Count + Math.Max(0, orderedKeyed.Count - originalChildren.Count));
 
-            panel.Children.Clear();
-
-            foreach (var child in orderedKeyed)
+            // Preserve non-keyed element positions (headers, static controls) and only remap keyed slots.
+            foreach (var original in originalChildren)
             {
-                var parent = GetParentPanel(child);
-                if (parent != null && parent != panel)
+                if (string.IsNullOrWhiteSpace(GetPanelKey(original)))
                 {
-                    parent.Children.Remove(child);
+                    rebuilt.Add(original);
+                    continue;
                 }
 
-                if (GetParentPanel(child) != panel)
+                if (keyedQueue.Count > 0)
                 {
-                    panel.Children.Add(child);
+                    rebuilt.Add(keyedQueue.Dequeue());
                 }
             }
 
-            foreach (var child in nonKeyed)
+            // If new keyed panels were inserted from another column, append remaining keyed items.
+            while (keyedQueue.Count > 0)
+            {
+                rebuilt.Add(keyedQueue.Dequeue());
+            }
+
+            panel.Children.Clear();
+
+            foreach (var child in rebuilt)
             {
                 var parent = GetParentPanel(child);
                 if (parent != null && parent != panel)
@@ -1125,6 +1146,35 @@ namespace MESharp.Views.Behaviors
             if (save)
             {
                 SaveCurrentLayout(panel);
+            }
+        }
+
+        private static Panel GetCurrentOrFallbackPanel(FrameworkElement child, Panel fallback)
+        {
+            return GetParentPanel(child) ?? fallback;
+        }
+
+        private static void BeginApplying(string pageKey)
+        {
+            lock (ApplyingPagesSync)
+            {
+                ApplyingPages.Add(pageKey);
+            }
+        }
+
+        private static void EndApplying(string pageKey)
+        {
+            lock (ApplyingPagesSync)
+            {
+                ApplyingPages.Remove(pageKey);
+            }
+        }
+
+        private static bool IsApplying(string pageKey)
+        {
+            lock (ApplyingPagesSync)
+            {
+                return ApplyingPages.Contains(pageKey);
             }
         }
 

@@ -10,7 +10,7 @@ using System.Windows.Threading;
 
 namespace MESharp.ViewModels
 {
-    internal class SkillsViewModel : INotifyPropertyChanged
+    internal class SkillsViewModel : INotifyPropertyChanged, IActivatableViewModel, IDisposable
     {
         private enum SkillsDisplayMode
         {
@@ -21,6 +21,9 @@ namespace MESharp.ViewModels
 
         private readonly SkillSession _session;
         private readonly DispatcherTimer _updateTimer;
+        private readonly EventHandler _updateTickHandler;
+        private bool _isActive;
+        private bool _disposed;
 
         public ObservableCollection<SkillModel> AllSkills { get; }
         public ICollectionView SkillsView { get; }
@@ -133,17 +136,21 @@ namespace MESharp.ViewModels
 
             ApplySorting();
 
-            _updateTimer = new DispatcherTimer(
-                TimeSpan.FromSeconds(1),
-                DispatcherPriority.Background,
-                (_, _) => RefreshAll(),
-                Dispatcher.CurrentDispatcher
-            );
-            _updateTimer.Start();
+            _updateTickHandler = OnUpdateTimerTick;
+            _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _updateTimer.Tick += _updateTickHandler;
         }
 
         private void RefreshAll()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             foreach (var vm in AllSkills)
             {
                 vm.Update();
@@ -256,6 +263,57 @@ namespace MESharp.ViewModels
             OnPropertyChanged(nameof(IsTableView));
             SkillsView.Refresh();
         }
+
+        public void OnActivated()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (_isActive)
+            {
+                RefreshAll();
+                return;
+            }
+
+            _isActive = true;
+            if (!_updateTimer.IsEnabled)
+            {
+                _updateTimer.Start();
+            }
+
+            RefreshAll();
+        }
+
+        public void OnDeactivated()
+        {
+            if (_disposed || !_isActive)
+            {
+                return;
+            }
+
+            _isActive = false;
+            if (_updateTimer.IsEnabled)
+            {
+                _updateTimer.Stop();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            OnDeactivated();
+            _disposed = true;
+            _updateTimer.Stop();
+            _updateTimer.Tick -= _updateTickHandler;
+        }
+
+        private void OnUpdateTimerTick(object? sender, EventArgs e) => RefreshAll();
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propName = null)

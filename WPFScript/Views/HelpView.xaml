@@ -4,25 +4,39 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MESharp.Views"
+             xmlns:controls="clr-namespace:MESharp.Views.Controls"
              xmlns:vm="clr-namespace:MESharp.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Margin="0,0,8,0" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+            <controls:SectionHeader
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,8"
+                Title="Help"
+                Description="Browse usage guides and appearance settings for the debug utility."
+                IconKind="HelpCircleOutline"
+                ShowExpandCollapseAll="False"
+                ShowHelp="False" />
+
+            <Border Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" Background="{DynamicResource App.CardBrush}" BorderBrush="{DynamicResource App.BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <StackPanel>
-                    <Button Content="API Reference" Command="{Binding ShowApiDocsCommand}" Margin="8"/>
                     <Button Content="How to Use" Command="{Binding ShowHowToUseCommand}" Margin="8"/>
                     <Button Content="Theme Settings" Command="{Binding ShowThemeSettingsCommand}" Margin="8"/>
                 </StackPanel>
             </Border>
 
-            <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
+            <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentViewModel}" />
         </Grid>
     </ScrollViewer>
 </UserControl>

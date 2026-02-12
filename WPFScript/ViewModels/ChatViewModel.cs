@@ -19,6 +19,8 @@ namespace MESharp.ViewModels
 
         private readonly DispatcherTimer _timer;
         private readonly NotifyCollectionChangedEventHandler _liveEventsChangedHandler;
+        private readonly NotifyCollectionChangedEventHandler _messagesChangedHandler;
+        private readonly NotifyCollectionChangedEventHandler _friendChatMembersChangedHandler;
         private long _eventSequence;
         private bool _disposed;
         private bool _isActive;
@@ -133,9 +135,11 @@ namespace MESharp.ViewModels
         public ChatViewModel()
         {
             _liveEventsChangedHandler = (_, __) => OnPropertyChanged(nameof(HasEvents));
+            _messagesChangedHandler = (_, __) => OnPropertyChanged(nameof(HasMessages));
+            _friendChatMembersChangedHandler = (_, __) => OnPropertyChanged(nameof(HasFriendChatMembers));
             LiveEvents.CollectionChanged += _liveEventsChangedHandler;
-            Messages.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasMessages));
-            FriendChatMembers.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasFriendChatMembers));
+            Messages.CollectionChanged += _messagesChangedHandler;
+            FriendChatMembers.CollectionChanged += _friendChatMembersChangedHandler;
 
             RefreshEventSupport();
 
@@ -409,6 +413,8 @@ namespace MESharp.ViewModels
             catch { /* ignore */ }
 
             LiveEvents.CollectionChanged -= _liveEventsChangedHandler;
+            Messages.CollectionChanged -= _messagesChangedHandler;
+            FriendChatMembers.CollectionChanged -= _friendChatMembersChangedHandler;
 
             _captureEvents = false;
 

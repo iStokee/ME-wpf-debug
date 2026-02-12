@@ -30,6 +30,11 @@ namespace MESharp.Services
 
             var app = Application.Current;
             if (app == null) return;
+            if (!app.Dispatcher.CheckAccess())
+            {
+                app.Dispatcher.Invoke(() => ApplyTheme(settings));
+                return;
+            }
 
             // 1) Swap base theme dictionary (Light/Dark)
             var merged = app.Resources.MergedDictionaries;
@@ -84,6 +89,8 @@ namespace MESharp.Services
                 themeDictionary = new ResourceDictionary { Source = baseThemeUri };
                 merged.Insert(insertIndex, themeDictionary);
             }
+
+            EnsureDictionaryPresent(merged, "Themes/ItemFlagResources.xaml");
 
             // 2) Apply Primary color (will override the defaults from theme)
             var primary = ParseColor(settings.PrimaryColor) ?? (settings.IsDark ? (Color)ColorConverter.ConvertFromString("#FF7AA2FF") : (Color)ColorConverter.ConvertFromString("#FF3F51B5"));
@@ -195,7 +202,7 @@ namespace MESharp.Services
 
         private static ThemeSettings CreateDefaultSettings()
         {
-            return new ThemeSettings { IsDark = false, PrimaryColor = "#3F51B5" };
+            return new ThemeSettings { IsDark = false, PrimaryColor = "#FF3F51B5" };
         }
 
         private static int FindDictionaryIndex(System.Collections.ObjectModel.Collection<ResourceDictionary> dictionaries, string resourceName)
@@ -211,6 +218,16 @@ namespace MESharp.Services
             }
 
             return -1;
+        }
+
+        private static void EnsureDictionaryPresent(System.Collections.ObjectModel.Collection<ResourceDictionary> dictionaries, string relativeResourcePath)
+        {
+            if (FindDictionaryIndex(dictionaries, relativeResourcePath) >= 0)
+            {
+                return;
+            }
+
+            dictionaries.Add(new ResourceDictionary { Source = GetThemePackUri(relativeResourcePath) });
         }
     }
 }

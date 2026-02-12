@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -15,14 +16,25 @@ namespace MESharp.Converters
 		{
 			if (value is bool boolValue)
 			{
-				return boolValue ? Brushes.LightGreen : Brushes.LightCoral;
+                return FindBrush(boolValue ? "StatusTrueBrush" : "StatusFalseBrush", boolValue ? Brushes.LightGreen : Brushes.LightCoral);
 			}
-			return Brushes.Gray;
+            return FindBrush("StatusUnknownBrush", Brushes.Gray);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}
+
+        private static Brush FindBrush(string key, Brush fallback)
+        {
+            var app = Application.Current;
+            if (app?.Resources[key] is Brush brush)
+            {
+                return brush;
+            }
+
+            return fallback;
+        }
 	}
 }

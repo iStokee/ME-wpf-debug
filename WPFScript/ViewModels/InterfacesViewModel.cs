@@ -59,6 +59,8 @@ namespace MESharp.ViewModels
 
     public class InterfacesViewModel : INotifyPropertyChanged, IActivatableViewModel, IDisposable
     {
+        private const string InterfaceHighlightKey = "InterfaceSelection";
+
         public sealed class InterfaceOverrideEntry
         {
             public string Key { get; }
@@ -158,13 +160,32 @@ namespace MESharp.ViewModels
             get => _selectedInterface;
             set
             {
-                if (SetProperty(ref _selectedInterface, value))
+                if (ReferenceEquals(_selectedInterface, value))
                 {
-                    OnPropertyChanged(nameof(SelectedInterfaceLabel));
-                    OnPropertyChanged(nameof(SelectedInterfaceTextItem));
-                    HighlightSelectionNow();
-                    CommandManager.InvalidateRequerySuggested();
+                    return;
                 }
+
+                var previous = _selectedInterface;
+                _selectedInterface = value;
+
+                OnPropertyChanged(nameof(SelectedInterface));
+                OnPropertyChanged(nameof(SelectedInterfaceLabel));
+                OnPropertyChanged(nameof(SelectedInterfaceTextItem));
+
+                var changedIdentity = !HasSameIdentity(previous, value);
+                if (changedIdentity)
+                {
+                    if (value == null)
+                    {
+                        DebugDraw.Clear(InterfaceHighlightKey);
+                    }
+                    else
+                    {
+                        HighlightSelectionNow();
+                    }
+                }
+
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -195,7 +216,18 @@ namespace MESharp.ViewModels
         public bool HighlightSelection
         {
             get => _highlightSelection;
-            set => SetProperty(ref _highlightSelection, value);
+            set
+            {
+                if (!SetProperty(ref _highlightSelection, value))
+                {
+                    return;
+                }
+
+                if (!value)
+                {
+                    DebugDraw.Clear(InterfaceHighlightKey);
+                }
+            }
         }
 
         private bool _keepHighlight;
@@ -213,6 +245,18 @@ namespace MESharp.ViewModels
         }
 
         private long _lastHighlightTick;
+        private string _findQuery = string.Empty;
+        public string FindQuery
+        {
+            get => _findQuery;
+            set
+            {
+                if (SetProperty(ref _findQuery, value))
+                {
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
 
         private string _newOverrideKey;
         public string NewOverrideKey
@@ -252,6 +296,7 @@ namespace MESharp.ViewModels
         public ICommand ClearHighlightCommand { get; }
         public ICommand DialogSelectCommand { get; }
         public ICommand DialogContinueCommand { get; }
+        public ICommand FindInterfaceCommand { get; }
 
         public InterfacesViewModel()
         {
@@ -271,10 +316,11 @@ namespace MESharp.ViewModels
             ExportOverridesCommand = new RelayCommand(_ => ExportOverrides());
             LoadOverridesCommand = new RelayCommand(_ => LoadOverrides());
             HighlightSelectedCommand = new RelayCommand(_ => HighlightSelectionNow(), _ => SelectedInterface != null);
-            ClearHighlightCommand = new RelayCommand(_ => DebugDraw.Clear("InterfaceSelection"));
+            ClearHighlightCommand = new RelayCommand(_ => DebugDraw.Clear(InterfaceHighlightKey));
 
             DialogSelectCommand = new RelayCommand(_ => RunDialog(() => Dialogs.SelectOption(DialogOptionText), "Dialogs.SelectOption"));
             DialogContinueCommand = new RelayCommand(_ => RunDialog(Dialogs.Continue, "Dialogs.Continue"));
+            FindInterfaceCommand = new RelayCommand(_ => FindInterface(), _ => !string.IsNullOrWhiteSpace(FindQuery));
 
             _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
@@ -291,6 +337,7 @@ namespace MESharp.ViewModels
         {
             try
             {
+                var previousSelection = SelectedInterface;
                 AllInterfaces.Clear();
 
                 int rootId = -1;
@@ -301,17 +348,14 @@ namespace MESharp.ViewModels
                     getOnlyTarget = true;
                 }
 
-                var components = Interfaces.Scan(rootId, getOnlyTarget, textOnly: true, includeHidden: IncludeHidden);
+                var components = Interfaces.Scan(rootId, getOnlyTarget, textOnly: TextOnly, includeHidden: IncludeHidden);
                 if (components.Count == 0)
                 {
                     InterfaceCount = 0;
+                    SelectedInterface = null;
                     StatusMessage = "No interfaces found.";
+                    OnPropertyChanged(nameof(HasInterfaces));
                     return;
-                }
-
-                if (TextOnly)
-                {
-                    components = components.Where(c => !string.IsNullOrWhiteSpace(c.TextItem) || !string.IsNullOrWhiteSpace(c.TextIds)).ToList();
                 }
 
                 if (FilterIndex1 || FilterIndex2 || FilterIndex3)
@@ -325,6 +369,7 @@ namespace MESharp.ViewModels
                 if (components.Count == 0)
                 {
                     InterfaceCount = 0;
+                    SelectedInterface = null;
                     StatusMessage = "No interfaces matched the current filters.";
                     OnPropertyChanged(nameof(HasInterfaces));
                     return;
@@ -366,10 +411,15 @@ namespace MESharp.ViewModels
                 InterfaceCount = components.Count;
                 StatusMessage = $"Loaded {InterfaceCount} interface(s).";
                 OnPropertyChanged(nameof(HasInterfaces));
+
+                var restored = FindBestSelectionMatch(previousSelection, components);
+                SelectedInterface = restored;
             }
             catch (Exception ex)
             {
+                SelectedInterface = null;
                 StatusMessage = $"Error: {ex.Message}";
+                OnPropertyChanged(nameof(HasInterfaces));
             }
         }
 
@@ -405,10 +455,21 @@ namespace MESharp.ViewModels
                 return;
             }
 
-            var refreshed = Interfaces.GetInfo(SelectedInterface.MemLoc, refreshData: true, refreshText: true);
-            if (refreshed != null)
+            try
             {
-                SelectedInterface = refreshed;
+                var refreshed = Interfaces.GetInfo(SelectedInterface.MemLoc, refreshData: true, refreshText: true);
+                if (refreshed != null)
+                {
+                    SelectedInterface = refreshed;
+                }
+                else
+                {
+                    StatusMessage = "Selected interface is no longer available.";
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Refresh selected failed: {ex.Message}";
             }
         }
 
@@ -432,7 +493,173 @@ namespace MESharp.ViewModels
 
             _lastHighlightTick = now;
             int duration = KeepHighlight ? 0 : HighlightDurationMs;
-            DebugDraw.HighlightInterface("InterfaceSelection", SelectedInterface, duration, 2.0f, false, KeepHighlight);
+            DebugDraw.HighlightInterface(InterfaceHighlightKey, SelectedInterface, duration, 2.0f, false, KeepHighlight);
+        }
+
+        private static bool HasSameIdentity(InterfaceComponent a, InterfaceComponent b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+
+            if (a.MemLoc != 0 || b.MemLoc != 0)
+            {
+                return a.MemLoc == b.MemLoc;
+            }
+
+            return a.Id1 == b.Id1 && a.Id2 == b.Id2 && a.Id3 == b.Id3;
+        }
+
+        private static InterfaceComponent FindBestSelectionMatch(InterfaceComponent previousSelection, IReadOnlyList<InterfaceComponent> components)
+        {
+            if (previousSelection == null || components.Count == 0)
+            {
+                return null;
+            }
+
+            if (previousSelection.MemLoc != 0)
+            {
+                var byMemLoc = components.FirstOrDefault(c => c.MemLoc == previousSelection.MemLoc);
+                if (byMemLoc != null)
+                {
+                    return byMemLoc;
+                }
+            }
+
+            return components.FirstOrDefault(c =>
+                c.Id1 == previousSelection.Id1 &&
+                c.Id2 == previousSelection.Id2 &&
+                c.Id3 == previousSelection.Id3);
+        }
+
+        private void FindInterface()
+        {
+            try
+            {
+                var query = (FindQuery ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    StatusMessage = "Enter text, id tuple (id1:id2:id3), or memloc (hex/decimal).";
+                    return;
+                }
+
+                if (AllInterfaces.Count == 0)
+                {
+                    LoadInterfaces();
+                }
+
+                var all = EnumerateComponents(AllInterfaces).ToList();
+                if (all.Count == 0)
+                {
+                    StatusMessage = "No interfaces are loaded to search.";
+                    return;
+                }
+
+                var match = FindExactIdTuple(query, all)
+                    ?? FindByMemloc(query, all)
+                    ?? FindByText(query, all);
+
+                if (match == null)
+                {
+                    StatusMessage = $"No interface match for \"{query}\".";
+                    return;
+                }
+
+                SelectedInterface = match;
+                StatusMessage = $"Matched {match.Id1}:{match.Id2}:{match.Id3} at 0x{match.MemLoc:X}.";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Find failed: {ex.Message}";
+            }
+        }
+
+        private static IEnumerable<InterfaceComponent> EnumerateComponents(IEnumerable<InterfaceComponentViewModel> roots)
+        {
+            if (roots == null)
+            {
+                yield break;
+            }
+
+            var stack = new Stack<InterfaceComponentViewModel>(roots.Reverse());
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                if (current?.Component != null)
+                {
+                    yield return current.Component;
+                }
+
+                if (current?.Children == null || current.Children.Count == 0)
+                {
+                    continue;
+                }
+
+                for (int i = current.Children.Count - 1; i >= 0; i--)
+                {
+                    stack.Push(current.Children[i]);
+                }
+            }
+        }
+
+        private static InterfaceComponent? FindExactIdTuple(string query, IReadOnlyList<InterfaceComponent> all)
+        {
+            var normalized = query.Replace(' ', ':').Replace(',', ':');
+            var parts = normalized.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (parts.Length != 3)
+            {
+                return null;
+            }
+
+            if (!int.TryParse(parts[0], out var id1) ||
+                !int.TryParse(parts[1], out var id2) ||
+                !int.TryParse(parts[2], out var id3))
+            {
+                return null;
+            }
+
+            return all.FirstOrDefault(c => c.Id1 == id1 && c.Id2 == id2 && c.Id3 == id3);
+        }
+
+        private static InterfaceComponent? FindByMemloc(string query, IReadOnlyList<InterfaceComponent> all)
+        {
+            if (!TryParseUnsigned(query, out var memloc))
+            {
+                return null;
+            }
+
+            return all.FirstOrDefault(c => c.MemLoc == memloc || c.MemLocTop == memloc);
+        }
+
+        private static InterfaceComponent? FindByText(string query, IReadOnlyList<InterfaceComponent> all)
+        {
+            return all.FirstOrDefault(c =>
+                Contains(c.TextItem, query) ||
+                Contains(c.TextIds, query) ||
+                Contains(c.FullPath, query) ||
+                Contains(c.FullIdPath, query));
+        }
+
+        private static bool Contains(string? source, string value)
+            => !string.IsNullOrWhiteSpace(source) &&
+               source.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+
+        private static bool TryParseUnsigned(string input, out ulong value)
+        {
+            value = 0;
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            var trimmed = input.Trim();
+            if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                return ulong.TryParse(trimmed[2..], System.Globalization.NumberStyles.HexNumber, null, out value);
+            }
+
+            return ulong.TryParse(trimmed, out value);
         }
 
         private void CaptureOverride()

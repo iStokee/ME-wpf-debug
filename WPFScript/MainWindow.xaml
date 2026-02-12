@@ -237,6 +237,9 @@
             <DataTemplate DataType="{x:Type vm:InterfacesViewModel}">
                 <views:InterfacesView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MiscApiViewModel}">
+                <views:MiscApiView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:VarbitViewModel}">
                 <views:VarbitView />
             </DataTemplate>
@@ -369,6 +372,20 @@
                     PanningMode="HorizontalOnly"
                     VerticalScrollBarVisibility="Disabled">
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowApiDocsCommand}"
+                            IsChecked="{Binding IsApiDocsSelected, Mode=OneWay}"
+                            ToolTip="Browse MESharp API documentation">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="BookOpenPageVariant" />
+                                <TextBlock Text="API Docs" />
+                            </StackPanel>
+                        </ToggleButton>
                         <ToggleButton
                             Margin="5,0,5,0"
                             Command="{Binding ShowGameCommand}"
@@ -511,19 +528,18 @@
                                 <TextBlock Text="Interfaces" />
                             </StackPanel>
                         </ToggleButton>
-
                         <ToggleButton
                             Margin="5,0,5,0"
-                            Command="{Binding ShowApiDocsCommand}"
-                            IsChecked="{Binding IsApiDocsSelected, Mode=OneWay}"
-                            ToolTip="Browse MESharp API documentation">
+                            Command="{Binding ShowMiscApiCommand}"
+                            IsChecked="{Binding IsMiscApiSelected, Mode=OneWay}"
+                            ToolTip="Misc API helpers">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial
                                     Margin="0,0,6,0"
                                     VerticalAlignment="Center"
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
-                                    Kind="BookOpenPageVariant" />
-                                <TextBlock Text="API Docs" />
+                                    Kind="Tools" />
+                                <TextBlock Text="Misc API" />
                             </StackPanel>
                         </ToggleButton>
 

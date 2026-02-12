@@ -5,6 +5,7 @@ using MESharp.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +14,14 @@ using System.Windows.Threading;
 
 namespace MESharp.ViewModels
 {
-    public class NavigationViewModel : BaseViewModel, IDisposable
+    public class NavigationViewModel : BaseViewModel, IDisposable, IActivatableViewModel
     {
         private readonly DispatcherTimer _refreshTimer;
+        private readonly NotifyCollectionChangedEventHandler _currentRouteChangedHandler;
         private readonly Random _random = new();
         private CancellationTokenSource? _routeRunCts;
+        private bool _isActive;
+        private bool _disposed;
 
         public ObservableCollection<string> ActivityLog { get; } = new();
         public ObservableCollection<LodestoneOption> Lodestones { get; }
@@ -202,11 +206,10 @@ namespace MESharp.ViewModels
                 Interval = TimeSpan.FromMilliseconds(750)
             };
             _refreshTimer.Tick += OnRefreshTick;
-            _refreshTimer.Start();
 
-            CurrentRoute.CollectionChanged += (_, __) => RefreshCommandStates();
+            _currentRouteChangedHandler = (_, __) => RefreshCommandStates();
+            CurrentRoute.CollectionChanged += _currentRouteChangedHandler;
             LoadRoutes();
-            RefreshPosition();
             AddLog("Navigation tester ready.");
         }
 
@@ -850,6 +853,11 @@ namespace MESharp.ViewModels
 
         private async Task RunRouteAsync(string routeName, IReadOnlyList<RouteWaypoint> waypoints)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (IsRouteRunning)
             {
                 return;
@@ -997,11 +1005,56 @@ namespace MESharp.ViewModels
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
+            OnDeactivated();
+            _disposed = true;
             try { _refreshTimer.Stop(); } catch { /* ignored */ }
             _refreshTimer.Tick -= OnRefreshTick;
+            try { CurrentRoute.CollectionChanged -= _currentRouteChangedHandler; } catch { /* ignored */ }
             try { _routeRunCts?.Cancel(); } catch { /* ignored */ }
             try { _routeRunCts?.Dispose(); } catch { /* ignored */ }
             _routeRunCts = null;
+        }
+
+        public void OnActivated()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (_isActive)
+            {
+                RefreshPosition();
+                return;
+            }
+
+            _isActive = true;
+            if (!_refreshTimer.IsEnabled)
+            {
+                _refreshTimer.Start();
+            }
+
+            RefreshPosition();
+        }
+
+        public void OnDeactivated()
+        {
+            if (_disposed || !_isActive)
+            {
+                return;
+            }
+
+            _isActive = false;
+            try { _refreshTimer.Stop(); } catch { /* ignored */ }
+            if (IsRouteRunning)
+            {
+                StopRoute();
+            }
         }
 
         private void OnRefreshTick(object? sender, EventArgs e) => RefreshPosition();

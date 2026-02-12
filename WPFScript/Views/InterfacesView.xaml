@@ -22,21 +22,21 @@
                 <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="4" />
-                <Setter Property="Padding" Value="10" />
-                <Setter Property="Margin" Value="0,0,0,10" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12" />
+                <Setter Property="Margin" Value="0,0,0,12" />
             </Style>
 
             <Style x:Key="InterfacePanelTitle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="13" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
             </Style>
 
             <Style x:Key="InterfacePanelSectionTitle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="12" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
                 <Setter Property="Margin" Value="0,8,0,4" />
             </Style>
 
@@ -63,17 +63,17 @@
 
             <Style x:Key="InterfaceTreeItemStyle" TargetType="TreeViewItem">
                 <Setter Property="IsExpanded" Value="False" />
-                <Setter Property="Padding" Value="4,2" />
-                <Setter Property="Margin" Value="2,1" />
+                <Setter Property="Padding" Value="6,4" />
+                <Setter Property="Margin" Value="2,3" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
                         <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
@@ -81,18 +81,35 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+
+            <Style x:Key="InterfaceColumnSplitterStyle" TargetType="GridSplitter">
+                <Setter Property="Width" Value="8" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+                <Setter Property="ResizeDirection" Value="Columns" />
+                <Setter Property="ShowsPreview" Value="True" />
+                <Setter Property="Margin" Value="0,10,0,10" />
+            </Style>
+
+            <Style x:Key="InterfaceSectionExpanderStyle" TargetType="Expander">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid
         Margin="5"
-        behaviors:PanelLayoutBehavior.PageKey="interfaces-view"
+        behaviors:PanelLayoutBehavior.PageKey="interfaces-view-v2"
         behaviors:PanelLayoutBehavior.ColumnKey="left">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Header  -->
@@ -108,9 +125,12 @@
         <Border
             Grid.Row="1"
             behaviors:PanelLayoutBehavior.PanelKey="controls"
+            behaviors:PanelLayoutBehavior.IsHeightResizable="False"
             Margin="0,0,0,10"
             Padding="10"
             Background="{DynamicResource App.CardBrush}"
+            BorderBrush="{DynamicResource App.BorderBrush}"
+            BorderThickness="1"
             CornerRadius="5">
             <Expander Header="Controls" IsExpanded="True">
                 <Grid Margin="0,10,0,0">
@@ -244,58 +264,42 @@
                         VerticalAlignment="Center"
                         Content="[3]"
                         IsChecked="{Binding FilterIndex3}" />
-                </StackPanel>
-                </Grid>
-            </Expander>
-        </Border>
-
-        <!--  Status / Info  -->
-        <Border
-            Grid.Row="2"
-            behaviors:PanelLayoutBehavior.PanelKey="status-info"
-            Margin="0,0,0,10"
-            Padding="10"
-            Background="{DynamicResource App.CardBrush}"
-            CornerRadius="5">
-            <Expander Header="Status / Info" IsExpanded="True">
-                <Grid Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel
-                    Grid.Column="0"
-                    Margin="0,0,20,0"
-                    Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial
-                        Margin="0,0,5,0"
-                        VerticalAlignment="Center"
-                        Foreground="{DynamicResource PrimaryBrush}"
-                        Kind="ViewList" />
-                    <TextBlock VerticalAlignment="Center" Text="Interfaces: " />
                     <TextBlock
+                        Margin="14,0,6,0"
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
                         Foreground="{DynamicResource PrimaryBrush}"
-                        Text="{Binding InterfaceCount, Mode=OneWay}" />
+                        Text="Find:" />
+                    <TextBox
+                        Width="260"
+                        Margin="0,0,8,0"
+                        VerticalContentAlignment="Center"
+                        Text="{Binding FindQuery, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Search by id tuple (id1:id2:id3), memloc (0x...), path, or text." />
+                    <Button
+                        Padding="10,3"
+                        Command="{Binding FindInterfaceCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Kind="Magnify" />
+                            <TextBlock Text="Find Match" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
-
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                    Text="{Binding StatusMessage}" />
                 </Grid>
             </Expander>
         </Border>
 
         <!--  Interface Tree  -->
         <Border
-            Grid.Row="3"
+            Grid.Row="2"
             behaviors:PanelLayoutBehavior.PanelKey="interface-tree-details"
             Margin="0,0,0,10"
             Background="{DynamicResource App.CardBrush}"
+            BorderBrush="{DynamicResource App.BorderBrush}"
+            BorderThickness="1"
             CornerRadius="5">
             <Expander Header="Interface Tree &amp; Details" IsExpanded="True">
                 <Grid
@@ -314,63 +318,111 @@
                     Background="{DynamicResource App.BackgroundBrush}"
                     BorderBrush="{DynamicResource App.BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="4">
+                    CornerRadius="6">
                     <Border
                         Margin="8"
                         Background="{DynamicResource App.CardBrush}"
                         BorderBrush="{DynamicResource App.BorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="4">
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                            <TreeView
-                                Margin="4"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                ItemContainerStyle="{StaticResource InterfaceTreeItemStyle}"
-                                ItemsSource="{Binding AllInterfaces}"
-                                SelectedItemChanged="OnSelectedInterfaceChanged">
-                                <TreeView.ItemTemplate>
-                                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                        <StackPanel Margin="2">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Text="{Binding DisplayText}" />
-                                            <TextBlock
-                                                FontSize="10"
-                                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                                Text="{Binding CoordinatesText}" />
-                                            <TextBlock
-                                                FontSize="10"
-                                                Foreground="{DynamicResource PrimaryBrush}"
-                                                Text="{Binding Text}"
-                                                TextWrapping="Wrap"
-                                                Visibility="{Binding HasText, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            <TextBlock
-                                                FontSize="10"
-                                                Foreground="{DynamicResource PrimaryBrush}"
-                                                Text="{Binding ItemText}"
-                                                Visibility="{Binding HasItem, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            <TextBlock
-                                                FontSize="10"
-                                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                                Text="{Binding MemLocText}" />
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-                                </TreeView.ItemTemplate>
-                            </TreeView>
-                        </ScrollViewer>
+                        CornerRadius="6">
+                        <Grid>
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer.Style>
+                                    <Style TargetType="ScrollViewer">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasInterfaces}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ScrollViewer.Style>
+                                <TreeView
+                                    Margin="4"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    ItemContainerStyle="{StaticResource InterfaceTreeItemStyle}"
+                                    ItemsSource="{Binding AllInterfaces}"
+                                    SelectedItemChanged="OnSelectedInterfaceChanged">
+                                    <TreeView.ItemTemplate>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                            <StackPanel Margin="2">
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Text="{Binding DisplayText}" />
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                    Text="{Binding CoordinatesText}" />
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    Foreground="{DynamicResource PrimaryBrush}"
+                                                    Text="{Binding Text}"
+                                                    TextWrapping="Wrap"
+                                                    Visibility="{Binding HasText, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    Foreground="{DynamicResource PrimaryBrush}"
+                                                    Text="{Binding ItemText}"
+                                                    Visibility="{Binding HasItem, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                <TextBlock
+                                                    FontSize="10"
+                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                    Text="{Binding MemLocText}" />
+                                            </StackPanel>
+                                        </HierarchicalDataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
+                            </ScrollViewer>
+
+                            <Border
+                                Margin="8"
+                                Padding="14"
+                                Background="{DynamicResource App.BackgroundBrush}"
+                                BorderBrush="{DynamicResource App.BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasInterfaces}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel VerticalAlignment="Center">
+                                    <iconPacks:PackIconMaterial
+                                        Width="24"
+                                        Height="24"
+                                        Margin="0,0,0,8"
+                                        HorizontalAlignment="Center"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Kind="ViewList" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Foreground="{DynamicResource App.ForegroundBrush}"
+                                        Text="No interfaces loaded" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        HorizontalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                        Text="Use 'Load Interfaces' in Controls to scan the game UI."
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </Border>
                 </Border>
 
                 <GridSplitter
                     Grid.Column="1"
-                    Width="6"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Background="{DynamicResource App.BorderBrush}"
-                    ResizeBehavior="PreviousAndNext"
-                    ResizeDirection="Columns" />
+                    Style="{StaticResource InterfaceColumnSplitterStyle}" />
 
                 <Border
                     Grid.Column="2"
@@ -378,29 +430,32 @@
                     Background="{DynamicResource App.BackgroundBrush}"
                     BorderBrush="{DynamicResource App.BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="4">
+                    CornerRadius="6">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="10">
                             <Border Style="{StaticResource InterfacePanelCard}">
-                                <StackPanel>
-                                    <DockPanel>
-                                        <iconPacks:PackIconMaterial
-                                            Width="16"
-                                            Height="16"
-                                            Margin="0,0,6,0"
-                                            VerticalAlignment="Center"
-                                            Foreground="{DynamicResource PrimaryBrush}"
-                                            Kind="InformationOutline" />
+                                <Expander IsExpanded="True" Style="{StaticResource InterfaceSectionExpanderStyle}">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                Kind="InformationOutline" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource InterfacePanelTitle}"
+                                                Text="Selection Details" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,10,0,0">
                                         <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource InterfacePanelTitle}"
-                                            Text="Selection Details" />
-                                    </DockPanel>
-                                    <TextBlock
-                                        Margin="0,4,0,8"
-                                        FontSize="11"
-                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                        Text="{Binding SelectedInterfaceLabel}" />
+                                            Margin="0,4,0,8"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                            Text="{Binding SelectedInterfaceLabel}" />
 
                                     <TextBlock Style="{StaticResource InterfacePanelSectionTitle}" Text="Identity" />
                                     <Grid>
@@ -533,11 +588,25 @@
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.MemLocTop, StringFormat=0x{0:X}}" />
                                     </Grid>
-                                </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </Border>
 
                             <Border Style="{StaticResource InterfacePanelCard}">
-                                <StackPanel>
+                                <Expander IsExpanded="True" Style="{StaticResource InterfaceSectionExpanderStyle}">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                Kind="TextBoxOutline" />
+                                            <TextBlock Style="{StaticResource InterfacePanelTitle}" Text="Text &amp; Item" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,10,0,0">
                                     <TextBlock Style="{StaticResource InterfacePanelSectionTitle}" Text="Text" />
                                     <TextBlock
                                         Margin="0,0,0,4"
@@ -579,11 +648,25 @@
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.ItemStack}" />
                                     </Grid>
-                                </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </Border>
 
                             <Border Style="{StaticResource InterfacePanelCard}">
-                                <StackPanel>
+                                <Expander IsExpanded="False" Style="{StaticResource InterfaceSectionExpanderStyle}">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                Kind="VectorPolyline" />
+                                            <TextBlock Style="{StaticResource InterfacePanelTitle}" Text="Paths" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,10,0,0">
                                     <TextBlock Style="{StaticResource InterfacePanelSectionTitle}" Text="Paths" />
                                     <TextBlock
                                         Style="{StaticResource InterfaceKeyLabel}"
@@ -599,24 +682,28 @@
                                         Foreground="{DynamicResource App.SubtleForegroundBrush}"
                                         Text="{Binding SelectedInterface.FullIdPath}"
                                         TextWrapping="Wrap" />
-                                </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </Border>
 
                             <Border Margin="0,10,0,0" Style="{StaticResource InterfacePanelCard}">
-                                <StackPanel>
-                                    <DockPanel>
-                                        <iconPacks:PackIconMaterial
-                                            Width="16"
-                                            Height="16"
-                                            Margin="0,0,6,0"
-                                            VerticalAlignment="Center"
-                                            Foreground="{DynamicResource PrimaryBrush}"
-                                            Kind="ChatProcessingOutline" />
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource InterfacePanelTitle}"
-                                            Text="Dialogs" />
-                                    </DockPanel>
+                                <Expander IsExpanded="False" Style="{StaticResource InterfaceSectionExpanderStyle}">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                Kind="ChatProcessingOutline" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource InterfacePanelTitle}"
+                                                Text="Dialogs" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,10,0,0">
 
                                     <TextBlock
                                         Margin="0,4,0,8"
@@ -638,12 +725,25 @@
                                             Command="{Binding DialogContinueCommand}"
                                             Content="Continue" />
                                     </StackPanel>
-                                </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </Border>
 
                             <Border Style="{StaticResource InterfacePanelCard}">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource InterfacePanelSectionTitle}" Text="Actions" />
+                                <Expander IsExpanded="False" Style="{StaticResource InterfaceSectionExpanderStyle}">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                Kind="PlayCircleOutline" />
+                                            <TextBlock Style="{StaticResource InterfacePanelTitle}" Text="Actions" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,10,0,0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -685,24 +785,28 @@
                                             <TextBlock Text="Clear Highlight" />
                                         </Button>
                                     </Grid>
-                                </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </Border>
 
                             <Border Margin="0" Style="{StaticResource InterfacePanelCard}">
-                                <StackPanel>
-                                    <DockPanel>
-                                        <iconPacks:PackIconMaterial
-                                            Width="16"
-                                            Height="16"
-                                            Margin="0,0,6,0"
-                                            VerticalAlignment="Center"
-                                            Foreground="{DynamicResource PrimaryBrush}"
-                                            Kind="FileSend" />
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource InterfacePanelTitle}"
-                                            Text="Overrides" />
-                                    </DockPanel>
+                                <Expander IsExpanded="False" Style="{StaticResource InterfaceSectionExpanderStyle}">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                Kind="FileSend" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource InterfacePanelTitle}"
+                                                Text="Overrides" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,10,0,0">
                                     <TextBlock
                                         Margin="0,4,0,6"
                                         FontSize="11"
@@ -777,13 +881,56 @@
                                             <TextBlock Text="Export JSON" />
                                         </Button>
                                     </WrapPanel>
-                                </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </Border>
                         </StackPanel>
                     </ScrollViewer>
                 </Border>
                 </Grid>
             </Expander>
+        </Border>
+
+        <!--  Compact Status Bar  -->
+        <Border
+            Grid.Row="3"
+            Margin="0,0,0,0"
+            Padding="10,8"
+            Background="{DynamicResource App.CardBrush}"
+            BorderBrush="{DynamicResource App.BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="0,0,18,0"
+                    Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Kind="ViewList" />
+                    <TextBlock VerticalAlignment="Center" Text="Interfaces:" />
+                    <TextBlock
+                        Margin="6,0,0,0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Text="{Binding InterfaceCount, Mode=OneWay}" />
+                </StackPanel>
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                    Text="{Binding StatusMessage}"
+                    TextTrimming="CharacterEllipsis" />
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

@@ -17,6 +17,8 @@ namespace MESharp.ViewModels
 {
     public class SettingsViewModel : INotifyPropertyChanged
     {
+        private bool _suppressThemePersistence;
+
         private bool _isDark;
         public bool IsDark
         {
@@ -25,7 +27,10 @@ namespace MESharp.ViewModels
             {
                 if (SetProperty(ref _isDark, value))
                 {
-                    UpdateAndSaveTheme();
+                    if (!_suppressThemePersistence)
+                    {
+                        UpdateAndSaveTheme();
+                    }
                 }
             }
         }
@@ -41,7 +46,10 @@ namespace MESharp.ViewModels
             {
                 if (SetProperty(ref _selectedPrimary, value))
                 {
-                    UpdateAndSaveTheme();
+                    if (!_suppressThemePersistence)
+                    {
+                        UpdateAndSaveTheme();
+                    }
                 }
             }
         }
@@ -183,18 +191,30 @@ namespace MESharp.ViewModels
         private void AddCustomColorFromHex(string hex)
         {
             if (string.IsNullOrWhiteSpace(hex)) return;
-            if (CustomColors.Any(c => c.Hex.Equals(hex, System.StringComparison.OrdinalIgnoreCase)))
+            var parsed = MESharp.Services.ThemeManager.ParseColor(hex);
+            if (parsed == null)
             {
-                SelectedPrimary = CustomColors.First(c => c.Hex.Equals(hex, System.StringComparison.OrdinalIgnoreCase));
-                UpdateAndSaveTheme();
                 return;
             }
-            var color = (Color)ColorConverter.ConvertFromString(hex);
-            var brush = new SolidColorBrush(color); brush.Freeze();
-            var item = new ColorOption { Name = hex, Hex = hex, Brush = brush };
+
+            var normalizedHex = $"#{parsed.Value.A:X2}{parsed.Value.R:X2}{parsed.Value.G:X2}{parsed.Value.B:X2}";
+            var existing = CustomColors.FirstOrDefault(c => c.Hex.Equals(normalizedHex, System.StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+            {
+                if (!ReferenceEquals(SelectedPrimary, existing))
+                {
+                    SelectedPrimary = existing;
+                }
+                else
+                {
+                    UpdateAndSaveTheme();
+                }
+                return;
+            }
+            var brush = new SolidColorBrush(parsed.Value); brush.Freeze();
+            var item = new ColorOption { Name = normalizedHex, Hex = normalizedHex, Brush = brush };
             CustomColors.Add(item);
             SelectedPrimary = item;
-            UpdateAndSaveTheme();
         }
 
         private void RemoveCustomColor(string hex)
@@ -203,7 +223,14 @@ namespace MESharp.ViewModels
             var target = CustomColors.FirstOrDefault(c => c.Hex.Equals(hex, System.StringComparison.OrdinalIgnoreCase));
             if (target != null)
             {
+                var removedSelected = ReferenceEquals(SelectedPrimary, target);
                 CustomColors.Remove(target);
+                if (removedSelected)
+                {
+                    _suppressThemePersistence = true;
+                    SelectedPrimary = CustomColors.FirstOrDefault() ?? ColorOption.MatchOrDefault(AvailableColors, null);
+                    _suppressThemePersistence = false;
+                }
                 UpdateAndSaveTheme();
             }
         }

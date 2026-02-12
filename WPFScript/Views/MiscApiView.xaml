@@ -1,0 +1,151 @@
+<UserControl
+    x:Class="MESharp.Views.MiscApiView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:MESharp.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:MiscApiViewModel}"
+    d:DesignHeight="700"
+    d:DesignWidth="1100"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="8">
+            <controls:SectionHeader
+                Margin="0,0,0,12"
+                Description="Focused helpers for APIs without their own dedicated debug tabs."
+                IconKind="Tools"
+                Title="Misc API Tools" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,0,8,8"
+                    Padding="14"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Abilities" />
+                        <WrapPanel Margin="0,8,0,0">
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Name" />
+                            <TextBox Width="180" Margin="0,0,8,0" Text="{Binding AbilityName, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Action" />
+                            <TextBox Width="60" Text="{Binding AbilityActionIndex, UpdateSourceTrigger=PropertyChanged}" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,8,0,0">
+                            <CheckBox Margin="0,0,10,0" Content="Exact Match" IsChecked="{Binding AbilityExactMatch}" />
+                            <CheckBox Margin="0,0,10,0" Content="Require Enabled" IsChecked="{Binding AbilityRequireEnabled}" />
+                            <CheckBox Content="Require Not Cooldown" IsChecked="{Binding AbilityRequireNotOnCooldown}" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,10,0,0">
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding UseAbilityCommand}" Content="Use" />
+                            <Button Padding="10,5" Command="{Binding UseAbilityIfReadyCommand}" Content="Use If Ready" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="8,0,0,8"
+                    Padding="14"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Action Buttons" />
+                        <WrapPanel Margin="0,10,0,0">
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding QuickHealCommand}" Content="Quick Heal" />
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding QuickPrayerCommand}" Content="Quick Prayer" />
+                            <Button Padding="10,5" Command="{Binding AutoRetaliateCommand}" Content="Auto Retaliate" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,10,0,0">
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Familiar Order" />
+                            <TextBox Width="80" Margin="0,0,8,0" Text="{Binding FamiliarOrder, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Padding="10,5" Command="{Binding FamiliarActionCommand}" Content="Familiar Action" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,0,8,8"
+                    Padding="14"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Debug Draw" />
+                        <WrapPanel Margin="0,8,0,0">
+                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="X" />
+                            <TextBox Width="60" Margin="0,0,8,0" Text="{Binding RectX, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Y" />
+                            <TextBox Width="60" Margin="0,0,8,0" Text="{Binding RectY, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="W" />
+                            <TextBox Width="60" Margin="0,0,8,0" Text="{Binding RectWidth, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="H" />
+                            <TextBox Width="60" Text="{Binding RectHeight, UpdateSourceTrigger=PropertyChanged}" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,8,0,0">
+                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Ms" />
+                            <TextBox Width="80" Margin="0,0,8,0" Text="{Binding RectDurationMs, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Thickness" />
+                            <TextBox Width="80" Margin="0,0,8,0" Text="{Binding RectThickness, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox Content="Filled" IsChecked="{Binding RectFilled}" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,8,0,0">
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding DrawRectCommand}" Content="Draw Rect" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Name" />
+                            <TextBox Width="140" Margin="0,0,8,0" Text="{Binding NamedRectId, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox Margin="0,0,8,0" VerticalAlignment="Center" Content="Permanent" IsChecked="{Binding NamedRectPermanent}" />
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding DrawNamedRectCommand}" Content="Draw Named" />
+                            <Button Padding="10,5" Command="{Binding ClearNamedRectCommand}" Content="Clear Named" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="8,0,0,8"
+                    Padding="14"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Session / Script Host" />
+                        <WrapPanel Margin="0,10,0,0">
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding LogoutMiniCommand}" Content="Logout Mini" />
+                            <Button Padding="10,5" Command="{Binding LobbyCommand}" Content="Lobby" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,10,0,0">
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Reload DLL" />
+                            <TextBox Width="340" Margin="0,0,8,0" Text="{Binding ReloadScriptPath, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Padding="10,5" Command="{Binding ReloadManagedScriptCommand}" Content="Reload" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border
+                Margin="0,4,0,0"
+                Padding="12,8"
+                Background="{DynamicResource App.CardBrush}"
+                BorderBrush="{DynamicResource App.BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="6">
+                <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -20,6 +20,7 @@ namespace MESharp.ViewModels
         GrandExchange,
         ObjectsUnified,
         Interfaces,
+        MiscApi,
         Varbit,
         ApiDocs,
         Help
@@ -56,6 +57,7 @@ namespace MESharp.ViewModels
                     OnPropertyChanged(nameof(IsGrandExchangeSelected));
                     OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
                     OnPropertyChanged(nameof(IsInterfacesSelected));
+                    OnPropertyChanged(nameof(IsMiscApiSelected));
                     OnPropertyChanged(nameof(IsVarbitSelected));
                     OnPropertyChanged(nameof(IsApiDocsSelected));
                     OnPropertyChanged(nameof(IsHelpSelected));
@@ -77,6 +79,7 @@ namespace MESharp.ViewModels
         public bool IsGrandExchangeSelected => CurrentPage == AppPage.GrandExchange;
         public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
         public bool IsInterfacesSelected => CurrentPage == AppPage.Interfaces;
+        public bool IsMiscApiSelected => CurrentPage == AppPage.MiscApi;
         public bool IsVarbitSelected => CurrentPage == AppPage.Varbit;
         public bool IsApiDocsSelected => CurrentPage == AppPage.ApiDocs;
         public bool IsHelpSelected => CurrentPage == AppPage.Help;
@@ -90,6 +93,7 @@ namespace MESharp.ViewModels
         public ICommand ShowGrandExchangeCommand { get; }
         public ICommand ShowObjectsUnifiedCommand { get; }
         public ICommand ShowInterfacesCommand { get; }
+        public ICommand ShowMiscApiCommand { get; }
         public ICommand ShowVarbitCommand { get; }
         public ICommand ShowApiDocsCommand { get; }
         public ICommand ShowHelpCommand { get; }
@@ -114,8 +118,9 @@ namespace MESharp.ViewModels
             ShowGrandExchangeCommand  = new RelayCommand(_ => ShowGrandExchange());
             ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
             ShowInterfacesCommand     = new RelayCommand(_ => ShowInterfaces());
+            ShowMiscApiCommand        = new RelayCommand(_ => ShowMiscApi());
             ShowVarbitCommand         = new RelayCommand(_ => ShowVarbit());
-            ShowApiDocsCommand        = new RelayCommand(_ => ShowApiDocs());
+            ShowApiDocsCommand        = new RelayCommand(param => ShowApiDocs(param as string));
             ShowHelpCommand           = new RelayCommand(_ => ShowHelp());
 
             _sessionTimerHandler = (_, __) => UpdateSessionTime();
@@ -144,9 +149,126 @@ namespace MESharp.ViewModels
         private void ShowGrandExchange() => SwitchView(AppPage.GrandExchange, () => new GrandExchangeViewModel());
         private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
         private void ShowInterfaces() => SwitchView(AppPage.Interfaces, () => new InterfacesViewModel());
+        private void ShowMiscApi() => SwitchView(AppPage.MiscApi, () => new MiscApiViewModel());
         private void ShowVarbit() => SwitchView(AppPage.Varbit, () => new VarbitViewModel());
-        private void ShowApiDocs() => SwitchView(AppPage.ApiDocs, () => new ApiDocsViewModel());
+        private void ShowApiDocs(string? initialClassName = null)
+        {
+            SwitchView(AppPage.ApiDocs, () => new ApiDocsViewModel(OpenApiDebugToolByClassName, initialClassName));
+
+            if (!string.IsNullOrWhiteSpace(initialClassName) && CurrentViewModel is ApiDocsViewModel docsVm)
+            {
+                docsVm.SearchText = initialClassName;
+            }
+        }
         private void ShowHelp() => SwitchView(AppPage.Help, () => new HelpViewModel());
+
+        private void OpenApiDebugToolByClassName(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                return;
+            }
+
+            switch (className)
+            {
+                case "Game":
+                    ShowGame();
+                    return;
+                case "Chat":
+                    ShowChat();
+                    return;
+                case "Skills":
+                    ShowSkills();
+                    return;
+                case "Players":
+                case "LocalPlayer":
+                    ShowPlayers();
+                    return;
+                case "Traversal":
+                case "Movement":
+                case "LodestoneData":
+                case "Teleports":
+                case "Minimap":
+                    ShowNavigation();
+                    return;
+                case "Inventory":
+                case "ItemContainers":
+                case "ItemContainer":
+                case "InventoryInterfaces":
+                    OpenItemsContainer("Inventory");
+                    return;
+                case "Bank":
+                    OpenItemsContainer("Bank");
+                    return;
+                case "Equipment":
+                    OpenItemsContainer("Equipment");
+                    return;
+                case "Loot":
+                    OpenItemsContainer("Loot");
+                    return;
+                case "MaterialCache":
+                    OpenItemsContainer("MaterialCache");
+                    return;
+                case "TradeWindow":
+                    OpenItemsContainer("TradeWindow");
+                    return;
+                case "Familiar":
+                    OpenItemsContainer("Familiar");
+                    return;
+                case "GrandExchange":
+                    ShowGrandExchange();
+                    return;
+                case "Objects":
+                case "ActionOffsets":
+                    OpenObjectsType(GameObjectType.Object);
+                    return;
+                case "Npcs":
+                    OpenObjectsType(GameObjectType.NPC);
+                    return;
+                case "GroundItems":
+                    OpenObjectsType(GameObjectType.GroundItem);
+                    return;
+                case "Interfaces":
+                case "InterfaceIds":
+                case "InterfaceOverrides":
+                case "Dialogs":
+                    ShowInterfaces();
+                    return;
+                case "Focus":
+                    ShowGame();
+                    return;
+                case "Abilities":
+                case "ActionButtons":
+                case "DebugDraw":
+                case "Session":
+                case "ScriptHost":
+                    ShowMiscApi();
+                    return;
+                case "Varbits":
+                    ShowVarbit();
+                    return;
+                default:
+                    break;
+            }
+        }
+
+        private void OpenItemsContainer(string containerName)
+        {
+            ShowItemsUnified();
+            if (CurrentViewModel is ItemsUnifiedViewModel itemsVm)
+            {
+                itemsVm.TrySelectContainer(containerName, autoLoad: true);
+            }
+        }
+
+        private void OpenObjectsType(GameObjectType type)
+        {
+            ShowObjectsUnified();
+            if (CurrentViewModel is ObjectsUnifiedViewModel objectsVm)
+            {
+                objectsVm.FocusType(type, autoLoad: true);
+            }
+        }
 
         private void SwitchView(AppPage page, Func<object> factory)
         {

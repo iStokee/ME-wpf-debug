@@ -5,16 +5,36 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:ME_wpf_debug"
+      xmlns:controls="clr-namespace:MESharp.Views.Controls"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SlayerDebug">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <Grid>
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
             <StackPanel>
-                <TextBlock Text="Slayer Info" FontSize="20" FontWeight="Bold" Margin="10"/>
-                <Button Content="Get Slayer Task" Click="GetSlayerTask_Click" Margin="10"/>
-                <TextBlock x:Name="SlayerTaskText" Margin="10"/>
+                <controls:SectionHeader
+                    Margin="0,0,0,10"
+                    Description="Legacy quick tool for checking the currently assigned slayer task."
+                    IconKind="SwordCross"
+                    ShowExpandCollapseAll="False"
+                    ShowHelp="False"
+                    Title="Slayer Info" />
+                <Border
+                    Padding="10"
+                    Background="{DynamicResource App.CardBrush}"
+                    BorderBrush="{DynamicResource App.BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <Button Content="Get Slayer Task" Click="GetSlayerTask_Click" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="SlayerTaskText"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </Grid>
     </ScrollViewer>

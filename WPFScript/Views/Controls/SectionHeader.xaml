@@ -81,6 +81,8 @@
     <Border
         Padding="{Binding HeaderPadding, RelativeSource={RelativeSource AncestorType=UserControl}}"
         Background="{DynamicResource App.CardBrush}"
+        BorderBrush="{DynamicResource App.BorderBrush}"
+        BorderThickness="1"
         CornerRadius="{Binding HeaderCornerRadius, RelativeSource={RelativeSource AncestorType=UserControl}}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -90,13 +92,26 @@
 
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial
-                        Width="{Binding IconSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Height="{Binding IconSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Margin="0,0,8,0"
+                    <Border
+                        Width="36"
+                        Height="36"
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="{Binding IconForeground, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Kind="{Binding IconKind, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        Background="{DynamicResource PrimarySoftBrush}"
+                        BorderBrush="{DynamicResource PrimaryBrush}"
+                        BorderThickness="1"
+                        CornerRadius="999">
+                        <Grid>
+                            <iconPacks:PackIconMaterial
+                                Width="{Binding IconSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Height="{Binding IconSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{Binding IconForeground, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Kind="{Binding IconKind, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        </Grid>
+                    </Border>
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="{Binding TitleFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"

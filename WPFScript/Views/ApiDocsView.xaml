@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:MESharp.Views"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:MESharp.Models"
     xmlns:vm="clr-namespace:MESharp.ViewModels"
@@ -54,45 +55,35 @@
 
     <Grid Margin="8">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="300" MinWidth="220" />
+            <ColumnDefinition Width="6" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!--  Navigation Sidebar  -->
         <Border
             Grid.Column="0"
-            Margin="0,0,8,0"
+            Margin="0"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!--  Sidebar Header  -->
-                <StackPanel Grid.Row="0" Margin="16,16,16,12">
-                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Width="28"
-                            Height="28"
-                            Margin="0,0,10,0"
-                            Foreground="{DynamicResource PrimaryBrush}"
-                            Kind="BookOpenPageVariant" />
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontSize="20"
-                            FontWeight="SemiBold"
-                            Foreground="{DynamicResource App.ForegroundBrush}"
-                            Text="API Reference" />
-                    </StackPanel>
-                    <TextBlock
-                        FontSize="11"
-                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                        Text="Comprehensive documentation for the MESharp API"
-                        TextWrapping="Wrap" />
-                </StackPanel>
+                <controls:SectionHeader
+                    Grid.Row="0"
+                    Margin="12,12,12,10"
+                    Description="Comprehensive documentation for the MESharp API"
+                    IconKind="BookOpenPageVariant"
+                    ShowExpandCollapseAll="False"
+                    ShowHelp="False"
+                    Title="API Reference"
+                    TitleFontSize="20" />
 
                 <!--  Search Box  -->
                 <Border
@@ -126,7 +117,7 @@
                                                         VerticalAlignment="Center"
                                                         Foreground="{DynamicResource App.SubtleForegroundBrush}"
                                                         IsHitTestVisible="False"
-                                                        Text="Search classes...">
+                                                        Text="Search API (class, method, property). Use * and ?">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
                                                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -155,22 +146,41 @@
                     </Grid>
                 </Border>
 
+                <TextBlock
+                    Grid.Row="2"
+                    Margin="16,0,16,6"
+                    FontSize="11"
+                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                    Text="{Binding SearchResultSummary}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding IsSearchActive, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                 <!--  Class List  -->
                 <ListBox
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Margin="8"
                     Background="Transparent"
                     BorderThickness="0"
                     ItemsSource="{Binding ApiClasses}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     SelectedItem="{Binding SelectedClass, Mode=TwoWay}">
+                    <ListBox.Style>
+                        <Style TargetType="ListBox">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSearchActive}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.Style>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
-                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                             <Setter Property="Padding" Value="12,10" />
-                            <Setter Property="Margin" Value="4,2" />
-                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Margin" Value="4,4" />
+                            <Setter Property="BorderThickness" Value="1" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
@@ -222,7 +232,98 @@
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
-                                                <Setter TargetName="Border" Property="BorderThickness" Value="1" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+                                                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+
+                <!--  Search Results  -->
+                <ListBox
+                    Grid.Row="3"
+                    Margin="8"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ItemsSource="{Binding SearchResults}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    SelectedItem="{Binding SelectedSearchResult, Mode=TwoWay}">
+                    <ListBox.Style>
+                        <Style TargetType="ListBox">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSearchActive}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.Style>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
+                            <Setter Property="Padding" Value="12,10" />
+                            <Setter Property="Margin" Value="4,4" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border
+                                            x:Name="Border"
+                                            Padding="{TemplateBinding Padding}"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{DynamicResource App.BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="6">
+                                            <StackPanel>
+                                                <StackPanel Margin="0,0,0,4" Orientation="Horizontal">
+                                                    <Border
+                                                        Margin="0,0,8,0"
+                                                        Padding="6,2"
+                                                        Background="{DynamicResource PrimarySoftBrush}"
+                                                        BorderBrush="{DynamicResource PrimaryBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="4">
+                                                        <TextBlock
+                                                            FontSize="9"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{DynamicResource PrimaryBrush}"
+                                                            Text="{Binding ResultType}" />
+                                                    </Border>
+                                                    <TextBlock
+                                                        FontSize="11"
+                                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                        Text="{Binding ClassName}"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <TextBlock
+                                                    FontSize="13"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{TemplateBinding Foreground}"
+                                                    Text="{Binding Signature}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                                <TextBlock
+                                                    Margin="0,4,0,0"
+                                                    FontSize="11"
+                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                    Text="{Binding Summary}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                                                 <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                                             </Trigger>
                                             <Trigger Property="IsSelected" Value="True">
@@ -241,12 +342,22 @@
             </Grid>
         </Border>
 
+        <GridSplitter
+            Grid.Column="1"
+            Width="6"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{DynamicResource PrimarySoftBrush}"
+            ResizeBehavior="PreviousAndNext"
+            ResizeDirection="Columns"
+            ShowsPreview="True" />
+
         <!--  Documentation Content Area  -->
         <Border
-            Grid.Column="1"
+            Grid.Column="2"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="8">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="32,24" DataContext="{Binding SelectedClassDocumentation}">
                     <!--  Class Header  -->
                     <Grid Margin="0,0,0,24">
@@ -261,14 +372,16 @@
                                 FontSize="32"
                                 FontWeight="Bold"
                                 Foreground="{DynamicResource App.ForegroundBrush}"
-                                Text="{Binding ClassName}" />
+                                Text="{Binding ClassName}"
+                                TextWrapping="Wrap" />
 
                             <!--  Namespace  -->
                             <TextBlock
                                 Margin="0,4,0,0"
                                 FontFamily="Consolas"
                                 FontSize="13"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}">
+                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                TextWrapping="Wrap">
                                 <Run Text="namespace" />
                                 <Run FontWeight="SemiBold" Text="{Binding Namespace, Mode=OneWay}" />
                             </TextBlock>
@@ -286,29 +399,22 @@
                             </Border>
                         </StackPanel>
 
-                        <!--  Related Classes  -->
+                        <!--  Debug Tool Link  -->
                         <StackPanel Grid.Column="1" Margin="20,0,0,0">
-                            <TextBlock
-                                FontSize="11"
+                            <Button
+                                MinWidth="180"
+                                Margin="0,0,0,14"
+                                Padding="14,8"
+                                HorizontalAlignment="Left"
+                                Background="{DynamicResource PrimarySoftBrush}"
+                                BorderBrush="{DynamicResource PrimaryBrush}"
+                                BorderThickness="1"
+                                Command="{Binding DataContext.OpenDebugToolCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Content="{Binding DataContext.OpenDebugToolLabel, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                FontSize="12"
                                 FontWeight="SemiBold"
-                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                Text="Related APIs" />
-                            <ItemsControl Margin="0,6,0,0" ItemsSource="{Binding RelatedClasses}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button
-                                            Margin="0,2"
-                                            Padding="8,4"
-                                            HorizontalAlignment="Left"
-                                            Background="Transparent"
-                                            BorderBrush="{DynamicResource PrimaryBrush}"
-                                            BorderThickness="1"
-                                            Content="{Binding}"
-                                            FontSize="11"
-                                            Foreground="{DynamicResource PrimaryBrush}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                Visibility="{Binding DataContext.CanOpenDebugTool, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </StackPanel>
                     </Grid>
 
@@ -348,6 +454,14 @@
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 Kind="FormatListBulleted" />
                             <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Properties" />
+                            <ComboBox
+                                Width="160"
+                                Margin="14,16,0,0"
+                                Padding="6,2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding PropertySortOptions}"
+                                SelectedItem="{Binding SelectedPropertySort, Mode=TwoWay}" />
                         </StackPanel>
 
                         <ItemsControl ItemsSource="{Binding Properties}">
@@ -373,7 +487,8 @@
                                                     FontFamily="Consolas"
                                                     FontSize="14"
                                                     FontWeight="Bold"
-                                                    Foreground="{DynamicResource App.ForegroundBrush}">
+                                                    Foreground="{DynamicResource App.ForegroundBrush}"
+                                                    TextWrapping="Wrap">
                                                     <Run Text="{Binding Name, Mode=OneWay}" />
                                                     <Run Foreground="{DynamicResource App.SubtleForegroundBrush}" Text=":" />
                                                     <Run Foreground="{DynamicResource PrimaryBrush}" Text="{Binding Type, Mode=OneWay}" />
@@ -464,6 +579,14 @@
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 Kind="FunctionVariant" />
                             <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Methods" />
+                            <ComboBox
+                                Width="180"
+                                Margin="14,16,0,0"
+                                Padding="6,2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding MethodSortOptions}"
+                                SelectedItem="{Binding SelectedMethodSort, Mode=TwoWay}" />
                         </StackPanel>
 
                         <ItemsControl ItemsSource="{Binding Methods}">
@@ -492,7 +615,8 @@
                                                     FontFamily="Consolas"
                                                     FontSize="14"
                                                     FontWeight="Bold"
-                                                    Foreground="{DynamicResource App.ForegroundBrush}">
+                                                    Foreground="{DynamicResource App.ForegroundBrush}"
+                                                    TextWrapping="Wrap">
                                                     <Run Text="{Binding Name, Mode=OneWay}" />
                                                     <Run Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="{Binding ParametersDisplay, Mode=OneWay}" />
                                                 </TextBlock>
@@ -517,7 +641,8 @@
                                                 Margin="0,4,0,0"
                                                 FontFamily="Consolas"
                                                 FontSize="11"
-                                                Foreground="{DynamicResource App.SubtleForegroundBrush}">
+                                                Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                TextWrapping="Wrap">
                                                 <Run Text="Returns:" />
                                                 <Run FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" Text="{Binding ReturnType, Mode=OneWay}" />
                                             </TextBlock>
@@ -556,8 +681,8 @@
                                                         <DataTemplate DataType="{x:Type models:ApiParameterDoc}">
                                                             <Grid Margin="0,4">
                                                                 <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" MinWidth="100" />
-                                                                    <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                                    <ColumnDefinition Width="140" />
+                                                                    <ColumnDefinition Width="130" />
                                                                     <ColumnDefinition Width="*" />
                                                                 </Grid.ColumnDefinitions>
 
@@ -567,7 +692,8 @@
                                                                     FontSize="12"
                                                                     FontWeight="SemiBold"
                                                                     Foreground="{DynamicResource App.ForegroundBrush}"
-                                                                    Text="{Binding Name}" />
+                                                                    Text="{Binding Name}"
+                                                                    TextTrimming="CharacterEllipsis" />
 
                                                                 <TextBlock
                                                                     Grid.Column="1"
@@ -575,7 +701,8 @@
                                                                     FontFamily="Consolas"
                                                                     FontSize="11"
                                                                     Foreground="{DynamicResource PrimaryBrush}"
-                                                                    Text="{Binding Type}" />
+                                                                    Text="{Binding Type}"
+                                                                    TextTrimming="CharacterEllipsis" />
 
                                                                 <TextBlock
                                                                     Grid.Column="2"
@@ -649,7 +776,8 @@
                                                                             FontFamily="Consolas"
                                                                             FontSize="11"
                                                                             Foreground="{DynamicResource App.ForegroundBrush}"
-                                                                            Text="{Binding Output}" />
+                                                                            Text="{Binding Output}"
+                                                                            TextWrapping="Wrap" />
                                                                     </StackPanel>
                                                                 </Border>
                                                             </StackPanel>

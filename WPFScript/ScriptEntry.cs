@@ -122,9 +122,35 @@ namespace MESharp
                 Console.WriteLine("[Managed] Shutdown waiting for UI dispatcher timed out; continuing cleanup.");
             }
 
-            // CRITICAL: DON'T call Application.Current.Shutdown() here!
-            // We need to preserve Application.Current for hot reload.
-            // The window closing naturally will exit app.Run() without destroying Application.Current.
+            // Fallback path: explicitly request window close + dispatcher shutdown.
+            // This guarantees unload works even if shutdown-token registration was skipped.
+            var dispatcher = _uiDispatcher ?? _mainWindow?.Dispatcher;
+            if (dispatcher != null)
+            {
+                try
+                {
+                    dispatcher.Invoke(() =>
+                    {
+                        try
+                        {
+                            _mainWindow?.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("[Managed] Failed to close main window during shutdown: " + ex.Message);
+                        }
+
+                        if (!dispatcher.HasShutdownStarted)
+                        {
+                            dispatcher.InvokeShutdown();
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("[Managed] Dispatcher shutdown invoke failed: " + ex.Message);
+                }
+            }
 
             // Just wait for the UI thread to exit naturally (window already closed by user or shutdown signal)
             var uiThread = _uiThread;
@@ -261,6 +287,7 @@ namespace MESharp
 
                 // Create and show the window
                 var window = new MainWindow();
+                _mainWindow = window;
 
                 // When reusing Application.Current from a previous load, we need to manually show the window
                 // and pump messages, because app.Run() can only be called once per Application instance.
@@ -320,8 +347,6 @@ namespace MESharp
             {
                 Application.ResourceAssembly = Assembly.GetExecutingAssembly();
             }
-
-            app.Resources.MergedDictionaries.Clear();
             var assemblyName = Assembly.GetExecutingAssembly().GetName().Name ?? "MESharp_DebugUtil";
 
             var fallbackUris = new[]
@@ -365,13 +390,11 @@ namespace MESharp
         {
             try
             {
-                if (app.Resources.Contains("PrimaryCommandButton") && app.Resources.Contains("SecondaryCommandButton"))
+                if (!app.Resources.Contains("PrimaryCommandButton") || !app.Resources.Contains("SecondaryCommandButton"))
                 {
-                    return;
+                    Console.WriteLine("[Managed] Ensuring theme resources for reused Application.");
+                    BootstrapResources(app);
                 }
-
-                Console.WriteLine("[Managed] Ensuring theme resources for reused Application.");
-                BootstrapResources(app);
                 TryApplyTheme();
             }
             catch (Exception ex)
@@ -402,7 +425,21 @@ namespace MESharp
         {
             try
             {
-                var dict = new ResourceDictionary { Source = new Uri(uriString, UriKind.Absolute) };
+                var targetUri = new Uri(uriString, UriKind.Absolute);
+                foreach (var existing in app.Resources.MergedDictionaries)
+                {
+                    if (existing.Source == null)
+                    {
+                        continue;
+                    }
+
+                    if (Uri.Compare(existing.Source, targetUri, UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return;
+                    }
+                }
+
+                var dict = new ResourceDictionary { Source = targetUri };
                 app.Resources.MergedDictionaries.Add(dict);
             }
             catch (Exception ex)

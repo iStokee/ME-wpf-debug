@@ -609,6 +609,27 @@ namespace MESharp.ViewModels
 			else if (IsFamiliarSelected) RefreshFamiliarStatus();
 		}
 
+		public bool TrySelectContainer(string containerName, bool autoLoad = false)
+		{
+			if (string.IsNullOrWhiteSpace(containerName))
+			{
+				return false;
+			}
+
+			if (!Enum.TryParse(containerName, true, out ContainerType parsed))
+			{
+				return false;
+			}
+
+			SelectedContainer = parsed;
+			if (autoLoad)
+			{
+				LoadItems();
+			}
+
+			return true;
+		}
+
 		private void LoadItems()
 		{
 			try
@@ -1235,23 +1256,25 @@ namespace MESharp.ViewModels
 			}
 		}
 
-		private void BankInvDepositSelected()
-		{
-			if (SelectedItem == null)
+			private void BankInvDepositSelected()
 			{
-				StatusMessage = "Select a bank inventory item first.";
-				return;
+				if (SelectedItem == null)
+				{
+					StatusMessage = "Select a bank inventory item first.";
+					return;
+				}
+				try
+				{
+					var ok = Bank.DepositFromInventoryBySlot(SelectedItem.Id, SelectedItem.Slot, BankInvMenuText);
+					StatusMessage = ok
+						? $"Deposit action sent for {SelectedItem.Name} (slot {SelectedItem.Slot})."
+						: "Deposit action failed.";
+				}
+				catch (Exception ex)
+				{
+					StatusMessage = $"Error: {ex.Message}";
+				}
 			}
-			try
-			{
-				var ok = Bank.DepositFromInventoryById(SelectedItem.Id, BankInvMenuText);
-				StatusMessage = ok ? $"Deposit action sent for {SelectedItem.Name}." : "Deposit action failed.";
-			}
-			catch (Exception ex)
-			{
-				StatusMessage = $"Error: {ex.Message}";
-			}
-		}
 
 		private void BankInvDepositById()
 		{
@@ -1513,72 +1536,72 @@ namespace MESharp.ViewModels
 		}
 
 		// ─── Item Action Methods ────────────────────────────────────────────
-		private void ItemEat()
-		{
-			if (SelectedItem == null) return;
-			try
+			private void ItemEat()
 			{
-				var success = Inventory.Eat(SelectedItem.Id);
-				StatusMessage = success ? $"Ate {SelectedItem.Name}." : "Eat action failed.";
-			}
-			catch (Exception ex)
-			{
+				if (SelectedItem == null) return;
+				try
+				{
+					var success = Inventory.EatBySlot(SelectedItem.Id, SelectedItem.Slot) || Inventory.Eat(SelectedItem.Id);
+					StatusMessage = success ? $"Ate {SelectedItem.Name}." : "Eat action failed.";
+				}
+				catch (Exception ex)
+				{
 				StatusMessage = $"Error: {ex.Message}";
 			}
 		}
 
-		private void ItemDrop()
-		{
-			if (SelectedItem == null) return;
-			try
+			private void ItemDrop()
 			{
-				var success = Inventory.Drop(SelectedItem.Id);
-				StatusMessage = success ? $"Dropped {SelectedItem.Name}." : "Drop action failed.";
-			}
-			catch (Exception ex)
-			{
+				if (SelectedItem == null) return;
+				try
+				{
+					var success = Inventory.DropBySlot(SelectedItem.Id, SelectedItem.Slot) || Inventory.Drop(SelectedItem.Id);
+					StatusMessage = success ? $"Dropped {SelectedItem.Name}." : "Drop action failed.";
+				}
+				catch (Exception ex)
+				{
 				StatusMessage = $"Error: {ex.Message}";
 			}
 		}
 
-		private void ItemUse()
-		{
-			if (SelectedItem == null) return;
-			try
+			private void ItemUse()
 			{
-				var success = Inventory.Use(SelectedItem.Id);
-				StatusMessage = success ? $"Used {SelectedItem.Name}." : "Use action failed.";
-			}
-			catch (Exception ex)
-			{
+				if (SelectedItem == null) return;
+				try
+				{
+					var success = Inventory.UseBySlot(SelectedItem.Id, SelectedItem.Slot) || Inventory.Use(SelectedItem.Id);
+					StatusMessage = success ? $"Used {SelectedItem.Name}." : "Use action failed.";
+				}
+				catch (Exception ex)
+				{
 				StatusMessage = $"Error: {ex.Message}";
 			}
 		}
 
-		private void ItemEquip()
-		{
-			if (SelectedItem == null) return;
-			try
+			private void ItemEquip()
 			{
-				var success = Inventory.Equip(SelectedItem.Id);
-				StatusMessage = success ? $"Equipped {SelectedItem.Name}." : "Equip action failed.";
-			}
-			catch (Exception ex)
-			{
+				if (SelectedItem == null) return;
+				try
+				{
+					var success = Inventory.EquipBySlot(SelectedItem.Id, SelectedItem.Slot) || Inventory.Equip(SelectedItem.Id);
+					StatusMessage = success ? $"Equipped {SelectedItem.Name}." : "Equip action failed.";
+				}
+				catch (Exception ex)
+				{
 				StatusMessage = $"Error: {ex.Message}";
 			}
 		}
 
-		private void ItemNote()
-		{
-			if (SelectedItem == null) return;
-			try
+			private void ItemNote()
 			{
-				var success = Inventory.Note(SelectedItem.Id);
-				StatusMessage = success ? $"Noted {SelectedItem.Name}." : "Note action failed.";
-			}
-			catch (Exception ex)
-			{
+				if (SelectedItem == null) return;
+				try
+				{
+					var success = Inventory.NoteBySlot(SelectedItem.Id, SelectedItem.Slot) || Inventory.Note(SelectedItem.Id);
+					StatusMessage = success ? $"Noted {SelectedItem.Name}." : "Note action failed.";
+				}
+				catch (Exception ex)
+				{
 				StatusMessage = $"Error: {ex.Message}";
 			}
 		}
@@ -1597,15 +1620,16 @@ namespace MESharp.ViewModels
 			}
 		}
 
-		private void ItemUseOnItem()
-		{
-			if (SelectedItem == null || TargetItem == null) return;
-			try
+			private void ItemUseOnItem()
 			{
-				var success = Inventory.UseItemOnItem(SelectedItem.Id, TargetItem.Id);
-				StatusMessage = success
-					? $"Used {SelectedItem.Name} on {TargetItem.Name}."
-					: "UseItemOnItem action failed.";
+				if (SelectedItem == null || TargetItem == null) return;
+				try
+				{
+					var success = Inventory.UseItemOnItemBySlot(SelectedItem.Id, SelectedItem.Slot, TargetItem.Id, TargetItem.Slot)
+						|| Inventory.UseItemOnItem(SelectedItem.Id, TargetItem.Id);
+					StatusMessage = success
+						? $"Used {SelectedItem.Name} on {TargetItem.Name}."
+						: "UseItemOnItem action failed.";
 			}
 			catch (Exception ex)
 			{

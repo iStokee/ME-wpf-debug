@@ -590,6 +590,37 @@ namespace MESharp.ViewModels
 		private void OnNpcSearchResultsChanged(object sender, NotifyCollectionChangedEventArgs e)
 			=> OnPropertyChanged(nameof(HasNpcSearchResults));
 
+		public void FocusType(GameObjectType type, bool autoLoad = false)
+		{
+			try
+			{
+				_suppressTypeOptionNotifications = true;
+
+				foreach (var option in ObjectTypeOptions)
+				{
+					if (option.Type == GameObjectType.All)
+					{
+						option.IsSelected = false;
+						continue;
+					}
+
+					option.IsSelected = option.Type == type;
+				}
+			}
+			finally
+			{
+				_suppressTypeOptionNotifications = false;
+			}
+
+			UpdateObjectTypeVisibility();
+			ObjectsView?.Refresh();
+
+			if (autoLoad)
+			{
+				LoadObjects();
+			}
+		}
+
 		private void LookupNpcById()
 		{
 			try

@@ -15,6 +15,7 @@ namespace MESharp.ViewModels
     public class PlayersViewModel : INotifyPropertyChanged, IActivatableViewModel, IDisposable
     {
         private readonly DispatcherTimer _refreshTimer;
+        private readonly EventHandler _refreshTickHandler;
         private bool _autoRefresh;
         private string _filterText = "";
         private int _maxDistance = 50;
@@ -58,7 +59,8 @@ namespace MESharp.ViewModels
             SessionLobbyCommand = new RelayCommand(_ => Run(Session.Lobby, "Session.Lobby"));
 
             _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
-            _refreshTimer.Tick += (s, e) => RefreshLocalPlayerAndPlayers();
+            _refreshTickHandler = OnRefreshTimerTick;
+            _refreshTimer.Tick += _refreshTickHandler;
         }
 
         #region Properties
@@ -564,9 +566,12 @@ namespace MESharp.ViewModels
 
         public void Dispose()
         {
-            _refreshTimer?.Stop();
+            try { _refreshTimer.Stop(); } catch { /* ignore */ }
+            try { _refreshTimer.Tick -= _refreshTickHandler; } catch { /* ignore */ }
         }
 
         #endregion
+
+        private void OnRefreshTimerTick(object? sender, EventArgs e) => RefreshLocalPlayerAndPlayers();
     }
 }

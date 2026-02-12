@@ -37,7 +37,7 @@
             </StackPanel>
             <Border Grid.Column="1" Margin="12,0,0,0" Background="{DynamicResource App.BackgroundBrush}" CornerRadius="6" BorderBrush="{DynamicResource App.BorderBrush}" BorderThickness="1">
                 <Grid>
-                    <Border x:Name="Preview" Background="Black" CornerRadius="6"/>
+                    <Border x:Name="Preview" Background="{DynamicResource App.BackgroundBrush}" CornerRadius="6"/>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Preview"/>
                 </Grid>
             </Border>
