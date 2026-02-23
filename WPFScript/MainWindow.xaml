@@ -210,6 +210,9 @@
             <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
                 <views:NavigationView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:WebwalkingViewModel}">
+                <views:WebwalkingView />
+            </DataTemplate>
             <!--<DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
                 <views:EquipmentView />
             </DataTemplate>-->
@@ -234,8 +237,14 @@
             <DataTemplate DataType="{x:Type vm:ObjectsUnifiedViewModel}">
                 <views:ObjectsUnifiedView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DoActionSignalsViewModel}">
+                <views:DoActionSignalsView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:InterfacesViewModel}">
                 <views:InterfacesView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DungeoneeringDebugViewModel}">
+                <views:DungeoneeringDebugView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:MiscApiViewModel}">
                 <views:MiscApiView />
@@ -459,6 +468,20 @@
                         </ToggleButton>
                         <ToggleButton
                             Margin="5,0,5,0"
+                            Command="{Binding ShowWebwalkingCommand}"
+                            IsChecked="{Binding IsWebwalkingSelected, Mode=OneWay}"
+                            ToolTip="Route planning and execution tooling">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="MapSearch" />
+                                <TextBlock Text="Webwalking" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
                             Command="{Binding ShowItemsUnifiedCommand}"
                             IsChecked="{Binding IsItemsUnifiedSelected, Mode=OneWay}"
                             ToolTip="Items - All Containers">
@@ -499,6 +522,33 @@
                                 <TextBlock Text="Objects" />
                             </StackPanel>
                         </ToggleButton>
+                        <Button
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowDoActionDebugCommand}"
+                            ToolTip="DoAction debug surface with snippet capture">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                    Kind="Tools" />
+                                <TextBlock Text="DoAction" />
+                            </StackPanel>
+                        </Button>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowDoActionSignalsCommand}"
+                            IsChecked="{Binding IsDoActionSignalsSelected, Mode=OneWay}"
+                            ToolTip="Unified feed of all captured DoAction signals">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="ChartTimelineVariant" />
+                                <TextBlock Text="DoAction Feed" />
+                            </StackPanel>
+                        </ToggleButton>
                         <ToggleButton
                             Margin="5,0,5,0"
                             Command="{Binding ShowVarbitCommand}"
@@ -526,6 +576,20 @@
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                                     Kind="MonitorDashboard" />
                                 <TextBlock Text="Interfaces" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowDungeoneeringDebugCommand}"
+                            IsChecked="{Binding IsDungeoneeringDebugSelected, Mode=OneWay}"
+                            ToolTip="Dungeoneering-specific debug probes">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="MapSearch" />
+                                <TextBlock Text="Dungeoneering" />
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton

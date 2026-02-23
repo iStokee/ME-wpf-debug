@@ -1,0 +1,261 @@
+<UserControl
+    x:Class="MESharp.Views.DungeoneeringDebugView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MESharp.Views.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:MESharp.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:DungeoneeringDebugViewModel}"
+    d:DesignHeight="760"
+    d:DesignWidth="1200"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <controls:SectionHeader
+                Grid.Row="0"
+                Margin="0,0,0,10"
+                Description="Debug-only probe panel for discovering party/interfaces/room signals used to harden headless Dungeoneering scripts."
+                IconKind="MapSearch"
+                Title="Dungeoneering Debug Probe" />
+
+            <Border
+                Grid.Row="1"
+                Margin="0,0,0,10"
+                Padding="12"
+                Background="{DynamicResource App.CardBrush}"
+                BorderBrush="{DynamicResource App.BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="0,0,8,8"
+                        Padding="12,6"
+                        Command="{Binding RefreshSnapshotCommand}"
+                        Content="Refresh Snapshot"
+                        Style="{StaticResource PrimaryCommandButton}" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="0,0,8,8"
+                        Padding="12,6"
+                        Command="{Binding CopySnapshotCommand}"
+                        Content="Copy Snapshot"
+                        Style="{StaticResource SecondaryCommandButton}" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="0,0,8,8"
+                        Padding="12,6"
+                        Command="{Binding CopySignalsCommand}"
+                        Content="Copy Signals"
+                        Style="{StaticResource SecondaryCommandButton}" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="{Binding LastUpdatedText, StringFormat=Last Updated: {0}}" />
+
+                    <WrapPanel Grid.Row="1" Grid.ColumnSpan="4" VerticalAlignment="Center">
+                        <CheckBox Margin="0,0,12,0" Content="Auto Refresh" IsChecked="{Binding AutoRefresh}" />
+                        <CheckBox Margin="0,0,12,0" Content="Freeze" IsChecked="{Binding FreezeRefresh}" />
+                        <CheckBox Margin="0,0,12,0" Content="Deep Interface Text Scan" IsChecked="{Binding EnableInterfaceTextScan}" />
+                        <TextBlock Margin="0,0,6,0" VerticalAlignment="Center" Text="Scan Radius" />
+                        <TextBox Width="52" Margin="0,0,12,0" Text="{Binding ScanRadius, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Padding="10,5" Command="{Binding ClearCommand}" Content="Clear" Style="{StaticResource SecondaryCommandButton}" />
+                    </WrapPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Margin="0,0,8,0" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Door-like" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding DoorLikeCount}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Margin="0,0,8,0" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Puzzle-like" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding PuzzleLikeCount}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Margin="0,0,8,0" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Resource-like" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding ResourceLikeCount}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Margin="0,0,8,0" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Ground Keys" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding KeyGroundCount}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Margin="0,0,8,0" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Hostile NPCs" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding HostileNpcCount}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="5" Margin="0,0,8,0" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Nearby Players" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding PartyNearbyCount}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="6" Padding="10" Background="{DynamicResource App.CardBrush}" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="Interface Hits" />
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding InterfaceHits}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="220" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="280" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Grid.Row="0"
+                    Margin="0,0,0,10"
+                    Padding="10"
+                    Background="{DynamicResource App.CardBrush}"
+                    BorderBrush="{DynamicResource App.BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock FontWeight="SemiBold" Text="Interface Query Terms" />
+                            <TextBlock Margin="0,2,0,6" Foreground="{DynamicResource App.SubtleForegroundBrush}" FontSize="11"
+                                       Text="One term per line. These map to Interfaces.GetByString / GetByStringStatic." />
+                            <TextBox AcceptsReturn="True" MinHeight="120" Text="{Binding InterfaceQueryText, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock FontWeight="SemiBold" Text="Snapshot Summary" />
+                            <TextBox MinHeight="120" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding SnapshotText}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Margin="0,0,0,10"
+                    Padding="10"
+                    Background="{DynamicResource App.CardBrush}"
+                    BorderBrush="{DynamicResource App.BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Text="Interface Probe Results" />
+                        <DataGrid
+                            Grid.Row="1"
+                            Margin="0,8,0,0"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding InterfaceProbes}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="1.8*" Binding="{Binding Query}" Header="Query" />
+                                <DataGridCheckBoxColumn Width="90" Binding="{Binding RootFound}" Header="Root?" />
+                                <DataGridTextColumn Width="120" Binding="{Binding RootId}" Header="Root Id" />
+                                <DataGridTextColumn Width="90" Binding="{Binding StaticMatches}" Header="Static Hits" />
+                                <DataGridTextColumn Width="2*" Binding="{Binding Notes}" Header="Notes" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="3"
+                    Margin="0,0,0,10"
+                    Padding="10"
+                    Background="{DynamicResource App.CardBrush}"
+                    BorderBrush="{DynamicResource App.BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Text="Nearby Dungeoneering Signals" />
+                        <DataGrid
+                            Grid.Row="1"
+                            Margin="0,8,0,0"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding Signals}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="120" Binding="{Binding Kind}" Header="Kind" />
+                                <DataGridTextColumn Width="80" Binding="{Binding Id}" Header="Id" />
+                                <DataGridTextColumn Width="2*" Binding="{Binding Name}" Header="Name" />
+                                <DataGridTextColumn Width="2.5*" Binding="{Binding Action}" Header="Action/Info" />
+                                <DataGridTextColumn Width="90" Binding="{Binding Distance}" Header="Dist" />
+                                <DataGridTextColumn Width="130" Binding="{Binding Tile}" Header="Tile" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="4"
+                    Padding="10"
+                    Background="{DynamicResource App.CardBrush}"
+                    BorderBrush="{DynamicResource App.BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <TextBlock Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="{Binding Status}" TextWrapping="Wrap" />
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

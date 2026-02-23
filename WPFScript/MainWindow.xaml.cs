@@ -10,6 +10,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.IO;
+using System.IO.Pipes;
+using System.Text;
+using System.Text.Json;
 
 using MESharp.ViewModels;
 using MESharp.API;
@@ -30,6 +34,10 @@ namespace MESharp
     public partial class MainWindow
     {
 		private Guid? _orbitSessionId;
+        private IntPtr _windowHandle = IntPtr.Zero;
+        private bool _nativeWindowRegistered;
+        private static readonly bool EnableOrbitDocking =
+            string.Equals(Environment.GetEnvironmentVariable("MESHARP_DEBUGUTIL_DOCK_WITH_ORBIT"), "1", StringComparison.OrdinalIgnoreCase);
 
 			public MainWindow()
 			{
@@ -38,31 +46,33 @@ namespace MESharp
             var vm = new MainWindowViewModel();
             	this.DataContext = vm;
 
-				try
+                try
                 {
-                    Console.WriteLine("[Managed] Registering UI thread + hwnd");
-				    MESharp.API.Focus.RegisterManagedThread(NativeMethods.GetCurrentThreadId());
-					var hwnd = new WindowInteropHelper(this).Handle;
-                    Console.WriteLine($"[Managed] MainWindow HWND={hwnd}");
-				    MESharp.API.Focus.RegisterManagedWindow(hwnd);
-
-                    this.PreviewMouseDown += (_, e) =>
-                    {
-                        try
-                        {
-                            if (ShouldForceWindowFocus(e.OriginalSource as DependencyObject))
-                            {
-                                this.Activate();
-                                Keyboard.Focus(this);
-                            }
-                        }
-                        catch { }
-                    };
+                    Console.WriteLine("[Managed] Registering UI thread");
+                    MESharp.API.Focus.RegisterManagedThread(NativeMethods.GetCurrentThreadId());
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[Managed] Failed to register UI thread/HWND: {ex}");
+                    Console.WriteLine($"[Managed] Failed to register UI thread: {ex}");
                 }
+
+                this.SourceInitialized += (_, __) =>
+                {
+                    TryRegisterNativeWindowHandle();
+                };
+
+                this.PreviewMouseDown += (_, e) =>
+                {
+                    try
+                    {
+                        if (ShouldForceWindowFocus(e.OriginalSource as DependencyObject))
+                        {
+                            this.Activate();
+                            Keyboard.Focus(this);
+                        }
+                    }
+                    catch { }
+                };
 
             this.Loaded += (_, __) =>
             {
@@ -70,6 +80,7 @@ namespace MESharp
 				// Most scripts don't need this
                 try
                 {
+                    TryRegisterNativeWindowHandle();
                     Console.WriteLine("[Managed] Requesting native focus activation + spoof OFF");
 					MESharp.API.Focus.ActivateManagedWindow();
 					MESharp.API.Focus.SetFocusSpoofEnabled(false);
@@ -79,24 +90,29 @@ namespace MESharp
                     Console.WriteLine($"[Managed] Activate request failed: {ex}");
                 }
 
-                // OPTIONAL: Try to dock into Orbit management app if available
-                // Orbit is a separate app that can manage multiple script windows
-                // Most scripts don't need this - it's only useful for complex multi-window setups
-                try
+                if (EnableOrbitDocking)
                 {
-                    _orbitSessionId = TryDockWithOrbit(new WindowInteropHelper(this).Handle);
-                    if (_orbitSessionId.HasValue)
+                    // OPTIONAL: Try to dock into Orbit management app if available
+                    try
                     {
-                        Console.WriteLine($"[Managed] Docked into Orbit with session ID: {_orbitSessionId}");
+                        _orbitSessionId = TryDockWithOrbit(new WindowInteropHelper(this).Handle);
+                        if (_orbitSessionId.HasValue)
+                        {
+                            Console.WriteLine($"[Managed] Docked into Orbit with session ID: {_orbitSessionId}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("[Managed] Orbit docking enabled, but Orbit bridge was unavailable.");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("[Managed] Orbit not available, running standalone");
+                        Console.WriteLine($"[Managed] Failed to dock with Orbit: {ex.Message}");
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine($"[Managed] Failed to dock with Orbit: {ex.Message}");
+                    Console.WriteLine("[Managed] Orbit auto-docking disabled for debug util (standalone window mode).");
                 }
             };
 
@@ -215,11 +231,50 @@ namespace MESharp
             return true;
         }
 
+        private void TryRegisterNativeWindowHandle()
+        {
+            if (_nativeWindowRegistered)
+            {
+                return;
+            }
+
+            try
+            {
+                _windowHandle = new WindowInteropHelper(this).Handle;
+                if (_windowHandle == IntPtr.Zero)
+                {
+                    Console.WriteLine("[Managed] Native HWND is not ready yet; postponing registration.");
+                    return;
+                }
+
+                MESharp.API.Focus.RegisterManagedWindow(_windowHandle);
+                _nativeWindowRegistered = true;
+                Console.WriteLine($"[Managed] Registered UI HWND={_windowHandle}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Managed] Failed to register UI HWND: {ex.Message}");
+            }
+        }
+
         /// <summary>
         /// Try to dock with Orbit if available (uses reflection to avoid hard dependency)
         /// </summary>
         private static Guid? TryDockWithOrbit(IntPtr hwnd)
         {
+            // Preferred path: cross-process Orbit API bridge
+            var bridgeResponse = SendOrbitBridgeRequest(new
+            {
+                action = "register",
+                windowHandle = hwnd.ToInt64().ToString(),
+                tabName = "MESharp Debug Util",
+                processId = Environment.ProcessId
+            });
+            if (bridgeResponse.ok && Guid.TryParse(bridgeResponse.sessionId, out var bridgedSessionId))
+            {
+                return bridgedSessionId;
+            }
+
             try
             {
                 // Try to load Orbit.dll from the same directory
@@ -230,7 +285,7 @@ namespace MESharp
                 }
 
                 var orbitAssembly = System.Reflection.Assembly.LoadFrom(orbitPath);
-                var orbitApiType = orbitAssembly.GetType("Orbit.OrbitAPI");
+                var orbitApiType = orbitAssembly.GetType("Orbit.API.OrbitAPI");
                 if (orbitApiType == null)
                 {
                     return null;
@@ -256,7 +311,7 @@ namespace MESharp
                     return null;
                 }
 
-                var result = registerMethod.Invoke(null, new object[] { hwnd, "MESharp Debug Util" });
+                var result = registerMethod.Invoke(null, new object[] { hwnd, "MESharp Debug Util", Environment.ProcessId });
                 return result as Guid?;
             }
             catch
@@ -270,6 +325,16 @@ namespace MESharp
         /// </summary>
         private static void TryUndockFromOrbit(Guid sessionId)
         {
+            var bridgeResponse = SendOrbitBridgeRequest(new
+            {
+                action = "unregister",
+                sessionId = sessionId.ToString()
+            });
+            if (bridgeResponse.ok)
+            {
+                return;
+            }
+
             try
             {
                 var orbitPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Orbit.dll");
@@ -279,7 +344,7 @@ namespace MESharp
                 }
 
                 var orbitAssembly = System.Reflection.Assembly.LoadFrom(orbitPath);
-                var orbitApiType = orbitAssembly.GetType("Orbit.OrbitAPI");
+                var orbitApiType = orbitAssembly.GetType("Orbit.API.OrbitAPI");
                 if (orbitApiType == null)
                 {
                     return;
@@ -297,6 +362,40 @@ namespace MESharp
             {
                 // Silently fail - Orbit integration is optional
             }
+        }
+
+        private static OrbitBridgeResponse SendOrbitBridgeRequest(object payload)
+        {
+            try
+            {
+                using var pipe = new NamedPipeClientStream(".", "OrbitApiBridge", PipeDirection.InOut);
+                pipe.Connect(500);
+
+                using var writer = new StreamWriter(pipe, Encoding.UTF8, bufferSize: 4096, leaveOpen: true) { AutoFlush = true };
+                using var reader = new StreamReader(pipe, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: true);
+
+                writer.WriteLine(JsonSerializer.Serialize(payload));
+                var responseLine = reader.ReadLine();
+                if (string.IsNullOrWhiteSpace(responseLine))
+                {
+                    return OrbitBridgeResponse.Failed("No response from Orbit bridge.");
+                }
+
+                return JsonSerializer.Deserialize<OrbitBridgeResponse>(responseLine) ?? OrbitBridgeResponse.Failed("Invalid bridge response.");
+            }
+            catch (Exception ex)
+            {
+                return OrbitBridgeResponse.Failed(ex.Message);
+            }
+        }
+
+        private sealed class OrbitBridgeResponse
+        {
+            public bool ok { get; set; }
+            public string? message { get; set; }
+            public string? sessionId { get; set; }
+
+            public static OrbitBridgeResponse Failed(string message) => new() { ok = false, message = message };
         }
 
     }

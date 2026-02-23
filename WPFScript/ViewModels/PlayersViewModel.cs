@@ -151,6 +151,21 @@ namespace MESharp.ViewModels
         private bool _isRunEnabled;
         private bool _isRunEnabledAlt;
         private bool _isQuickPrayerEnabled;
+        private string _targetName = "";
+        private int _targetHitChancePercent;
+        private int _targetCombatLevel;
+        private int _targetHitpoints;
+
+        public sealed class TargetBuffDisplay
+        {
+            public int Id { get; init; }
+            public int VarbitId { get; init; }
+            public int SpriteId { get; init; }
+            public string Name { get; init; } = "";
+            public bool IsDebuff { get; init; }
+        }
+
+        public ObservableCollection<TargetBuffDisplay> TargetBuffs { get; } = new();
 
         public bool IsLoggedIn
         {
@@ -293,6 +308,32 @@ namespace MESharp.ViewModels
             set { _isQuickPrayerEnabled = value; OnPropertyChanged(); }
         }
 
+        public string TargetName
+        {
+            get => _targetName;
+            set { _targetName = value; OnPropertyChanged(); }
+        }
+
+        public int TargetHitChancePercent
+        {
+            get => _targetHitChancePercent;
+            set { _targetHitChancePercent = value; OnPropertyChanged(); }
+        }
+
+        public int TargetCombatLevel
+        {
+            get => _targetCombatLevel;
+            set { _targetCombatLevel = value; OnPropertyChanged(); }
+        }
+
+        public int TargetHitpoints
+        {
+            get => _targetHitpoints;
+            set { _targetHitpoints = value; OnPropertyChanged(); }
+        }
+
+        public int TargetBuffCount => TargetBuffs.Count;
+
         // Distance Calculator
         private int _distanceToX, _distanceToY, _distanceToZ;
         private float _calculatedDistance;
@@ -400,6 +441,12 @@ namespace MESharp.ViewModels
                     IsRunEnabled = false;
                     IsRunEnabledAlt = false;
                     IsQuickPrayerEnabled = false;
+                    TargetName = string.Empty;
+                    TargetHitChancePercent = 0;
+                    TargetCombatLevel = 0;
+                    TargetHitpoints = 0;
+                    TargetBuffs.Clear();
+                    OnPropertyChanged(nameof(TargetBuffCount));
                 }
 
                 var tilePos = LocalPlayer.GetTilePosition();
@@ -438,6 +485,27 @@ namespace MESharp.ViewModels
                     IsRunEnabled = LocalPlayer.IsRunEnabled();
                     IsRunEnabledAlt = LocalPlayer.IsRunEnabledAlt();
                     IsQuickPrayerEnabled = LocalPlayer.IsQuickPrayerEnabled();
+
+                    var target = LocalPlayer.GetTarget();
+                    TargetName = target.Name;
+                    TargetHitChancePercent = target.HitChancePercent;
+                    TargetCombatLevel = target.CombatLevel;
+                    TargetHitpoints = target.Hitpoints;
+
+                    TargetBuffs.Clear();
+                    for (var i = 0; i < target.Buffs.Count; i++)
+                    {
+                        var buff = target.Buffs[i];
+                        TargetBuffs.Add(new TargetBuffDisplay
+                        {
+                            Id = buff.Id,
+                            VarbitId = buff.VarbitId,
+                            SpriteId = buff.SpriteId,
+                            Name = buff.Name,
+                            IsDebuff = buff.IsDebuff,
+                        });
+                    }
+                    OnPropertyChanged(nameof(TargetBuffCount));
                 }
             }
             catch (Exception ex)

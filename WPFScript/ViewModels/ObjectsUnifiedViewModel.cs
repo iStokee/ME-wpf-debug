@@ -621,6 +621,40 @@ namespace MESharp.ViewModels
 			}
 		}
 
+		public void FocusDoActionDebug(bool autoLoad = false)
+		{
+			try
+			{
+				_suppressTypeOptionNotifications = true;
+				foreach (var option in ObjectTypeOptions)
+				{
+					option.IsSelected = option.Type switch
+					{
+						GameObjectType.Object => true,
+						GameObjectType.NPC => true,
+						GameObjectType.GroundItem => true,
+						_ => false
+					};
+				}
+			}
+			finally
+			{
+				_suppressTypeOptionNotifications = false;
+			}
+
+			SelectedActionIndex = 1;
+			SelectedOffset = OffsetOptions.FirstOrDefault(o => o.Value == Objects.Offsets.GeneralRoute0) ?? SelectedOffset;
+			UpdateObjectTypeVisibility();
+			ObjectsView?.Refresh();
+
+			if (autoLoad)
+			{
+				LoadObjects();
+			}
+
+			StatusMessage = "DoAction debug focus enabled (Objects + NPCs + Ground Items).";
+		}
+
 		private void LookupNpcById()
 		{
 			try
@@ -781,8 +815,7 @@ namespace MESharp.ViewModels
 					}
 
 					var ok = npcResult || objectResult || groundResult;
-
-					StatusMessage = ok ? "Action executed." : "Action failed.";
+					StatusMessage = ok ? "Action executed. Open DoAction Feed to inspect recorded snippets." : "Action failed.";
 				}
 				catch (Exception ex)
 			{

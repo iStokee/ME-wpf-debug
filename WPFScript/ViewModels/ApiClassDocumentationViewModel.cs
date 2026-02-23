@@ -61,6 +61,20 @@ namespace MESharp.ViewModels
         public ObservableCollection<ApiPropertyDoc> Properties { get; } = new();
         public ObservableCollection<ApiMethodDoc> Methods { get; } = new();
 
+        private ApiPropertyDoc? _selectedProperty;
+        public ApiPropertyDoc? SelectedProperty
+        {
+            get => _selectedProperty;
+            set => SetProperty(ref _selectedProperty, value);
+        }
+
+        private ApiMethodDoc? _selectedMethod;
+        public ApiMethodDoc? SelectedMethod
+        {
+            get => _selectedMethod;
+            set => SetProperty(ref _selectedMethod, value);
+        }
+
         public IReadOnlyList<string> PropertySortOptions => PropertySortOptionsInternal;
         public IReadOnlyList<string> MethodSortOptions => MethodSortOptionsInternal;
 
@@ -168,6 +182,7 @@ namespace MESharp.ViewModels
 
         private void ApplyPropertySort()
         {
+            var selectedName = SelectedProperty?.Name;
             IEnumerable<ApiPropertyDoc> sorted = SelectedPropertySort switch
             {
                 "Name (Z-A)" => _allProperties.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase),
@@ -181,10 +196,17 @@ namespace MESharp.ViewModels
             {
                 Properties.Add(property);
             }
+
+            if (!string.IsNullOrWhiteSpace(selectedName))
+            {
+                SelectedProperty = Properties.FirstOrDefault(p => string.Equals(p.Name, selectedName, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         private void ApplyMethodSort()
         {
+            var selectedName = SelectedMethod?.Name;
+            var selectedSignature = SelectedMethod?.Signature;
             IEnumerable<ApiMethodDoc> sorted = SelectedMethodSort switch
             {
                 "Name (Z-A)" => _allMethods.OrderByDescending(m => m.Name, StringComparer.OrdinalIgnoreCase),
@@ -198,6 +220,41 @@ namespace MESharp.ViewModels
             {
                 Methods.Add(method);
             }
+
+            if (!string.IsNullOrWhiteSpace(selectedName))
+            {
+                SelectedMethod = Methods.FirstOrDefault(m =>
+                    string.Equals(m.Name, selectedName, StringComparison.OrdinalIgnoreCase) &&
+                    (string.IsNullOrWhiteSpace(selectedSignature) || string.Equals(m.Signature, selectedSignature, StringComparison.Ordinal)));
+            }
+        }
+
+        public void NavigateToMember(string resultType, string memberName, string signature)
+        {
+            if (string.IsNullOrWhiteSpace(resultType))
+            {
+                return;
+            }
+
+            if (string.Equals(resultType, "Method", StringComparison.OrdinalIgnoreCase))
+            {
+                SelectedProperty = null;
+                SelectedMethod = Methods.FirstOrDefault(m =>
+                    string.Equals(m.Name, memberName, StringComparison.OrdinalIgnoreCase) &&
+                    (string.IsNullOrWhiteSpace(signature) || string.Equals(m.Signature, signature, StringComparison.Ordinal)))
+                    ?? Methods.FirstOrDefault(m => string.Equals(m.Name, memberName, StringComparison.OrdinalIgnoreCase));
+                return;
+            }
+
+            if (string.Equals(resultType, "Property", StringComparison.OrdinalIgnoreCase))
+            {
+                SelectedMethod = null;
+                SelectedProperty = Properties.FirstOrDefault(p => string.Equals(p.Name, memberName, StringComparison.OrdinalIgnoreCase));
+                return;
+            }
+
+            SelectedMethod = null;
+            SelectedProperty = null;
         }
 
         private static string GetFriendlyTypeName(Type type)

@@ -193,6 +193,10 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock
@@ -264,6 +268,10 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock
@@ -292,6 +300,52 @@
 
                                     <TextBlock
                                         Grid.Row="2"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Snap Name:" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding TargetName}"
+                                        TextTrimming="CharacterEllipsis"
+                                        ToolTip="{Binding TargetName}" />
+
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Hit Chance:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding TargetHitChancePercent, StringFormat={}{0}%}" />
+
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Cmb Lvl:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding TargetCombatLevel}" />
+
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Target HP:" />
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding TargetHitpoints}" />
+
+                                    <TextBlock
+                                        Grid.Row="6"
                                         Grid.Column="0"
                                         Grid.ColumnSpan="2"
                                         Margin="0,8,0,4"
@@ -358,6 +412,29 @@
                                         Foreground="{DynamicResource PrimaryBrush}"
                                         Text="{Binding CalculatedDistance, StringFormat={}{0:F2}}" />
                                 </Grid>
+
+                                <TextBlock
+                                    Margin="0,10,0,4"
+                                    FontSize="10"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                    Text="{Binding TargetBuffCount, StringFormat=Target Buffs ({0})}" />
+                                <DataGrid
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    CanUserDeleteRows="False"
+                                    HeadersVisibility="Column"
+                                    IsReadOnly="True"
+                                    ItemsSource="{Binding TargetBuffs}"
+                                    MaxHeight="180">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="55" />
+                                        <DataGridTextColumn Binding="{Binding VarbitId}" Header="Varbit" Width="60" />
+                                        <DataGridTextColumn Binding="{Binding SpriteId}" Header="Sprite" Width="60" />
+                                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*" />
+                                        <DataGridCheckBoxColumn Binding="{Binding IsDebuff}" Header="Debuff" Width="65" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
                             </StackPanel>
                         </Border>
 

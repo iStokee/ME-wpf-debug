@@ -357,7 +357,10 @@
             Grid.Column="2"
             Background="{DynamicResource App.CardBrush}"
             CornerRadius="8">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer
+                x:Name="DocumentationScrollViewer"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="32,24" DataContext="{Binding SelectedClassDocumentation}">
                     <!--  Class Header  -->
                     <Grid Margin="0,0,0,24">
@@ -464,10 +467,45 @@
                                 SelectedItem="{Binding SelectedPropertySort, Mode=TwoWay}" />
                         </StackPanel>
 
-                        <ItemsControl ItemsSource="{Binding Properties}">
-                            <ItemsControl.ItemTemplate>
+                        <ListBox
+                            x:Name="PropertiesListBox"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ItemsSource="{Binding Properties}"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            SelectedItem="{Binding SelectedProperty, Mode=TwoWay}"
+                            SelectionChanged="OnMemberSelectionChanged">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type models:ApiPropertyDoc}">
-                                    <Border Style="{StaticResource MethodCardStyle}">
+                                    <Border>
+                                        <Border.Style>
+                                            <Style BasedOn="{StaticResource MethodCardStyle}" TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                                        <Setter Property="BorderThickness" Value="2" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
@@ -564,8 +602,8 @@
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </StackPanel>
 
                     <!--  Methods Section  -->
@@ -589,10 +627,45 @@
                                 SelectedItem="{Binding SelectedMethodSort, Mode=TwoWay}" />
                         </StackPanel>
 
-                        <ItemsControl ItemsSource="{Binding Methods}">
-                            <ItemsControl.ItemTemplate>
+                        <ListBox
+                            x:Name="MethodsListBox"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ItemsSource="{Binding Methods}"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                            SelectedItem="{Binding SelectedMethod, Mode=TwoWay}"
+                            SelectionChanged="OnMemberSelectionChanged">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type models:ApiMethodDoc}">
-                                    <Border Style="{StaticResource MethodCardStyle}">
+                                    <Border>
+                                        <Border.Style>
+                                            <Style BasedOn="{StaticResource MethodCardStyle}" TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                                        <Setter Property="BorderThickness" Value="2" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
@@ -788,8 +861,8 @@
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

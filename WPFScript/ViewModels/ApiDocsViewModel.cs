@@ -367,6 +367,8 @@ namespace MESharp.ViewModels
             {
                 SelectedClass = result.ClassInfo;
             }
+
+            SelectedClassDocumentation?.NavigateToMember(result.ResultType, result.MemberName, result.Signature);
         }
 
         private void OpenDebugTool()

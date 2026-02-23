@@ -753,7 +753,12 @@ namespace MESharp.ViewModels
                 SavedRoutes.Add(route);
             }
 
-            RouteStore.Save(SavedRoutes);
+            if (!RouteStore.TrySave(SavedRoutes, out var saveError))
+            {
+                LastStatus = saveError ?? "Route save failed.";
+                AddLog(LastStatus);
+                return;
+            }
             SelectedRoute = route;
             LastStatus = $"Route '{route.Name}' saved ({route.Waypoints.Count} waypoints).";
             AddLog(LastStatus);
@@ -785,6 +790,7 @@ namespace MESharp.ViewModels
         {
             return new RouteWaypoint
             {
+                Id = Guid.NewGuid().ToString("N"),
                 X = x,
                 Y = y,
                 Z = z,
@@ -792,7 +798,8 @@ namespace MESharp.ViewModels
                 ArrivalDistance = WaypointArrivalDistance,
                 TimeoutMs = WaypointTimeoutMs,
                 JitterTiles = WaypointJitterTiles,
-                ChainWhileMoving = WaypointChainWhileMoving
+                ChainWhileMoving = WaypointChainWhileMoving,
+                TransitionObjectIds = new List<int>()
             };
         }
 
@@ -800,6 +807,7 @@ namespace MESharp.ViewModels
         {
             var clone = new RouteWaypoint
             {
+                Id = source.Id,
                 Label = source.Label,
                 X = source.X,
                 Y = source.Y,
@@ -808,7 +816,9 @@ namespace MESharp.ViewModels
                 ArrivalDistance = source.ArrivalDistance,
                 TimeoutMs = source.TimeoutMs,
                 JitterTiles = source.JitterTiles,
-                ChainWhileMoving = source.ChainWhileMoving
+                ChainWhileMoving = source.ChainWhileMoving,
+                IsTransition = source.IsTransition,
+                TransitionObjectIds = source.TransitionObjectIds?.ToList() ?? new List<int>()
             };
             clone.Normalize();
             return clone;
@@ -820,6 +830,12 @@ namespace MESharp.ViewModels
             foreach (var route in RouteStore.Load())
             {
                 SavedRoutes.Add(route);
+            }
+
+            if (!string.IsNullOrWhiteSpace(RouteStore.LastError))
+            {
+                LastStatus = RouteStore.LastError;
+                AddLog(LastStatus);
             }
 
             if (SavedRoutes.Any())

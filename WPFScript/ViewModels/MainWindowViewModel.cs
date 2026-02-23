@@ -16,10 +16,13 @@ namespace MESharp.ViewModels
         Skills,
         Players,
         Navigation,
+        Webwalking,
         ItemsUnified,
         GrandExchange,
         ObjectsUnified,
+        DoActionSignals,
         Interfaces,
+        DungeoneeringDebug,
         MiscApi,
         Varbit,
         ApiDocs,
@@ -53,10 +56,13 @@ namespace MESharp.ViewModels
                     OnPropertyChanged(nameof(IsSkillsSelected));
                     OnPropertyChanged(nameof(IsPlayersSelected));
                     OnPropertyChanged(nameof(IsNavigationSelected));
+                    OnPropertyChanged(nameof(IsWebwalkingSelected));
                     OnPropertyChanged(nameof(IsItemsUnifiedSelected));
                     OnPropertyChanged(nameof(IsGrandExchangeSelected));
                     OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
+                    OnPropertyChanged(nameof(IsDoActionSignalsSelected));
                     OnPropertyChanged(nameof(IsInterfacesSelected));
+                    OnPropertyChanged(nameof(IsDungeoneeringDebugSelected));
                     OnPropertyChanged(nameof(IsMiscApiSelected));
                     OnPropertyChanged(nameof(IsVarbitSelected));
                     OnPropertyChanged(nameof(IsApiDocsSelected));
@@ -75,10 +81,13 @@ namespace MESharp.ViewModels
         public bool IsSkillsSelected => CurrentPage == AppPage.Skills;
         public bool IsPlayersSelected => CurrentPage == AppPage.Players;
         public bool IsNavigationSelected => CurrentPage == AppPage.Navigation;
+        public bool IsWebwalkingSelected => CurrentPage == AppPage.Webwalking;
         public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
         public bool IsGrandExchangeSelected => CurrentPage == AppPage.GrandExchange;
         public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
+        public bool IsDoActionSignalsSelected => CurrentPage == AppPage.DoActionSignals;
         public bool IsInterfacesSelected => CurrentPage == AppPage.Interfaces;
+        public bool IsDungeoneeringDebugSelected => CurrentPage == AppPage.DungeoneeringDebug;
         public bool IsMiscApiSelected => CurrentPage == AppPage.MiscApi;
         public bool IsVarbitSelected => CurrentPage == AppPage.Varbit;
         public bool IsApiDocsSelected => CurrentPage == AppPage.ApiDocs;
@@ -89,10 +98,14 @@ namespace MESharp.ViewModels
         public ICommand ShowSkillsCommand { get; }
         public ICommand ShowPlayersCommand { get; }
         public ICommand ShowNavigationCommand { get; }
+        public ICommand ShowWebwalkingCommand { get; }
         public ICommand ShowItemsUnifiedCommand { get; }
         public ICommand ShowGrandExchangeCommand { get; }
         public ICommand ShowObjectsUnifiedCommand { get; }
+        public ICommand ShowDoActionDebugCommand { get; }
+        public ICommand ShowDoActionSignalsCommand { get; }
         public ICommand ShowInterfacesCommand { get; }
+        public ICommand ShowDungeoneeringDebugCommand { get; }
         public ICommand ShowMiscApiCommand { get; }
         public ICommand ShowVarbitCommand { get; }
         public ICommand ShowApiDocsCommand { get; }
@@ -114,10 +127,14 @@ namespace MESharp.ViewModels
             ShowSkillsCommand         = new RelayCommand(_ => ShowSkills());
             ShowPlayersCommand        = new RelayCommand(_ => ShowPlayers());
             ShowNavigationCommand     = new RelayCommand(_ => ShowNavigation());
+            ShowWebwalkingCommand     = new RelayCommand(_ => ShowWebwalking());
             ShowItemsUnifiedCommand   = new RelayCommand(_ => ShowItemsUnified());
             ShowGrandExchangeCommand  = new RelayCommand(_ => ShowGrandExchange());
             ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
+            ShowDoActionDebugCommand  = new RelayCommand(_ => ShowDoActionDebug());
+            ShowDoActionSignalsCommand = new RelayCommand(_ => ShowDoActionSignals());
             ShowInterfacesCommand     = new RelayCommand(_ => ShowInterfaces());
+            ShowDungeoneeringDebugCommand = new RelayCommand(_ => ShowDungeoneeringDebug());
             ShowMiscApiCommand        = new RelayCommand(_ => ShowMiscApi());
             ShowVarbitCommand         = new RelayCommand(_ => ShowVarbit());
             ShowApiDocsCommand        = new RelayCommand(param => ShowApiDocs(param as string));
@@ -145,10 +162,21 @@ namespace MESharp.ViewModels
         private void ShowSkills() => SwitchView(AppPage.Skills, () => new SkillsViewModel());
         private void ShowPlayers() => SwitchView(AppPage.Players, () => new PlayersViewModel());
         private void ShowNavigation() => SwitchView(AppPage.Navigation, () => new NavigationViewModel());
+        private void ShowWebwalking() => SwitchView(AppPage.Webwalking, () => new WebwalkingViewModel());
         private void ShowItemsUnified() => SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
         private void ShowGrandExchange() => SwitchView(AppPage.GrandExchange, () => new GrandExchangeViewModel());
         private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
+        private void ShowDoActionDebug()
+        {
+            ShowObjectsUnified();
+            if (CurrentViewModel is ObjectsUnifiedViewModel objectsVm)
+            {
+                objectsVm.FocusDoActionDebug(autoLoad: true);
+            }
+        }
+        private void ShowDoActionSignals() => SwitchView(AppPage.DoActionSignals, () => new DoActionSignalsViewModel());
         private void ShowInterfaces() => SwitchView(AppPage.Interfaces, () => new InterfacesViewModel());
+        private void ShowDungeoneeringDebug() => SwitchView(AppPage.DungeoneeringDebug, () => new DungeoneeringDebugViewModel());
         private void ShowMiscApi() => SwitchView(AppPage.MiscApi, () => new MiscApiViewModel());
         private void ShowVarbit() => SwitchView(AppPage.Varbit, () => new VarbitViewModel());
         private void ShowApiDocs(string? initialClassName = null)
@@ -191,6 +219,12 @@ namespace MESharp.ViewModels
                 case "Minimap":
                     ShowNavigation();
                     return;
+                case "Webwalking":
+                case "WebwalkingRoutes":
+                case "WebwalkingRoute":
+                case "WebwalkingWaypoint":
+                    ShowWebwalking();
+                    return;
                 case "Inventory":
                 case "ItemContainers":
                 case "ItemContainer":
@@ -222,6 +256,9 @@ namespace MESharp.ViewModels
                 case "ActionOffsets":
                     OpenObjectsType(GameObjectType.Object);
                     return;
+                case "DoActionDebugSignals":
+                    ShowDoActionSignals();
+                    return;
                 case "Npcs":
                     OpenObjectsType(GameObjectType.NPC);
                     return;
@@ -233,6 +270,9 @@ namespace MESharp.ViewModels
                 case "InterfaceOverrides":
                 case "Dialogs":
                     ShowInterfaces();
+                    return;
+                case "Dungeoneering":
+                    ShowDungeoneeringDebug();
                     return;
                 case "Focus":
                     ShowGame();
