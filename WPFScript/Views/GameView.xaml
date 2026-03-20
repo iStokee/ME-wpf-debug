@@ -75,6 +75,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBlock
@@ -164,6 +166,28 @@
                             Grid.Column="1"
                             Style="{StaticResource ValueTextStyle}"
                             Text="{Binding Version}" />
+
+                        <TextBlock
+                            Grid.Row="7"
+                            Grid.Column="0"
+                            Style="{StaticResource LabelTextStyle}"
+                            Text="Current Tick:" />
+                        <TextBlock
+                            Grid.Row="7"
+                            Grid.Column="1"
+                            Style="{StaticResource ValueTextStyle}"
+                            Text="{Binding CurrentTick}" />
+
+                        <TextBlock
+                            Grid.Row="8"
+                            Grid.Column="0"
+                            Style="{StaticResource LabelTextStyle}"
+                            Text="Tick Boundary:" />
+                        <TextBlock
+                            Grid.Row="8"
+                            Grid.Column="1"
+                            Style="{StaticResource ValueTextStyle}"
+                            Text="{Binding TickBoundaryPassed}" />
                     </Grid>
                 </StackPanel>
             </Border>

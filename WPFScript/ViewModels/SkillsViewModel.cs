@@ -24,6 +24,8 @@ namespace MESharp.ViewModels
         private readonly EventHandler _updateTickHandler;
         private bool _isActive;
         private bool _disposed;
+        private bool _autoRefreshEnabled = true;
+        private double _refreshIntervalSeconds = 2;
 
         public ObservableCollection<SkillModel> AllSkills { get; }
         public ICollectionView SkillsView { get; }
@@ -117,6 +119,34 @@ namespace MESharp.ViewModels
             }
         }
 
+        public bool AutoRefreshEnabled
+        {
+            get => _autoRefreshEnabled;
+            set
+            {
+                if (_autoRefreshEnabled == value) return;
+                _autoRefreshEnabled = value;
+                OnPropertyChanged();
+                UpdateTimerState();
+            }
+        }
+
+        public double RefreshIntervalSeconds
+        {
+            get => _refreshIntervalSeconds;
+            set
+            {
+                var clamped = Math.Clamp(value, 1, 10);
+                if (Math.Abs(_refreshIntervalSeconds - clamped) < 0.001) return;
+                _refreshIntervalSeconds = clamped;
+                _updateTimer.Interval = TimeSpan.FromSeconds(_refreshIntervalSeconds);
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(RefreshIntervalDisplay));
+            }
+        }
+
+        public string RefreshIntervalDisplay => $"{_refreshIntervalSeconds:0}s";
+
         public SkillsViewModel()
         {
             _session = new SkillSession();
@@ -139,7 +169,7 @@ namespace MESharp.ViewModels
             _updateTickHandler = OnUpdateTimerTick;
             _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
-                Interval = TimeSpan.FromSeconds(1)
+                Interval = TimeSpan.FromSeconds(_refreshIntervalSeconds)
             };
             _updateTimer.Tick += _updateTickHandler;
         }
@@ -156,7 +186,16 @@ namespace MESharp.ViewModels
                 vm.Update();
             }
 
-            SkillsView.Refresh();
+            if (NeedsDynamicViewRefresh())
+            {
+                SkillsView.Refresh();
+            }
+        }
+
+        private bool NeedsDynamicViewRefresh()
+        {
+            return ShowOnlyActive
+                || _selectedSortOption != "Skill Name";
         }
 
         private void ApplySorting()
@@ -278,11 +317,7 @@ namespace MESharp.ViewModels
             }
 
             _isActive = true;
-            if (!_updateTimer.IsEnabled)
-            {
-                _updateTimer.Start();
-            }
-
+            UpdateTimerState();
             RefreshAll();
         }
 
@@ -294,10 +329,7 @@ namespace MESharp.ViewModels
             }
 
             _isActive = false;
-            if (_updateTimer.IsEnabled)
-            {
-                _updateTimer.Stop();
-            }
+            UpdateTimerState();
         }
 
         public void Dispose()
@@ -314,6 +346,25 @@ namespace MESharp.ViewModels
         }
 
         private void OnUpdateTimerTick(object? sender, EventArgs e) => RefreshAll();
+
+        private void UpdateTimerState()
+        {
+            if (_disposed || !_isActive || !_autoRefreshEnabled)
+            {
+                if (_updateTimer.IsEnabled)
+                {
+                    _updateTimer.Stop();
+                }
+
+                return;
+            }
+
+            _updateTimer.Interval = TimeSpan.FromSeconds(_refreshIntervalSeconds);
+            if (!_updateTimer.IsEnabled)
+            {
+                _updateTimer.Start();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propName = null)

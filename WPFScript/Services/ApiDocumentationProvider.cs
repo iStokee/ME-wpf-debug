@@ -31,6 +31,75 @@ namespace MESharp.Services
 
         private static void InitializeDocumentation()
         {
+            _documentation["Dungeoneering"] = new ApiClassDocumentation
+            {
+                ClassName = "Dungeoneering",
+                Namespace = "MESharp.API",
+                Summary = "Unified dungeoneering helper surface for room signals, party hints, floor inference, and room graph state.",
+                Description = @"The Dungeoneering class is the single entry point for the debug-oriented dungeoneering API. It wraps the lower-level signal classifiers, probe builders, and room-graph store behind one class so scripts and the docs browser do not need to understand the internal helper split.
+
+**Use it for:**
+• Classifying nearby dungeon objects
+• Building room signal snapshots
+• Inferring party and floor context
+• Reading and clearing the current room graph snapshot",
+                Category = "Specialized APIs",
+                RelatedClasses = new List<string> { "Objects", "Players", "Chat", "Skills" },
+                Methods = new List<ApiMethodDoc>
+                {
+                    new ApiMethodDoc
+                    {
+                        Name = "GetRoomSignals",
+                        Summary = "Build a classified snapshot of nearby dungeoneering-relevant room signals.",
+                        ReturnType = "DgRoomSignalsResult",
+                        ReturnDescription = "A snapshot containing origin tile, max distance, and classified room items.",
+                        Signature = "public static DgRoomSignalsResult GetRoomSignals(double maxDistance = 20, int maxCount = 120, bool includeNpcs = true)",
+                        IsStatic = true,
+                        Category = "Signals"
+                    },
+                    new ApiMethodDoc
+                    {
+                        Name = "GetPartyCandidates",
+                        Summary = "Collect nearby player candidates and optional friend-chat members for dungeon party context.",
+                        ReturnType = "DgPartyResult",
+                        ReturnDescription = "A snapshot of nearby player candidates and friend-chat names.",
+                        Signature = "public static DgPartyResult GetPartyCandidates(double maxDistance = 35, int maxCount = 12, bool includeFriendChat = true)",
+                        IsStatic = true,
+                        Category = "Party"
+                    },
+                    new ApiMethodDoc
+                    {
+                        Name = "GetFloorHints",
+                        Summary = "Infer floor and complexity hints from recent chat and nearby dungeon context.",
+                        ReturnType = "DgFloorHintsResult",
+                        ReturnDescription = "A snapshot of inferred floor hints, ring state, and recent relevant messages.",
+                        Signature = "public static DgFloorHintsResult GetFloorHints(int maxMessages = 20)",
+                        IsStatic = true,
+                        Category = "Floor"
+                    },
+                    new ApiMethodDoc
+                    {
+                        Name = "GetRoomGraph",
+                        Summary = "Read the latest published room graph snapshot.",
+                        ReturnType = "DgRoomGraphSnapshot",
+                        ReturnDescription = "The most recent room graph snapshot stored by the dungeoneering graph helpers.",
+                        Signature = "public static DgRoomGraphSnapshot GetRoomGraph()",
+                        IsStatic = true,
+                        Category = "Graph"
+                    },
+                    new ApiMethodDoc
+                    {
+                        Name = "ClearRoomGraph",
+                        Summary = "Reset the stored room graph snapshot back to an empty state.",
+                        ReturnType = "void",
+                        ReturnDescription = "No return value.",
+                        Signature = "public static void ClearRoomGraph()",
+                        IsStatic = true,
+                        Category = "Graph"
+                    }
+                }
+            };
+
             // Inventory Class Documentation
             _documentation["Inventory"] = new ApiClassDocumentation
             {

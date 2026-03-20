@@ -67,6 +67,24 @@
                 <Setter Property="Margin" Value="0,0,0,0" />
             </Style>
 
+            <Style x:Key="SkillLevelBadgeStyle" TargetType="Border">
+                <Setter Property="Width" Value="36" />
+                <Setter Property="Height" Value="36" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Background" Value="{Binding SecondaryBrush, Converter={StaticResource ToOpacityBrush}, ConverterParameter=0.4}" />
+                <Setter Property="CornerRadius" Value="6" />
+            </Style>
+
+            <Style x:Key="SkillLevelBadgeTextStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Consolas" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="TextAlignment" Value="Center" />
+            </Style>
+
             <!--  A compact list card with safer right edge spacing  -->
             <DataTemplate x:Key="ListSkillTemplate">
                 <Border Style="{StaticResource SkillChromeBorderStyle}">
@@ -88,11 +106,8 @@
 
                             <Border
                                 Grid.Column="0"
-                                Padding="6,2"
-                                VerticalAlignment="Center"
-                                Background="{Binding SecondaryBrush, Converter={StaticResource ToOpacityBrush}, ConverterParameter=0.4}"
-                                CornerRadius="4">
-                                <TextBlock Style="{StaticResource SkillTitleTextStyle}" Text="{Binding Level}" />
+                                Style="{StaticResource SkillLevelBadgeStyle}">
+                                <TextBlock Style="{StaticResource SkillLevelBadgeTextStyle}" Text="{Binding Level}" />
                             </Border>
 
                             <TextBlock
@@ -153,11 +168,8 @@
                                     <!--  Level badge  -->
                                     <Border
                                         Grid.Column="0"
-                                        Padding="6,2"
-                                        VerticalAlignment="Center"
-                                        Background="{Binding SecondaryBrush, Converter={StaticResource ToOpacityBrush}, ConverterParameter=0.4}"
-                                        CornerRadius="6">
-                                        <TextBlock Style="{StaticResource SkillTitleTextStyle}" Text="{Binding Level}" />
+                                        Style="{StaticResource SkillLevelBadgeStyle}">
+                                        <TextBlock Style="{StaticResource SkillLevelBadgeTextStyle}" Text="{Binding Level}" />
                                     </Border>
 
                                     <!--  Skill name  -->
@@ -366,6 +378,37 @@
                             Foreground="{DynamicResource App.MutedBrush}"
                             Text="Toggle view mode, filter active skills, and sort by any tracked metric." />
 
+                        <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
+                            <CheckBox
+                                Margin="0,0,12,0"
+                                VerticalAlignment="Center"
+                                Content="Auto Refresh"
+                                IsChecked="{Binding AutoRefreshEnabled, Mode=TwoWay}"
+                                ToolTip="Automatically refresh skill stats on a timer" />
+                            <TextBlock
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="Refresh Rate:" />
+                            <Slider
+                                Width="160"
+                                Minimum="1"
+                                Maximum="10"
+                                TickFrequency="1"
+                                SmallChange="1"
+                                LargeChange="1"
+                                Foreground="{DynamicResource App.ForegroundBrush}"
+                                Background="{DynamicResource App.MutedBrush}"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="{Binding AutoRefreshEnabled}"
+                                Value="{Binding RefreshIntervalSeconds, Mode=TwoWay}" />
+                            <TextBlock
+                                Width="32"
+                                Margin="8,0,12,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding RefreshIntervalDisplay}" />
+                        </WrapPanel>
+
                     <WrapPanel Margin="0,12,0,0" VerticalAlignment="Center">
                         <!--  List View Toggle  -->
                         <ToggleButton
@@ -520,11 +563,8 @@
                                                 <Border
                                                     Grid.Column="1"
                                                     Margin="8,0"
-                                                    Padding="6,2"
-                                                    VerticalAlignment="Center"
-                                                    Background="{Binding SecondaryBrush, Converter={StaticResource ToOpacityBrush}, ConverterParameter=0.35}"
-                                                    CornerRadius="4">
-                                                    <TextBlock FontFamily="Consolas" FontWeight="SemiBold" Text="{Binding Level}" />
+                                                    Style="{StaticResource SkillLevelBadgeStyle}">
+                                                    <TextBlock Style="{StaticResource SkillLevelBadgeTextStyle}" Text="{Binding Level}" />
                                                 </Border>
                                                 <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                                     <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />

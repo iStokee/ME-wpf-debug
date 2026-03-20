@@ -522,19 +522,6 @@
                                 <TextBlock Text="Objects" />
                             </StackPanel>
                         </ToggleButton>
-                        <Button
-                            Margin="5,0,5,0"
-                            Command="{Binding ShowDoActionDebugCommand}"
-                            ToolTip="DoAction debug surface with snippet capture">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial
-                                    Margin="0,0,6,0"
-                                    VerticalAlignment="Center"
-                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                    Kind="Tools" />
-                                <TextBlock Text="DoAction" />
-                            </StackPanel>
-                        </Button>
                         <ToggleButton
                             Margin="5,0,5,0"
                             Command="{Binding ShowDoActionSignalsCommand}"

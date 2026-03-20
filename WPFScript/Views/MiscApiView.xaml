@@ -27,6 +27,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Border
@@ -51,15 +52,113 @@
                         </WrapPanel>
                         <WrapPanel Margin="0,10,0,0">
                             <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding UseAbilityCommand}" Content="Use" />
-                            <Button Padding="10,5" Command="{Binding UseAbilityIfReadyCommand}" Content="Use If Ready" />
+                            <Button Margin="0,0,8,0" Padding="10,5" Command="{Binding UseAbilityIfReadyCommand}" Content="Use If Ready" />
+                            <Button Padding="10,5" Command="{Binding RefreshAbilityStateCommand}" Content="Refresh State" />
                         </WrapPanel>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,8,4" FontWeight="SemiBold" Text="Found" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,16,4" Text="{Binding AbilityFound}" />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Margin="0,0,8,4" FontWeight="SemiBold" Text="Enabled" />
+                            <TextBlock Grid.Row="0" Grid.Column="3" Margin="0,0,0,4" Text="{Binding AbilityEnabledState}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,8,4" FontWeight="SemiBold" Text="Cooldown" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,16,4" Text="{Binding AbilityCooldownTimer}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Margin="0,0,8,4" FontWeight="SemiBold" Text="Id" />
+                            <TextBlock Grid.Row="1" Grid.Column="3" Margin="0,0,0,4" Text="{Binding AbilityResolvedId}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" FontWeight="SemiBold" Text="Slot" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,16,0" Text="{Binding AbilityResolvedSlot}" />
+                            <TextBlock Grid.Row="2" Grid.Column="2" Margin="0,0,8,0" FontWeight="SemiBold" Text="Bar" />
+                            <TextBlock Grid.Row="2" Grid.Column="3" Margin="0,0,0,0" Text="{Binding AbilityResolvedBar}" />
+                        </Grid>
                     </StackPanel>
                 </Border>
 
                 <Border
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Grid.Column="1"
                     Margin="8,0,0,8"
+                    Padding="14"
+                    Background="{DynamicResource App.CardBrush}"
+                    CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Buffs / Debuffs / Ticks" />
+                        <WrapPanel Margin="0,10,0,0">
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Tick" />
+                            <TextBlock Margin="0,0,16,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding CurrentTick}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Boundary" />
+                            <TextBlock Margin="0,0,16,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding TickBoundaryPassed}" />
+                            <Button Padding="10,5" Command="{Binding RefreshBuffsCommand}" Content="Refresh" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,10,0,0">
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Buff Id" />
+                            <TextBox Width="80" Margin="0,0,8,0" Text="{Binding BuffLookupId, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Found" />
+                            <TextBlock Margin="0,0,16,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding BuffFound}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Duration" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding BuffDuration}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Sec" />
+                            <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding BuffDurationSeconds}" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,8,0,0">
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Debuff Id" />
+                            <TextBox Width="80" Margin="0,0,8,0" Text="{Binding DebuffLookupId, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Found" />
+                            <TextBlock Margin="0,0,16,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding DebuffFound}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Duration" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding DebuffDuration}" />
+                            <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Sec" />
+                            <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding DebuffDurationSeconds}" />
+                        </WrapPanel>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Margin="0,0,8,0" Padding="8" Background="{DynamicResource App.BackgroundBrush}" CornerRadius="6">
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="{Binding ActiveBuffCount, StringFormat=Active Buffs ({0})}" />
+                                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" IsReadOnly="True" ItemsSource="{Binding ActiveBuffs}" MaxHeight="220">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="70" />
+                                            <DataGridTextColumn Binding="{Binding Duration}" Header="Dur" Width="70" />
+                                            <DataGridTextColumn Binding="{Binding DurationSeconds}" Header="Sec" Width="70" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Margin="8,0,0,0" Padding="8" Background="{DynamicResource App.BackgroundBrush}" CornerRadius="6">
+                                <StackPanel>
+                                    <TextBlock FontWeight="SemiBold" Text="{Binding ActiveDebuffCount, StringFormat=Active Debuffs ({0})}" />
+                                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" IsReadOnly="True" ItemsSource="{Binding ActiveDebuffs}" MaxHeight="220">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="70" />
+                                            <DataGridTextColumn Binding="{Binding Duration}" Header="Dur" Width="70" />
+                                            <DataGridTextColumn Binding="{Binding DurationSeconds}" Header="Sec" Width="70" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,0,8,8"
                     Padding="14"
                     Background="{DynamicResource App.CardBrush}"
                     CornerRadius="8">
@@ -79,9 +178,9 @@
                 </Border>
 
                 <Border
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="0,0,8,8"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="8,0,0,8"
                     Padding="14"
                     Background="{DynamicResource App.CardBrush}"
                     CornerRadius="8">
@@ -116,9 +215,10 @@
                 </Border>
 
                 <Border
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="8,0,0,8"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0,0,8"
                     Padding="14"
                     Background="{DynamicResource App.CardBrush}"
                     CornerRadius="8">

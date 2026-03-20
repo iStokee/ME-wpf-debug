@@ -74,12 +74,18 @@ namespace MESharp.ViewModels
         private string _version = string.Empty;
         public string Version { get => _version; private set => Set(ref _version, value); }
 
+        private int _currentTick;
+        public int CurrentTick { get => _currentTick; private set => Set(ref _currentTick, value); }
+
+        private bool _tickBoundaryPassed;
+        public bool TickBoundaryPassed { get => _tickBoundaryPassed; private set => Set(ref _tickBoundaryPassed, value); }
+
         public GameViewModel()
         {
             _tickHandler = OnTimerTick;
             _timer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
-                Interval = TimeSpan.FromSeconds(1),
+                Interval = TimeSpan.FromMilliseconds(600),
                 IsEnabled = false
             };
             _timer.Tick += _tickHandler;
@@ -107,6 +113,8 @@ namespace MESharp.ViewModels
                 IsInjected = Game.IsInjected;
                 LocalPlayerName = Game.LocalPlayerName;
                 Version = Game.Version;
+                CurrentTick = Game.CurrentTick;
+                TickBoundaryPassed = Game.CheckTick();
             }
             catch { /* ignore */ }
         }

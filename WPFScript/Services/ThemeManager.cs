@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace MESharp.Services
 {
@@ -30,12 +31,34 @@ namespace MESharp.Services
 
             var app = Application.Current;
             if (app == null) return;
-            if (!app.Dispatcher.CheckAccess())
+
+            var dispatcher = GetUsableDispatcher(app);
+            if (dispatcher == null)
             {
-                app.Dispatcher.Invoke(() => ApplyTheme(settings));
                 return;
             }
 
+            if (!dispatcher.CheckAccess())
+            {
+                _ = dispatcher.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        ApplyThemeCore(app, settings);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Managed] ApplyTheme async failed: {ex.Message}");
+                    }
+                }, DispatcherPriority.Send);
+                return;
+            }
+
+            ApplyThemeCore(app, settings);
+        }
+
+        private static void ApplyThemeCore(Application app, ThemeSettings settings)
+        {
             // 1) Swap base theme dictionary (Light/Dark)
             var merged = app.Resources.MergedDictionaries;
             ResourceDictionary? themeDictionary = null;
@@ -76,7 +99,7 @@ namespace MESharp.Services
                     merged.Insert(themeIndex, themeDictionary);
                 }
 
-                themeDictionary.Source = baseThemeUri;
+                TrySetThemeDictionarySource(merged, themeDictionary, baseThemeUri);
             }
             else
             {
@@ -113,6 +136,53 @@ namespace MESharp.Services
             app.Resources["PrimarySoftBrush"] = primarySoftBrush;
 
             // Custom background overrides removed per UX feedback
+        }
+
+        private static Dispatcher? GetUsableDispatcher(Application app)
+        {
+            try
+            {
+                var appDispatcher = app.Dispatcher;
+                if (appDispatcher != null && !appDispatcher.HasShutdownStarted && !appDispatcher.HasShutdownFinished)
+                {
+                    return appDispatcher;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Managed] App dispatcher unavailable for theme apply: {ex.Message}");
+            }
+
+            var currentDispatcher = Dispatcher.CurrentDispatcher;
+            if (currentDispatcher != null && !currentDispatcher.HasShutdownStarted && !currentDispatcher.HasShutdownFinished)
+            {
+                return currentDispatcher;
+            }
+
+            return null;
+        }
+
+        private static void TrySetThemeDictionarySource(
+            System.Collections.ObjectModel.Collection<ResourceDictionary> merged,
+            ResourceDictionary themeDictionary,
+            Uri baseThemeUri)
+        {
+            try
+            {
+                themeDictionary.Source = baseThemeUri;
+            }
+            catch
+            {
+                var index = merged.IndexOf(themeDictionary);
+                if (index >= 0)
+                {
+                    merged.RemoveAt(index);
+                    merged.Insert(index, new ResourceDictionary { Source = baseThemeUri });
+                    return;
+                }
+
+                merged.Add(new ResourceDictionary { Source = baseThemeUri });
+            }
         }
 
 		public static void SaveSettings(ThemeSettings settings)

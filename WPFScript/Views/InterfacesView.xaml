@@ -59,26 +59,81 @@
                 <Setter Property="Padding" Value="12,6" />
                 <Setter Property="MinWidth" Value="120" />
                 <Setter Property="MinHeight" Value="34" />
+                <Setter Property="Margin" Value="0,0,8,8" />
+            </Style>
+
+            <Style x:Key="InterfaceToolbarButton" BasedOn="{StaticResource InterfacePanelButton}" TargetType="Button">
+                <Setter Property="MinHeight" Value="32" />
+                <Setter Property="Padding" Value="12,5" />
+                <Setter Property="MinWidth" Value="116" />
+                <Setter Property="Margin" Value="0,0,8,0" />
+            </Style>
+
+            <Style x:Key="InterfaceInputTextBox" TargetType="TextBox">
+                <Setter Property="MinHeight" Value="30" />
+                <Setter Property="Padding" Value="8,4" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="InterfaceCheckBoxStyle" TargetType="CheckBox">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,0,12,0" />
+                <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
             </Style>
 
             <Style x:Key="InterfaceTreeItemStyle" TargetType="TreeViewItem">
-                <Setter Property="IsExpanded" Value="False" />
-                <Setter Property="Padding" Value="6,4" />
-                <Setter Property="Margin" Value="2,3" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Setter Property="Padding" Value="5,3" />
+                <Setter Property="Margin" Value="2,4" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
                 <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="MinHeight" Value="28" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
                         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}" />
                         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource App.ForegroundBrush}" />
                     </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="True" />
+                            <Condition Property="IsSelectionActive" Value="False" />
+                        </MultiTrigger.Conditions>
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                    </MultiTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="InterfaceTreeNodeCardStyle" TargetType="Border">
+                <Setter Property="Padding" Value="6,4" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Background" Value="Transparent" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
+                    </DataTrigger>
                 </Style.Triggers>
             </Style>
 
@@ -137,6 +192,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -147,10 +203,12 @@
                 <Button
                     Grid.Row="0"
                     Grid.Column="0"
-                    Margin="0,0,10,8"
-                    Padding="15,5"
                     Command="{Binding LoadInterfacesCommand}"
-                    Style="{StaticResource AccentButton}">
+                    Style="{StaticResource AccentButton}"
+                    MinHeight="32"
+                    MinWidth="128"
+                    Padding="14,5"
+                    Margin="0,0,10,8">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial
                             Margin="0,0,5,0"
@@ -163,9 +221,8 @@
                 <Button
                     Grid.Row="0"
                     Grid.Column="1"
-                    Margin="0,0,10,8"
-                    Padding="15,5"
-                    Command="{Binding ClearCommand}">
+                    Command="{Binding ClearCommand}"
+                    Style="{StaticResource InterfaceToolbarButton}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial
                             Margin="0,0,5,0"
@@ -182,34 +239,28 @@
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
                     <CheckBox
-                        Margin="0,0,15,0"
-                        VerticalAlignment="Center"
                         Content="Freeze"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding FreezeRefresh}" />
                     <CheckBox
-                        Margin="0,0,15,0"
-                        VerticalAlignment="Center"
                         Content="Auto Refresh"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding AutoRefresh}" />
                     <CheckBox
-                        Margin="0,0,15,0"
-                        VerticalAlignment="Center"
                         Content="Include Hidden"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding IncludeHidden}" />
                     <CheckBox
-                        Margin="0,0,15,0"
-                        VerticalAlignment="Center"
                         Content="Text Only"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding TextOnly}" />
                     <CheckBox
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Center"
                         Content="Highlight Selection"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding HighlightSelection}" />
                     <CheckBox
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Center"
                         Content="Keep Highlight"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding KeepHighlight}" />
                     <TextBlock
                         Margin="0,0,6,0"
@@ -217,7 +268,7 @@
                         Text="Highlight ms:" />
                     <TextBox
                         Width="70"
-                        VerticalContentAlignment="Center"
+                        Style="{StaticResource InterfaceInputTextBox}"
                         Text="{Binding HighlightDurationMs, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
@@ -232,17 +283,16 @@
                     <TextBox
                         Width="80"
                         Margin="0,0,10,0"
-                        VerticalContentAlignment="Center"
+                        Style="{StaticResource InterfaceInputTextBox}"
                         Text="{Binding RootIdText, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Center"
                         Content="Focus Root"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding FocusRoot}" />
                     <Button
                         Margin="0,0,12,0"
-                        Padding="10,3"
-                        Command="{Binding UseSelectedRootCommand}">
+                        Command="{Binding UseSelectedRootCommand}"
+                        Style="{StaticResource InterfaceToolbarButton}">
                         <TextBlock Text="Use Selected Root" />
                     </Button>
                     <TextBlock
@@ -250,19 +300,16 @@
                         VerticalAlignment="Center"
                         Text="Index filters:" />
                     <CheckBox
-                        Margin="0,0,6,0"
-                        VerticalAlignment="Center"
                         Content="[1]"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding FilterIndex1}" />
                     <CheckBox
-                        Margin="0,0,6,0"
-                        VerticalAlignment="Center"
                         Content="[2]"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding FilterIndex2}" />
                     <CheckBox
-                        Margin="0,0,6,0"
-                        VerticalAlignment="Center"
                         Content="[3]"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
                         IsChecked="{Binding FilterIndex3}" />
                     <TextBlock
                         Margin="14,0,6,0"
@@ -273,12 +320,12 @@
                     <TextBox
                         Width="260"
                         Margin="0,0,8,0"
-                        VerticalContentAlignment="Center"
+                        Style="{StaticResource InterfaceInputTextBox}"
                         Text="{Binding FindQuery, UpdateSourceTrigger=PropertyChanged}"
                         ToolTip="Search by id tuple (id1:id2:id3), memloc (0x...), path, or text." />
                     <Button
-                        Padding="10,3"
-                        Command="{Binding FindInterfaceCommand}">
+                        Command="{Binding FindInterfaceCommand}"
+                        Style="{StaticResource InterfaceToolbarButton}">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial
                                 Margin="0,0,5,0"
@@ -287,6 +334,84 @@
                             <TextBlock Text="Find Match" />
                         </StackPanel>
                     </Button>
+                    <CheckBox
+                        Content="Filter XY"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
+                        IsChecked="{Binding FilterByPoint}" />
+                    <TextBlock
+                        Margin="0,0,4,0"
+                        VerticalAlignment="Center"
+                        Text="X:" />
+                    <TextBox
+                        Width="70"
+                        Margin="0,0,6,0"
+                        Style="{StaticResource InterfaceInputTextBox}"
+                        Text="{Binding PointXText, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock
+                        Margin="0,0,4,0"
+                        VerticalAlignment="Center"
+                        Text="Y:" />
+                    <TextBox
+                        Width="70"
+                        Margin="0,0,6,0"
+                        Style="{StaticResource InterfaceInputTextBox}"
+                        Text="{Binding PointYText, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock
+                        Margin="0,0,4,0"
+                        VerticalAlignment="Center"
+                        Text="R:" />
+                    <TextBox
+                        Width="46"
+                        Style="{StaticResource InterfaceInputTextBox}"
+                        Text="{Binding PointRadius, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    Margin="0,8,0,0"
+                    Orientation="Horizontal">
+                    <Button
+                        Command="{Binding ExpandAllCommand}"
+                        Style="{StaticResource InterfaceToolbarButton}">
+                        <TextBlock Text="Expand All" />
+                    </Button>
+                    <Button
+                        Margin="0,0,12,0"
+                        Command="{Binding CollapseAllCommand}"
+                        Style="{StaticResource InterfaceToolbarButton}">
+                        <TextBlock Text="Collapse All" />
+                    </Button>
+                    <Button
+                        Margin="0,0,12,0"
+                        Command="{Binding CancelExpandAllCommand}"
+                        Style="{StaticResource InterfaceToolbarButton}">
+                        <TextBlock Text="Cancel Expand" />
+                    </Button>
+                    <CheckBox
+                        Content="Show Known Only"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
+                        IsChecked="{Binding ShowKnownOnly}" />
+                    <CheckBox
+                        Content="Show Diff Only"
+                        Style="{StaticResource InterfaceCheckBoxStyle}"
+                        IsChecked="{Binding ShowDiffOnly}" />
+                    <Button
+                        Margin="0,0,12,0"
+                        Command="{Binding ResetListDiffBaselineCommand}"
+                        Style="{StaticResource InterfaceToolbarButton}">
+                        <TextBlock Text="Reset Diff Baseline" />
+                    </Button>
+                    <TextBlock
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="{Binding ExpandAllStatus}" />
+                    <TextBlock
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                        Text="{Binding DiffStatus}" />
                 </StackPanel>
                 </Grid>
             </Expander>
@@ -341,36 +466,46 @@
                                     Margin="4"
                                     Background="Transparent"
                                     BorderThickness="0"
+                                    VirtualizingStackPanel.IsVirtualizing="True"
+                                    VirtualizingStackPanel.VirtualizationMode="Recycling"
+                                    ScrollViewer.CanContentScroll="True"
                                     ItemContainerStyle="{StaticResource InterfaceTreeItemStyle}"
                                     ItemsSource="{Binding AllInterfaces}"
                                     SelectedItemChanged="OnSelectedInterfaceChanged">
                                     <TreeView.ItemTemplate>
                                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                            <StackPanel Margin="2">
-                                                <TextBlock
-                                                    FontSize="12"
-                                                    FontWeight="SemiBold"
-                                                    Text="{Binding DisplayText}" />
-                                                <TextBlock
-                                                    FontSize="10"
-                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                                    Text="{Binding CoordinatesText}" />
-                                                <TextBlock
-                                                    FontSize="10"
-                                                    Foreground="{DynamicResource PrimaryBrush}"
-                                                    Text="{Binding Text}"
-                                                    TextWrapping="Wrap"
-                                                    Visibility="{Binding HasText, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                                <TextBlock
-                                                    FontSize="10"
-                                                    Foreground="{DynamicResource PrimaryBrush}"
-                                                    Text="{Binding ItemText}"
-                                                    Visibility="{Binding HasItem, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                                <TextBlock
-                                                    FontSize="10"
-                                                    Foreground="{DynamicResource App.SubtleForegroundBrush}"
-                                                    Text="{Binding MemLocText}" />
-                                            </StackPanel>
+                                            <Border Style="{StaticResource InterfaceTreeNodeCardStyle}">
+                                                <StackPanel Margin="1">
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Text="{Binding DisplayText}" />
+                                                    <TextBlock
+                                                        Margin="0,1,0,0"
+                                                        FontSize="10"
+                                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                        Text="{Binding CoordinatesText}" />
+                                                    <TextBlock
+                                                        Margin="0,2,0,0"
+                                                        FontSize="10"
+                                                        Foreground="{DynamicResource PrimaryBrush}"
+                                                        Text="{Binding Text}"
+                                                        TextWrapping="Wrap"
+                                                        Visibility="{Binding HasText, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    <TextBlock
+                                                        Margin="0,1,0,0"
+                                                        FontSize="10"
+                                                        Foreground="{DynamicResource PrimaryBrush}"
+                                                        Text="{Binding ItemText}"
+                                                        Visibility="{Binding HasItem, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    <TextBlock
+                                                        Margin="0,2,0,0"
+                                                        FontSize="10"
+                                                        Foreground="{DynamicResource App.SubtleForegroundBrush}"
+                                                        Text="{Binding KnownLabel}"
+                                                        Visibility="{Binding HasKnownLabel, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                </StackPanel>
+                                            </Border>
                                         </HierarchicalDataTemplate>
                                     </TreeView.ItemTemplate>
                                 </TreeView>
@@ -476,6 +611,7 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
                                         <TextBlock
@@ -505,85 +641,94 @@
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.Id3}" />
-
                                         <TextBlock
                                             Grid.Row="3"
                                             Style="{StaticResource InterfaceKeyLabel}"
-                                            Text="X" />
+                                            Text="Known" />
                                         <TextBlock
                                             Grid.Row="3"
+                                            Grid.Column="1"
+                                            Style="{StaticResource InterfaceValueText}"
+                                            Text="{Binding SelectedInterfaceKnownLabel}" />
+
+                                        <TextBlock
+                                            Grid.Row="4"
+                                            Style="{StaticResource InterfaceKeyLabel}"
+                                            Text="X" />
+                                        <TextBlock
+                                            Grid.Row="4"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.X}" />
                                         <TextBlock
-                                            Grid.Row="4"
+                                            Grid.Row="5"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="Y" />
                                         <TextBlock
-                                            Grid.Row="4"
+                                            Grid.Row="5"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.Y}" />
                                         <TextBlock
-                                            Grid.Row="5"
+                                            Grid.Row="6"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="W" />
                                         <TextBlock
-                                            Grid.Row="5"
+                                            Grid.Row="6"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.Width}" />
                                         <TextBlock
-                                            Grid.Row="6"
+                                            Grid.Row="7"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="H" />
                                         <TextBlock
-                                            Grid.Row="6"
+                                            Grid.Row="7"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.Height}" />
                                         <TextBlock
-                                            Grid.Row="7"
+                                            Grid.Row="8"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="Box X" />
                                         <TextBlock
-                                            Grid.Row="7"
+                                            Grid.Row="8"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.BoxX}" />
                                         <TextBlock
-                                            Grid.Row="8"
+                                            Grid.Row="9"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="Box Y" />
                                         <TextBlock
-                                            Grid.Row="8"
+                                            Grid.Row="9"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.BoxY}" />
                                         <TextBlock
-                                            Grid.Row="9"
+                                            Grid.Row="10"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="Scroll" />
                                         <TextBlock
-                                            Grid.Row="9"
+                                            Grid.Row="10"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.ScrollY}" />
                                         <TextBlock
-                                            Grid.Row="10"
+                                            Grid.Row="11"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="Mem" />
                                         <TextBlock
-                                            Grid.Row="10"
+                                            Grid.Row="11"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.MemLoc, StringFormat=0x{0:X}}" />
                                         <TextBlock
-                                            Grid.Row="11"
+                                            Grid.Row="12"
                                             Style="{StaticResource InterfaceKeyLabel}"
                                             Text="Top" />
                                         <TextBlock
-                                            Grid.Row="11"
+                                            Grid.Row="12"
                                             Grid.Column="1"
                                             Style="{StaticResource InterfaceValueText}"
                                             Text="{Binding SelectedInterface.MemLocTop, StringFormat=0x{0:X}}" />
@@ -922,6 +1067,16 @@
                         FontWeight="SemiBold"
                         Foreground="{DynamicResource PrimaryBrush}"
                         Text="{Binding InterfaceCount, Mode=OneWay}" />
+                    <TextBlock
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="Known:" />
+                    <TextBlock
+                        Margin="6,0,0,0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Text="{Binding KnownInterfaceCount, Mode=OneWay}" />
                 </StackPanel>
 
                 <TextBlock

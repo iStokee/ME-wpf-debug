@@ -24,6 +24,13 @@
             <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
         </Style>
 
+        <Style x:Key="FieldLabelText" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+        </Style>
+
         <Style x:Key="ListPanel" TargetType="ListBox">
             <Setter Property="Background" Value="{DynamicResource App.BackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource App.BorderBrush}" />
@@ -139,6 +146,7 @@
                                     <StackPanel>
                                         <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
                                         <TextBlock Style="{StaticResource HintText}" Text="{Binding Category}" />
+                                        <TextBlock Style="{StaticResource HintText}" Text="{Binding Waypoints.Count, StringFormat=Waypoints: {0}}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -185,8 +193,14 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="150" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Margin="0,0,8,0" Padding="6" Text="{Binding RouteName, UpdateSourceTrigger=PropertyChanged}" ToolTip="Route name/id used by scripts (keep stable after adoption)" />
-                            <TextBox Grid.Column="1" Padding="6" Text="{Binding RouteCategory, UpdateSourceTrigger=PropertyChanged}" ToolTip="Grouping label like core/custom/slayer" />
+                            <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                <TextBlock Style="{StaticResource FieldLabelText}" Text="Route Name" />
+                                <TextBox Padding="6" Text="{Binding RouteName, UpdateSourceTrigger=PropertyChanged}" ToolTip="Route name/id used by scripts (keep stable after adoption)" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Style="{StaticResource FieldLabelText}" Text="Category" />
+                                <TextBox Padding="6" Text="{Binding RouteCategory, UpdateSourceTrigger=PropertyChanged}" ToolTip="Grouping label like core/custom/slayer" />
+                            </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="2" Margin="0,0,0,8">
@@ -194,8 +208,14 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="160" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Margin="0,0,8,0" Padding="6" Text="{Binding RouteDescription, UpdateSourceTrigger=PropertyChanged}" ToolTip="Human-readable description" />
-                            <TextBox Grid.Column="1" Padding="6" Text="{Binding RouteTags, UpdateSourceTrigger=PropertyChanged}" ToolTip="Comma-separated tags for filtering" />
+                            <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                <TextBlock Style="{StaticResource FieldLabelText}" Text="Description" />
+                                <TextBox Padding="6" Text="{Binding RouteDescription, UpdateSourceTrigger=PropertyChanged}" ToolTip="Human-readable description" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Style="{StaticResource FieldLabelText}" Text="Tags" />
+                                <TextBox Padding="6" Text="{Binding RouteTags, UpdateSourceTrigger=PropertyChanged}" ToolTip="Comma-separated tags for filtering" />
+                            </StackPanel>
                         </Grid>
 
                         <ListBox
@@ -216,6 +236,7 @@
 
                         <StackPanel Grid.Row="4" Margin="0,8,0,0">
                             <TextBlock Style="{StaticResource HintText}" Text="Waypoint actions: current/target adds use your configured editor defaults." />
+                            <CheckBox Margin="0,6,0,0" Content="Route Enabled" IsChecked="{Binding RouteEnabled}" />
                             <WrapPanel Margin="0,4,0,0">
                                 <Button Margin="0,0,6,0" Command="{Binding AddCurrentWaypointCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Add Current Tile" />
                                 <Button Margin="0,0,6,0" Command="{Binding AddTargetWaypointCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Add Target Tile" />
@@ -235,10 +256,6 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
@@ -256,53 +273,112 @@
                         </DockPanel>
                         <TextBlock Grid.Row="1" Margin="0,2,0,8" Style="{StaticResource HintText}" Text="Edit selected waypoint, then save route and run current or selected route." />
 
-                        <Grid Grid.Row="2" Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Margin="0,0,6,0" Padding="6" Text="{Binding WaypointX}" ToolTip="Waypoint X" />
-                            <TextBox Grid.Column="1" Margin="0,0,6,0" Padding="6" Text="{Binding WaypointY}" ToolTip="Waypoint Y" />
-                            <TextBox Grid.Column="2" Padding="6" Text="{Binding WaypointZ}" ToolTip="Waypoint Z/plane" />
-                        </Grid>
+                        <StackPanel Grid.Row="2">
+                            <GroupBox Header="Waypoint Position">
+                                <StackPanel Margin="8">
+                                    <TextBlock Style="{StaticResource HintText}" Text="Basic waypoint inputs. Most routes only need coordinates and an optional label." />
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="X" />
+                                            <TextBox Padding="6" Text="{Binding WaypointX}" ToolTip="Waypoint X" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Y" />
+                                            <TextBox Padding="6" Text="{Binding WaypointY}" ToolTip="Waypoint Y" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Z" />
+                                            <TextBox Padding="6" Text="{Binding WaypointZ}" ToolTip="Waypoint Z/plane" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Margin="0,8,0,0">
+                                        <TextBlock Style="{StaticResource FieldLabelText}" Text="Label" />
+                                        <TextBox Padding="6" Text="{Binding WaypointLabel, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional waypoint label" />
+                                    </StackPanel>
+                                    <WrapPanel Margin="0,8,0,0">
+                                        <Button Margin="0,0,6,0" Command="{Binding UseCurrentTileForWaypointCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Use Current Tile" />
+                                        <Button Margin="0,0,6,0" Command="{Binding CopyTargetToWaypointCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Use Target Inputs" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
 
-                        <TextBox Grid.Row="3" Margin="0,0,0,8" Padding="6" Text="{Binding WaypointLabel, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional waypoint label" />
+                            <Expander Margin="0,8,0,0" Header="Advanced Waypoint Settings" IsExpanded="False">
+                                <StackPanel Margin="8">
+                                    <TextBlock Style="{StaticResource HintText}" Text="These settings tune arrival behavior, jitter, and transitions. Leave defaults unless a route needs special handling." />
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Area Radius" />
+                                            <TextBox Padding="6" Text="{Binding WaypointAreaRadius}" ToolTip="Arrival area radius" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Arrival Distance" />
+                                            <TextBox Padding="6" Text="{Binding WaypointArrivalDistance}" ToolTip="Arrival tile distance" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Timeout (ms)" />
+                                            <TextBox Padding="6" Text="{Binding WaypointTimeoutMs}" ToolTip="Waypoint timeout ms" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Jitter Tiles" />
+                                            <TextBox Padding="6" Text="{Binding WaypointJitterTiles}" ToolTip="Click jitter tiles" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Transition Object IDs" />
+                                            <TextBox Padding="6" Text="{Binding WaypointTransitionIds, UpdateSourceTrigger=PropertyChanged}" ToolTip="Transition object IDs (comma-separated)" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <CheckBox Content="Chain while moving" IsChecked="{Binding WaypointChainWhileMoving}" />
+                                    <CheckBox Margin="0,4,0,0" Content="Transition waypoint" IsChecked="{Binding WaypointIsTransition}" />
+                                    <WrapPanel Margin="0,8,0,0">
+                                        <Button Margin="0,0,6,0" Command="{Binding ResetWaypointDefaultsCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Reset Defaults" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Expander>
 
-                        <Grid Grid.Row="4" Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Margin="0,0,6,0" Padding="6" Text="{Binding WaypointAreaRadius}" ToolTip="Arrival area radius" />
-                            <TextBox Grid.Column="1" Margin="0,0,6,0" Padding="6" Text="{Binding WaypointArrivalDistance}" ToolTip="Arrival tile distance" />
-                            <TextBox Grid.Column="2" Padding="6" Text="{Binding WaypointTimeoutMs}" ToolTip="Waypoint timeout ms" />
-                        </Grid>
-
-                        <Grid Grid.Row="5" Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Margin="0,0,6,0" Padding="6" Text="{Binding WaypointJitterTiles}" ToolTip="Click jitter tiles" />
-                            <TextBox Grid.Column="1" Padding="6" Text="{Binding WaypointTransitionIds, UpdateSourceTrigger=PropertyChanged}" ToolTip="Transition object IDs (comma-separated)" />
-                        </Grid>
-
-                        <StackPanel Grid.Row="6">
-                            <CheckBox Content="Chain while moving" IsChecked="{Binding WaypointChainWhileMoving}" />
-                            <CheckBox Margin="0,4,0,0" Content="Transition waypoint" IsChecked="{Binding WaypointIsTransition}" />
-
-                            <Grid Margin="0,8,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Margin="0,0,6,0" Padding="6" Text="{Binding TargetX, UpdateSourceTrigger=PropertyChanged}" ToolTip="Target X for Add Target" />
-                                <TextBox Grid.Column="1" Margin="0,0,6,0" Padding="6" Text="{Binding TargetY, UpdateSourceTrigger=PropertyChanged}" ToolTip="Target Y for Add Target" />
-                                <TextBox Grid.Column="2" Padding="6" Text="{Binding TargetZ, UpdateSourceTrigger=PropertyChanged}" ToolTip="Target Z for Add Target" />
-                            </Grid>
+                            <GroupBox Margin="0,8,0,0" Header="Target Tile Helper">
+                                <StackPanel Margin="8">
+                                    <TextBlock Style="{StaticResource HintText}" Text="Use this helper to prepare a tile for Add Target Tile, or copy it into the waypoint editor." />
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Target X" />
+                                            <TextBox Padding="6" Text="{Binding TargetX, UpdateSourceTrigger=PropertyChanged}" ToolTip="Target X for Add Target" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,6,0">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Target Y" />
+                                            <TextBox Padding="6" Text="{Binding TargetY, UpdateSourceTrigger=PropertyChanged}" ToolTip="Target Y for Add Target" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Style="{StaticResource FieldLabelText}" Text="Target Z" />
+                                            <TextBox Padding="6" Text="{Binding TargetZ, UpdateSourceTrigger=PropertyChanged}" ToolTip="Target Z for Add Target" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <WrapPanel Margin="0,8,0,0">
+                                        <Button Margin="0,0,6,0" Command="{Binding UseCurrentTileAsTargetCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Use Current Tile" />
+                                        <Button Margin="0,0,6,0" Command="{Binding CopyTargetToWaypointCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Copy To Waypoint" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
 
                             <WrapPanel Margin="0,8,0,0">
                                 <Button Margin="0,0,6,0" Command="{Binding ApplyWaypointEditsCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Apply WP Changes" />

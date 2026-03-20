@@ -14,6 +14,7 @@ namespace MESharp.Models
 	public class SkillModel : INotifyPropertyChanged
 	{
 		private readonly SkillSession _session;
+		private readonly SkillName _skillName;
 		public string Name { get; }
 		public string Level { get; private set; }
 		public int LevelValue { get; private set; }
@@ -30,6 +31,7 @@ namespace MESharp.Models
 		public SkillModel(SkillName name, SkillSession session)
 		{
 			Name = name.ToString();
+			_skillName = name;
 			_session = session;
 
 			// Map to your primary and secondary colors
@@ -49,17 +51,16 @@ namespace MESharp.Models
 		/// </summary>
 		public void Update()
 		{
-			var skillEnum = (SkillName)Enum.Parse(typeof(SkillName), Name);
-			var snapshot = Skills.Get(skillEnum);
+			var snapshot = Skills.Get(_skillName);
 
 			Xp = snapshot.Xp;
 			LevelValue = snapshot.CurrentLevel;
 			Level = LevelValue.ToString();
-			XpGained = _session.GetXpGained(skillEnum);
-			XpPerHour = _session.GetXpPerHour(skillEnum);
+			XpGained = _session.GetXpGained(_skillName);
+			XpPerHour = _session.GetXpPerHour(_skillName);
 			XpToNext = Skills.GetXpToNextLevel(snapshot);
 
-			var eta = _session.GetTimeToNextLevel(skillEnum);
+			var eta = _session.GetTimeToNextLevel(_skillName);
 			EtaString = eta == TimeSpan.MaxValue ? "--" : eta.ToString(@"hh\:mm\:ss");
 			EtaMinutes = eta == TimeSpan.MaxValue ? double.MaxValue : eta.TotalMinutes;
 

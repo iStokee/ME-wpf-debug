@@ -147,6 +147,10 @@ namespace MESharp.ViewModels
         public ICommand MoveWaypointDownCommand { get; }
         public ICommand ApplyWaypointEditsCommand { get; }
         public ICommand ClearCurrentRouteCommand { get; }
+        public ICommand UseCurrentTileAsTargetCommand { get; }
+        public ICommand UseCurrentTileForWaypointCommand { get; }
+        public ICommand CopyTargetToWaypointCommand { get; }
+        public ICommand ResetWaypointDefaultsCommand { get; }
 
         public ICommand RunCurrentRouteCommand { get; }
         public ICommand RunSelectedRouteCommand { get; }
@@ -174,6 +178,10 @@ namespace MESharp.ViewModels
             MoveWaypointDownCommand = new RelayCommand(_ => MoveSelectedWaypoint(1), _ => CanMoveSelectedWaypoint(1) && !IsRunning);
             ApplyWaypointEditsCommand = new RelayCommand(_ => ApplyWaypointEdits(), _ => SelectedWaypoint != null && !IsRunning);
             ClearCurrentRouteCommand = new RelayCommand(_ => ClearCurrentRoute(), _ => CurrentRoute.Any() && !IsRunning);
+            UseCurrentTileAsTargetCommand = new RelayCommand(_ => UseCurrentTileAsTarget(), _ => !IsRunning);
+            UseCurrentTileForWaypointCommand = new RelayCommand(_ => UseCurrentTileForWaypoint(), _ => !IsRunning);
+            CopyTargetToWaypointCommand = new RelayCommand(_ => CopyTargetToWaypoint(), _ => !IsRunning);
+            ResetWaypointDefaultsCommand = new RelayCommand(_ => ResetWaypointDefaults(), _ => !IsRunning);
 
             RunCurrentRouteCommand = new RelayCommand(_ => RunCurrentRoute(), _ => CurrentRoute.Any() && !IsRunning);
             RunSelectedRouteCommand = new RelayCommand(_ => RunSelectedRoute(), _ => SelectedRoute != null && !IsRunning);
@@ -682,17 +690,7 @@ namespace MESharp.ViewModels
         {
             if (waypoint == null)
             {
-                WaypointLabel = string.Empty;
-                WaypointX = 0;
-                WaypointY = 0;
-                WaypointZ = 0;
-                WaypointAreaRadius = 1;
-                WaypointArrivalDistance = 2;
-                WaypointTimeoutMs = 9000;
-                WaypointJitterTiles = 1;
-                WaypointChainWhileMoving = true;
-                WaypointIsTransition = false;
-                WaypointTransitionIds = string.Empty;
+                ClearWaypointEditor();
                 return;
             }
 
@@ -707,6 +705,26 @@ namespace MESharp.ViewModels
             WaypointChainWhileMoving = waypoint.ChainWhileMoving;
             WaypointIsTransition = waypoint.IsTransition;
             WaypointTransitionIds = string.Join(",", waypoint.TransitionObjectIds ?? new List<int>());
+        }
+
+        private void ClearWaypointEditor()
+        {
+            WaypointLabel = string.Empty;
+            WaypointX = 0;
+            WaypointY = 0;
+            WaypointZ = 0;
+            ResetWaypointDefaults();
+        }
+
+        private void ResetWaypointDefaults()
+        {
+            WaypointAreaRadius = 1;
+            WaypointArrivalDistance = 2;
+            WaypointTimeoutMs = 9000;
+            WaypointJitterTiles = 1;
+            WaypointChainWhileMoving = true;
+            WaypointIsTransition = false;
+            WaypointTransitionIds = string.Empty;
         }
 
         private void ClearCurrentRoute()
@@ -882,15 +900,73 @@ namespace MESharp.ViewModels
 
         private void UpdateCurrentTile()
         {
-            try
+            if (TryGetCurrentTile(out var x, out var y, out var z))
             {
-                var tile = LocalPlayer.GetTilePosition();
-                CurrentTile = $"{tile.x}, {tile.y}, {tile.z}";
+                CurrentTile = $"{x}, {y}, {z}";
             }
-            catch
+            else
             {
                 CurrentTile = "--";
             }
+        }
+
+        private bool TryGetCurrentTile(out int x, out int y, out int z)
+        {
+            x = y = z = 0;
+            try
+            {
+                var tile = LocalPlayer.GetTilePosition();
+                x = tile.x;
+                y = tile.y;
+                z = tile.z;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void UseCurrentTileAsTarget()
+        {
+            if (!TryGetCurrentTile(out var x, out var y, out var z))
+            {
+                LastStatus = "Failed to read current tile.";
+                return;
+            }
+
+            TargetX = x.ToString();
+            TargetY = y.ToString();
+            TargetZ = z.ToString();
+            LastStatus = "Copied current tile into target inputs.";
+        }
+
+        private void UseCurrentTileForWaypoint()
+        {
+            if (!TryGetCurrentTile(out var x, out var y, out var z))
+            {
+                LastStatus = "Failed to read current tile.";
+                return;
+            }
+
+            WaypointX = x;
+            WaypointY = y;
+            WaypointZ = z;
+            LastStatus = "Copied current tile into waypoint editor.";
+        }
+
+        private void CopyTargetToWaypoint()
+        {
+            if (!TryParseTarget(out var x, out var y, out var z))
+            {
+                LastStatus = "Enter valid target coordinates first.";
+                return;
+            }
+
+            WaypointX = x;
+            WaypointY = y;
+            WaypointZ = z;
+            LastStatus = "Copied target inputs into waypoint editor.";
         }
 
         private bool TryParseTarget(out int x, out int y, out int z)

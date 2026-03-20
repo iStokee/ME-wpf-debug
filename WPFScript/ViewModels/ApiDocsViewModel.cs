@@ -42,6 +42,15 @@ namespace MESharp.ViewModels
             "Varbits"
         };
 
+        private static readonly HashSet<string> HiddenTopLevelApiClasses = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "DBRow",
+            "DungeoneeringSignals",
+            "DungeoneeringProbes",
+            "DungeoneeringRoomGraph",
+            "WebwalkingRoutes"
+        };
+
         public ObservableCollection<ApiClassInfo> ApiClasses { get; private set; }
         public ObservableCollection<ApiSearchResult> SearchResults { get; } = new();
 
@@ -159,7 +168,7 @@ namespace MESharp.ViewModels
                 }
 
                 _allClasses = assembly.GetTypes()
-                    .Where(t => t.IsPublic && t.IsClass && t.Namespace == "MESharp.API")
+                    .Where(IsBrowsableApiType)
                     .OrderBy(t => t.Name)
                     .Select(t =>
                     {
@@ -391,6 +400,7 @@ namespace MESharp.ViewModels
                 "Skills" => "Open Skills",
                 "Players" or "LocalPlayer" => "Open Players",
                 "Traversal" or "Movement" or "LodestoneData" or "Teleports" or "Minimap" => "Open Navigation",
+                "Webwalking" => "Open Navigation",
                 "Inventory" => "Open Items: Inventory",
                 "Bank" => "Open Items: Bank",
                 "Equipment" => "Open Items: Equipment",
@@ -407,9 +417,38 @@ namespace MESharp.ViewModels
                 "Focus" => "Open Game",
                 "ActionOffsets" => "Open Objects",
                 "Abilities" or "ActionButtons" or "DebugDraw" or "Session" or "ScriptHost" => "Open Misc API",
+                "Dungeoneering" => "Open Dungeoneering",
                 "Varbits" => "Open Varbits",
                 _ => null
             };
+        }
+
+        private static bool IsBrowsableApiType(Type type)
+        {
+            if (!type.IsPublic || !type.IsClass || type.Namespace != "MESharp.API")
+            {
+                return false;
+            }
+
+            if (HiddenTopLevelApiClasses.Contains(type.Name))
+            {
+                return false;
+            }
+
+            if (type.Name.StartsWith("Dg", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (type.Name.StartsWith("WebwalkingStored", StringComparison.Ordinal) ||
+                type.Name.StartsWith("WebwalkingRoute", StringComparison.Ordinal) ||
+                string.Equals(type.Name, "WebwalkingWaypoint", StringComparison.Ordinal) ||
+                string.Equals(type.Name, "WebwalkingRunResult", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void OnActivated()

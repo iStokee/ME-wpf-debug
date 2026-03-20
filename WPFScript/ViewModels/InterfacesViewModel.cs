@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using MESharp.Commands;
@@ -18,12 +17,19 @@ namespace MESharp.ViewModels
     {
         public InterfaceComponent Component { get; }
         public ObservableCollection<InterfaceComponentViewModel> Children { get; } = new ObservableCollection<InterfaceComponentViewModel>();
-        public InterfaceComponentViewModel(InterfaceComponent component)
+        private bool _isExpanded;
+
+        public InterfaceComponentViewModel(InterfaceComponent component, string knownLabel = "")
         {
             Component = component;
+            KnownLabel = knownLabel ?? string.Empty;
         }
 
-        public string DisplayText => $"[{Component.Index}] {Component.Id1}:{Component.Id2}:{Component.Id3}";
+        public string KnownLabel { get; }
+        public bool HasKnownLabel => !string.IsNullOrWhiteSpace(KnownLabel);
+        public string DisplayText => HasKnownLabel
+            ? $"[{Component.Index}] {Component.Id1}:{Component.Id2}:{Component.Id3} | {KnownLabel}"
+            : $"[{Component.Index}] {Component.Id1}:{Component.Id2}:{Component.Id3}";
         public string CoordinatesText => $"X:{Component.X} Y:{Component.Y} W:{Component.Width} H:{Component.Height}";
         public string ItemText => Component.ItemId > 0 ? $"Item: {Component.ItemId} x{Component.ItemStack}" : string.Empty;
         public bool HasText => !string.IsNullOrWhiteSpace(Component.TextItem) || !string.IsNullOrWhiteSpace(Component.TextIds);
@@ -50,6 +56,21 @@ namespace MESharp.ViewModels
         }
         public string MemLocText => $"Mem: 0x{Component.MemLoc:X}";
         public string IdPathText => string.IsNullOrWhiteSpace(Component.FullIdPath) ? string.Empty : Component.FullIdPath;
+
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded == value)
+                {
+                    return;
+                }
+
+                _isExpanded = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -78,6 +99,23 @@ namespace MESharp.ViewModels
         private readonly DispatcherTimer _updateTimer;
         private bool _isActive;
         private bool _disposed;
+        private Dictionary<string, string> _knownLabels = new(StringComparer.OrdinalIgnoreCase);
+        private CancellationTokenSource? _expandAllCts;
+        private Dictionary<string, DiffSnapshot> _previousInterfaceSnapshot = new(StringComparer.Ordinal);
+        private string _previousDiffContext = string.Empty;
+
+        private sealed class DiffSnapshot
+        {
+            public bool Visible { get; init; }
+            public bool HasText { get; init; }
+            public bool HasItem { get; init; }
+            public bool Active { get; init; }
+            public int X { get; init; }
+            public int Y { get; init; }
+            public int Width { get; init; }
+            public int Height { get; init; }
+            public int ScrollY { get; init; }
+        }
 
         private bool _autoRefresh;
         public bool AutoRefresh
@@ -147,6 +185,13 @@ namespace MESharp.ViewModels
             set => SetProperty(ref _focusRoot, value);
         }
 
+        private bool _showKnownOnly;
+        public bool ShowKnownOnly
+        {
+            get => _showKnownOnly;
+            set => SetProperty(ref _showKnownOnly, value);
+        }
+
         private string _rootIdText;
         public string RootIdText
         {
@@ -170,6 +215,7 @@ namespace MESharp.ViewModels
 
                 OnPropertyChanged(nameof(SelectedInterface));
                 OnPropertyChanged(nameof(SelectedInterfaceLabel));
+                OnPropertyChanged(nameof(SelectedInterfaceKnownLabel));
                 OnPropertyChanged(nameof(SelectedInterfaceTextItem));
 
                 var changedIdentity = !HasSameIdentity(previous, value);
@@ -194,6 +240,19 @@ namespace MESharp.ViewModels
                 ? "(none selected)"
                 : $"{SelectedInterface.Id1}:{SelectedInterface.Id2}:{SelectedInterface.Id3}";
 
+        public string SelectedInterfaceKnownLabel
+        {
+            get
+            {
+                if (SelectedInterface == null)
+                {
+                    return string.Empty;
+                }
+
+                return TryGetKnownLabel(SelectedInterface, out var label) ? label : string.Empty;
+            }
+        }
+
         public string SelectedInterfaceTextItem => InterfaceTextCleaner.Clean(SelectedInterface?.TextItem);
 
         public ObservableCollection<InterfaceComponentViewModel> AllInterfaces { get; } = new ObservableCollection<InterfaceComponentViewModel>();
@@ -203,6 +262,47 @@ namespace MESharp.ViewModels
         {
             get => _interfaceCount;
             set => SetProperty(ref _interfaceCount, value);
+        }
+
+        private int _knownInterfaceCount;
+        public int KnownInterfaceCount
+        {
+            get => _knownInterfaceCount;
+            set => SetProperty(ref _knownInterfaceCount, value);
+        }
+
+        private bool _isExpandAllRunning;
+        public bool IsExpandAllRunning
+        {
+            get => _isExpandAllRunning;
+            set
+            {
+                if (SetProperty(ref _isExpandAllRunning, value))
+                {
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
+        }
+
+        private string _expandAllStatus = "Idle";
+        public string ExpandAllStatus
+        {
+            get => _expandAllStatus;
+            set => SetProperty(ref _expandAllStatus, value);
+        }
+
+        private bool _showDiffOnly;
+        public bool ShowDiffOnly
+        {
+            get => _showDiffOnly;
+            set => SetProperty(ref _showDiffOnly, value);
+        }
+
+        private string _diffStatus = "Diff: baseline not set.";
+        public string DiffStatus
+        {
+            get => _diffStatus;
+            set => SetProperty(ref _diffStatus, value);
         }
 
         private string _statusMessage;
@@ -258,6 +358,34 @@ namespace MESharp.ViewModels
             }
         }
 
+        private bool _filterByPoint;
+        public bool FilterByPoint
+        {
+            get => _filterByPoint;
+            set => SetProperty(ref _filterByPoint, value);
+        }
+
+        private string _pointXText = string.Empty;
+        public string PointXText
+        {
+            get => _pointXText;
+            set => SetProperty(ref _pointXText, value);
+        }
+
+        private string _pointYText = string.Empty;
+        public string PointYText
+        {
+            get => _pointYText;
+            set => SetProperty(ref _pointYText, value);
+        }
+
+        private int _pointRadius = 2;
+        public int PointRadius
+        {
+            get => _pointRadius;
+            set => SetProperty(ref _pointRadius, value);
+        }
+
         private string _newOverrideKey;
         public string NewOverrideKey
         {
@@ -297,6 +425,10 @@ namespace MESharp.ViewModels
         public ICommand DialogSelectCommand { get; }
         public ICommand DialogContinueCommand { get; }
         public ICommand FindInterfaceCommand { get; }
+        public ICommand ExpandAllCommand { get; }
+        public ICommand CollapseAllCommand { get; }
+        public ICommand CancelExpandAllCommand { get; }
+        public ICommand ResetListDiffBaselineCommand { get; }
 
         public InterfacesViewModel()
         {
@@ -305,9 +437,12 @@ namespace MESharp.ViewModels
             {
                 AllInterfaces.Clear();
                 InterfaceCount = 0;
+                KnownInterfaceCount = 0;
                 SelectedInterface = null;
+                ResetListDiffBaseline();
                 StatusMessage = "Cleared.";
                 OnPropertyChanged(nameof(HasInterfaces));
+                CommandManager.InvalidateRequerySuggested();
             });
             UseSelectedRootCommand = new RelayCommand(_ => UseSelectedRoot());
             RefreshSelectedCommand = new RelayCommand(_ => RefreshSelected(), _ => SelectedInterface != null);
@@ -321,6 +456,10 @@ namespace MESharp.ViewModels
             DialogSelectCommand = new RelayCommand(_ => RunDialog(() => Dialogs.SelectOption(DialogOptionText), "Dialogs.SelectOption"));
             DialogContinueCommand = new RelayCommand(_ => RunDialog(Dialogs.Continue, "Dialogs.Continue"));
             FindInterfaceCommand = new RelayCommand(_ => FindInterface(), _ => !string.IsNullOrWhiteSpace(FindQuery));
+            ExpandAllCommand = new RelayCommand(_ => StartExpandAll(), _ => HasInterfaces && !IsExpandAllRunning);
+            CollapseAllCommand = new RelayCommand(_ => CollapseAllFast(), _ => HasInterfaces);
+            CancelExpandAllCommand = new RelayCommand(_ => CancelExpandAll(), _ => IsExpandAllRunning);
+            ResetListDiffBaselineCommand = new RelayCommand(_ => ResetListDiffBaseline());
 
             _updateTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher.CurrentDispatcher)
             {
@@ -331,6 +470,7 @@ namespace MESharp.ViewModels
             StatusMessage = "Click Load Interfaces to scan the game UI.";
             OverridesPath = Path.GetFullPath(InterfaceOverrides.ResolveDefaultPath());
             LoadOverrides();
+            RefreshKnownLabels();
         }
 
         private void LoadInterfaces()
@@ -339,6 +479,7 @@ namespace MESharp.ViewModels
             {
                 var previousSelection = SelectedInterface;
                 AllInterfaces.Clear();
+                RefreshKnownLabels();
 
                 int rootId = -1;
                 bool getOnlyTarget = false;
@@ -352,9 +493,11 @@ namespace MESharp.ViewModels
                 if (components.Count == 0)
                 {
                     InterfaceCount = 0;
+                    KnownInterfaceCount = 0;
                     SelectedInterface = null;
                     StatusMessage = "No interfaces found.";
                     OnPropertyChanged(nameof(HasInterfaces));
+                    CommandManager.InvalidateRequerySuggested();
                     return;
                 }
 
@@ -369,38 +512,89 @@ namespace MESharp.ViewModels
                 if (components.Count == 0)
                 {
                     InterfaceCount = 0;
+                    KnownInterfaceCount = 0;
                     SelectedInterface = null;
                     StatusMessage = "No interfaces matched the current filters.";
                     OnPropertyChanged(nameof(HasInterfaces));
+                    CommandManager.InvalidateRequerySuggested();
                     return;
+                }
+
+                if (ShowKnownOnly)
+                {
+                    components = components.Where(c => TryGetKnownLabel(c, out _)).ToList();
+                }
+
+                if (FilterByPoint && int.TryParse(PointXText, out var px) && int.TryParse(PointYText, out var py))
+                {
+                    var radius = Math.Max(0, PointRadius);
+                    components = components.Where(c => IsPointInside(c, px, py, radius)).ToList();
+                }
+
+                if (components.Count == 0)
+                {
+                    InterfaceCount = 0;
+                    KnownInterfaceCount = 0;
+                    SelectedInterface = null;
+                    StatusMessage = "No interfaces matched known-label filtering.";
+                    OnPropertyChanged(nameof(HasInterfaces));
+                    CommandManager.InvalidateRequerySuggested();
+                    return;
+                }
+
+                var diffContext = BuildDiffContextKey(rootId, getOnlyTarget);
+                if (!string.Equals(_previousDiffContext, diffContext, StringComparison.Ordinal))
+                {
+                    _previousDiffContext = diffContext;
+                    _previousInterfaceSnapshot = BuildDiffSnapshot(components);
+                    DiffStatus = "Diff baseline reset (context changed).";
+                }
+
+                var currentSnapshot = BuildDiffSnapshot(components);
+                var addedKeys = currentSnapshot.Keys.Except(_previousInterfaceSnapshot.Keys).ToHashSet(StringComparer.Ordinal);
+                var removedCount = _previousInterfaceSnapshot.Keys.Except(currentSnapshot.Keys).Count();
+                var changedKeys = currentSnapshot.Keys
+                    .Where(_previousInterfaceSnapshot.ContainsKey)
+                    .Where(key => !DiffSnapshotEquals(currentSnapshot[key], _previousInterfaceSnapshot[key]))
+                    .ToHashSet(StringComparer.Ordinal);
+
+                if (ShowDiffOnly)
+                {
+                    var keysToShow = addedKeys.Union(changedKeys).ToHashSet(StringComparer.Ordinal);
+                    components = components
+                        .Where(c => keysToShow.Contains(GetDiffKey(c)))
+                        .ToList();
                 }
 
                 var rootNodes = new List<InterfaceComponentViewModel>();
                 var parentStack = new Stack<InterfaceComponentViewModel>();
 
-                var firstNode = new InterfaceComponentViewModel(components[0]);
-                rootNodes.Add(firstNode);
-                parentStack.Push(firstNode);
-
-                for (int i = 1; i < components.Count; i++)
+                if (components.Count > 0)
                 {
-                    var component = components[i];
-                    var viewModel = new InterfaceComponentViewModel(component);
+                    var firstNode = new InterfaceComponentViewModel(components[0], ResolveKnownLabel(components[0]));
+                    rootNodes.Add(firstNode);
+                    parentStack.Push(firstNode);
 
-                    while (parentStack.Count > 0 && parentStack.Peek().Component.Index >= component.Index)
+                    for (int i = 1; i < components.Count; i++)
                     {
-                        parentStack.Pop();
-                    }
+                        var component = components[i];
+                        var viewModel = new InterfaceComponentViewModel(component, ResolveKnownLabel(component));
 
-                    if (parentStack.Count > 0)
-                    {
-                        parentStack.Peek().Children.Add(viewModel);
+                        while (parentStack.Count > 0 && parentStack.Peek().Component.Index >= component.Index)
+                        {
+                            parentStack.Pop();
+                        }
+
+                        if (parentStack.Count > 0)
+                        {
+                            parentStack.Peek().Children.Add(viewModel);
+                        }
+                        else
+                        {
+                            rootNodes.Add(viewModel);
+                        }
+                        parentStack.Push(viewModel);
                     }
-                    else
-                    {
-                        rootNodes.Add(viewModel);
-                    }
-                    parentStack.Push(viewModel);
                 }
 
                 foreach(var root in rootNodes)
@@ -409,17 +603,24 @@ namespace MESharp.ViewModels
                 }
 
                 InterfaceCount = components.Count;
-                StatusMessage = $"Loaded {InterfaceCount} interface(s).";
+                KnownInterfaceCount = components.Count(c => TryGetKnownLabel(c, out _));
+                DiffStatus = $"Diff: +{addedKeys.Count} ~{changedKeys.Count} -{removedCount}";
+                StatusMessage = ShowDiffOnly
+                    ? $"Loaded {InterfaceCount} diff interface(s) | Known labels: {KnownInterfaceCount}."
+                    : $"Loaded {InterfaceCount} interface(s) | Known labels: {KnownInterfaceCount}.";
                 OnPropertyChanged(nameof(HasInterfaces));
+                CommandManager.InvalidateRequerySuggested();
 
                 var restored = FindBestSelectionMatch(previousSelection, components);
                 SelectedInterface = restored;
+                _previousInterfaceSnapshot = currentSnapshot;
             }
             catch (Exception ex)
             {
                 SelectedInterface = null;
                 StatusMessage = $"Error: {ex.Message}";
                 OnPropertyChanged(nameof(HasInterfaces));
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -603,6 +804,218 @@ namespace MESharp.ViewModels
             }
         }
 
+        private IEnumerable<InterfaceComponentViewModel> EnumerateNodes(IEnumerable<InterfaceComponentViewModel> roots)
+        {
+            if (roots == null)
+            {
+                yield break;
+            }
+
+            var stack = new Stack<InterfaceComponentViewModel>(roots.Reverse());
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                if (current == null)
+                {
+                    continue;
+                }
+
+                yield return current;
+
+                if (current.Children == null || current.Children.Count == 0)
+                {
+                    continue;
+                }
+
+                for (int i = current.Children.Count - 1; i >= 0; i--)
+                {
+                    stack.Push(current.Children[i]);
+                }
+            }
+        }
+
+        private void SetTreeExpansion(bool expanded)
+        {
+            foreach (var node in EnumerateNodes(AllInterfaces))
+            {
+                node.IsExpanded = expanded;
+            }
+        }
+
+        private void CollapseAllFast()
+        {
+            CancelExpandAll();
+            foreach (var root in AllInterfaces)
+            {
+                root.IsExpanded = false;
+            }
+
+            ExpandAllStatus = "Collapsed root nodes.";
+        }
+
+        private void StartExpandAll()
+        {
+            _ = ExpandAllProgressiveAsync();
+        }
+
+        private void CancelExpandAll()
+        {
+            _expandAllCts?.Cancel();
+        }
+
+        private void ResetListDiffBaseline()
+        {
+            _previousInterfaceSnapshot.Clear();
+            _previousDiffContext = string.Empty;
+            DiffStatus = "Diff baseline cleared.";
+        }
+
+        private async Task ExpandAllProgressiveAsync()
+        {
+            if (IsExpandAllRunning)
+            {
+                return;
+            }
+
+            IsExpandAllRunning = true;
+            _expandAllCts?.Cancel();
+            _expandAllCts?.Dispose();
+            _expandAllCts = new CancellationTokenSource();
+            var token = _expandAllCts.Token;
+
+            try
+            {
+                var total = EnumerateNodes(AllInterfaces).Count();
+                if (total == 0)
+                {
+                    ExpandAllStatus = "No interfaces to expand.";
+                    return;
+                }
+
+                int batchSize = total > 8000 ? 24 : total > 3000 ? 48 : 96;
+                int delayMs = total > 8000 ? 10 : total > 3000 ? 4 : 1;
+
+                ExpandAllStatus = $"Expanding {total} nodes (throttled)...";
+
+                var queue = new Queue<InterfaceComponentViewModel>(AllInterfaces);
+                int processed = 0;
+                while (queue.Count > 0)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    var node = queue.Dequeue();
+                    if (node != null && !node.IsExpanded)
+                    {
+                        node.IsExpanded = true;
+                    }
+
+                    if (node?.Children != null)
+                    {
+                        foreach (var child in node.Children)
+                        {
+                            queue.Enqueue(child);
+                        }
+                    }
+
+                    processed++;
+                    if (processed % batchSize == 0)
+                    {
+                        ExpandAllStatus = $"Expanding... {processed}/{total}";
+                        await Dispatcher.Yield(DispatcherPriority.Background);
+                        await Task.Delay(delayMs, token);
+                    }
+                }
+
+                ExpandAllStatus = $"Expand complete ({total} nodes).";
+            }
+            catch (OperationCanceledException)
+            {
+                ExpandAllStatus = "Expand cancelled.";
+            }
+            catch (Exception ex)
+            {
+                ExpandAllStatus = $"Expand failed: {ex.Message}";
+            }
+            finally
+            {
+                IsExpandAllRunning = false;
+            }
+        }
+
+        private string BuildDiffContextKey(int rootId, bool getOnlyTarget)
+        {
+            return string.Join("|",
+                $"root={rootId}",
+                $"target={getOnlyTarget}",
+                $"hidden={IncludeHidden}",
+                $"textOnly={TextOnly}",
+                $"f1={FilterIndex1}",
+                $"f2={FilterIndex2}",
+                $"f3={FilterIndex3}",
+                $"knownOnly={ShowKnownOnly}");
+        }
+
+        private static string GetDiffKey(InterfaceComponent c)
+        {
+            return $"{c.Id1}:{c.Id2}:{c.Id3}:{c.Index}";
+        }
+
+        private static Dictionary<string, DiffSnapshot> BuildDiffSnapshot(IEnumerable<InterfaceComponent> components)
+        {
+            var map = new Dictionary<string, DiffSnapshot>(StringComparer.Ordinal);
+            foreach (var c in components)
+            {
+                map[GetDiffKey(c)] = new DiffSnapshot
+                {
+                    Visible = !c.IsNotVisible,
+                    HasText = !string.IsNullOrWhiteSpace(c.TextIds) || !string.IsNullOrWhiteSpace(c.TextItem),
+                    HasItem = c.ItemId > 0 || c.ItemId2 > 0 || c.ItemStack > 0,
+                    Active = c.Op != 0 || c.IsHovered,
+                    X = c.X,
+                    Y = c.Y,
+                    Width = c.Width,
+                    Height = c.Height,
+                    ScrollY = c.ScrollY
+                };
+            }
+
+            return map;
+        }
+
+        private static bool DiffSnapshotEquals(DiffSnapshot a, DiffSnapshot b)
+        {
+            return a.Visible == b.Visible &&
+                   a.HasText == b.HasText &&
+                   a.HasItem == b.HasItem &&
+                   a.Active == b.Active &&
+                   a.X == b.X &&
+                   a.Y == b.Y &&
+                   a.Width == b.Width &&
+                   a.Height == b.Height &&
+                   a.ScrollY == b.ScrollY;
+        }
+
+        private void RefreshKnownLabels()
+        {
+            _knownLabels = InterfaceKnownLabels.BuildLabelMap(InterfaceOverrides.Entries);
+        }
+
+        private bool TryGetKnownLabel(InterfaceComponent component, out string label)
+        {
+            label = string.Empty;
+            if (component == null || _knownLabels == null || _knownLabels.Count == 0)
+            {
+                return false;
+            }
+
+            return InterfaceKnownLabels.TryGetLabel(component.Id1, component.Id2, component.Id3, _knownLabels, out label);
+        }
+
+        private string ResolveKnownLabel(InterfaceComponent component)
+        {
+            return TryGetKnownLabel(component, out var label) ? label : string.Empty;
+        }
+
         private static InterfaceComponent? FindExactIdTuple(string query, IReadOnlyList<InterfaceComponent> all)
         {
             var normalized = query.Replace(' ', ':').Replace(',', ':');
@@ -662,6 +1075,15 @@ namespace MESharp.ViewModels
             return ulong.TryParse(trimmed, out value);
         }
 
+        private static bool IsPointInside(InterfaceComponent c, int x, int y, int radius)
+        {
+            var left = c.X - radius;
+            var top = c.Y - radius;
+            var right = c.X + c.Width + radius;
+            var bottom = c.Y + c.Height + radius;
+            return x >= left && x <= right && y >= top && y <= bottom;
+        }
+
         private void CaptureOverride()
         {
             if (SelectedInterface == null)
@@ -685,6 +1107,8 @@ namespace MESharp.ViewModels
             }
 
             Overrides.Add(entry);
+            RefreshKnownLabels();
+            OnPropertyChanged(nameof(SelectedInterfaceKnownLabel));
             StatusMessage = $"Captured {entry.Display}.";
         }
 
@@ -694,6 +1118,8 @@ namespace MESharp.ViewModels
                 return;
 
             Overrides.Remove(entry);
+            RefreshKnownLabels();
+            OnPropertyChanged(nameof(SelectedInterfaceKnownLabel));
             StatusMessage = $"Removed {entry.Key}.";
         }
 
@@ -718,6 +1144,9 @@ namespace MESharp.ViewModels
             {
                 Overrides.Add(new InterfaceOverrideEntry(kvp.Key, kvp.Value));
             }
+
+            RefreshKnownLabels();
+            OnPropertyChanged(nameof(SelectedInterfaceKnownLabel));
 
             if (loaded)
             {
