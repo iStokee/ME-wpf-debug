@@ -197,6 +197,8 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock
@@ -237,6 +239,30 @@
                                         Foreground="{DynamicResource PrimaryBrush}"
                                         Maximum="100"
                                         Value="{Binding HoverProgress}" />
+
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Aggro NPC:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsBeingTargetedByNpc, Converter={StaticResource BoolToStringConverter}}" />
+
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Style="{StaticResource LabelTextStyle}"
+                                        Text="Aggro Player:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Style="{StaticResource ValueTextStyle}"
+                                        Text="{Binding IsBeingTargetedByPlayer, Converter={StaticResource BoolToStringConverter}}" />
                                 </Grid>
                             </StackPanel>
                         </Border>

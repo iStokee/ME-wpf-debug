@@ -848,7 +848,10 @@ namespace MESharp.ViewModels
             if (waypoint.TransitionObjectIds?.Count > 0)
             {
                 var candidate = Objects.GetAll()
-                    .Where(o => (o.Type == (int)Objects.ObjectKind.Object || o.Type == (int)Objects.ObjectKind.Object12)
+                    .Where(o => (o.Type == (int)Objects.ObjectKind.Object ||
+                                 o.Type == (int)Objects.ObjectKind.Object12 ||
+                                 o.Type == (int)Objects.ObjectKind.Object13 ||
+                                 o.Type == (int)Objects.ObjectKind.Object17)
                                 && waypoint.TransitionObjectIds.Contains(o.Id)
                                 && o.Distance <= 12)
                     .OrderBy(o => o.Distance)

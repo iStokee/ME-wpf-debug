@@ -36,6 +36,7 @@ namespace MESharp.Views
             if (_viewModel != null)
             {
                 _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+                _viewModel = null;
             }
         }
 

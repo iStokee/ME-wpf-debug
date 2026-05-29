@@ -181,6 +181,11 @@
                                 Header="ID"
                                 SortMemberPath="Id" />
                             <DataGridTextColumn
+                                Width="90"
+                                Binding="{Binding UniqueId}"
+                                Header="Unique"
+                                SortMemberPath="UniqueId" />
+                            <DataGridTextColumn
                                 Width="*"
                                 MinWidth="200"
                                 Binding="{Binding Name}"
@@ -206,6 +211,11 @@
                                 Binding="{Binding Life}"
                                 Header="Life"
                                 SortMemberPath="Life" />
+                            <DataGridTextColumn
+                                Width="90"
+                                Binding="{Binding Amount}"
+                                Header="Amount"
+                                SortMemberPath="Amount" />
                             <DataGridTextColumn
                                 Width="80"
                                 Binding="{Binding CombatLevel}"
@@ -236,6 +246,16 @@
                                 Binding="{Binding Animation}"
                                 Header="Anim"
                                 SortMemberPath="Animation" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding HeadX}"
+                                Header="Head X"
+                                SortMemberPath="HeadX" />
+                            <DataGridTextColumn
+                                Width="80"
+                                Binding="{Binding HeadY}"
+                                Header="Head Y"
+                                SortMemberPath="HeadY" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -349,6 +369,70 @@
                     Margin="10"
                     behaviors:PanelLayoutBehavior.PageKey="objects-unified-view"
                     behaviors:PanelLayoutBehavior.ColumnKey="right">
+                    <Border
+                        Margin="0,0,0,10"
+                        Padding="10"
+                        Background="{DynamicResource App.BackgroundBrush}"
+                        CornerRadius="5"
+                        behaviors:PanelLayoutBehavior.PanelKey="selection-diagnostics"
+                        behaviors:PanelLayoutBehavior.IsHeightResizable="False"
+                        Visibility="{Binding HasSelectedObject, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Expander Header="Selection Diagnostics" IsExpanded="True">
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Name:" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedObject.Name}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Unique:" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedObject.UniqueId}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Address:" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedObject.Address}" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Calc:" />
+                                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedObject.CalcX}" />
+                                    <TextBlock Margin="4,0,4,0" Text="," />
+                                    <TextBlock Text="{Binding SelectedObject.CalcY}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Head:" />
+                                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedObject.HeadX}" />
+                                    <TextBlock Margin="4,0,4,0" Text="," />
+                                    <TextBlock Text="{Binding SelectedObject.HeadY}" />
+                                    <TextBlock Margin="4,0,4,0" Text="," />
+                                    <TextBlock Text="{Binding SelectedObject.HeadZ}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="5" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Item Data:" />
+                                <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedObject.Amount, StringFormat=Amount {0}}" />
+                                    <TextBlock Margin="8,0,0,0" Text="{Binding SelectedObject.ItemIndex, StringFormat=Index {0}}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="6" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Tile Checks:" />
+                                <StackPanel Grid.Row="6" Grid.Column="1">
+                                    <TextBlock Text="{Binding SelectedTileHasObjects, StringFormat=Objects at tile: {0}}" />
+                                    <TextBlock Text="{Binding SelectedTileHasAnyGroundItems, StringFormat=Any ground items: {0}}" />
+                                    <TextBlock Text="{Binding SelectedTileHasMatchingGroundItem, StringFormat=Matching ground item: {0}}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="7" Grid.Column="0" Margin="0,0,10,4" FontWeight="SemiBold" Text="Projectile:" />
+                                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding SelectedProjectileDestination}" />
+                                <TextBlock Grid.Row="8" Grid.Column="0" Margin="0,0,10,0" FontWeight="SemiBold" Text="Action:" />
+                                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding SelectedObject.Action}" TextWrapping="Wrap" />
+                            </Grid>
+                        </Expander>
+                    </Border>
                     <Border
                         Margin="0,0,0,10"
                         Padding="10"

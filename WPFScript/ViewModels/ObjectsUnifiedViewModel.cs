@@ -36,6 +36,8 @@ namespace MESharp.ViewModels
 			GameObjectType.Projectile => "Projectiles",
 			GameObjectType.Tile => "Tiles",
 			GameObjectType.Object12 => "Objects (12)",
+			GameObjectType.Object13 => "Objects (13)",
+			GameObjectType.Object17 => "Objects (17)",
 			_ => Type.ToString()
 		};
 
@@ -80,7 +82,9 @@ namespace MESharp.ViewModels
 		Highlight,
 		Projectile,
 		Tile,
-		Object12
+		Object12,
+		Object13,
+		Object17
 	}
 
 	public class ObjectsUnifiedViewModel : INotifyPropertyChanged, IActivatableViewModel, IDisposable
@@ -124,7 +128,46 @@ namespace MESharp.ViewModels
 		public Objects.GameObject SelectedObject
 		{
 			get => _selectedObject;
-			set => SetProperty(ref _selectedObject, value);
+			set
+			{
+				if (SetProperty(ref _selectedObject, value))
+				{
+					OnPropertyChanged(nameof(HasSelectedObject));
+					OnPropertyChanged(nameof(HasSelectedProjectile));
+					RefreshSelectedObjectDiagnostics();
+				}
+			}
+		}
+
+		public bool HasSelectedObject => SelectedObject != null;
+		public bool HasSelectedProjectile => SelectedObject?.IsProjectile == true;
+
+		private bool _selectedTileHasObjects;
+		public bool SelectedTileHasObjects
+		{
+			get => _selectedTileHasObjects;
+			set => SetProperty(ref _selectedTileHasObjects, value);
+		}
+
+		private bool _selectedTileHasAnyGroundItems;
+		public bool SelectedTileHasAnyGroundItems
+		{
+			get => _selectedTileHasAnyGroundItems;
+			set => SetProperty(ref _selectedTileHasAnyGroundItems, value);
+		}
+
+		private bool _selectedTileHasMatchingGroundItem;
+		public bool SelectedTileHasMatchingGroundItem
+		{
+			get => _selectedTileHasMatchingGroundItem;
+			set => SetProperty(ref _selectedTileHasMatchingGroundItem, value);
+		}
+
+		private string _selectedProjectileDestination = string.Empty;
+		public string SelectedProjectileDestination
+		{
+			get => _selectedProjectileDestination;
+			set => SetProperty(ref _selectedProjectileDestination, value);
 		}
 
 		public ObservableCollection<ActionOffsetOption> OffsetOptions { get; } = new ObservableCollection<ActionOffsetOption>();
@@ -299,7 +342,9 @@ namespace MESharp.ViewModels
 				new GameObjectTypeOption(GameObjectType.Highlight),
 				new GameObjectTypeOption(GameObjectType.Projectile),
 				new GameObjectTypeOption(GameObjectType.Tile),
-				new GameObjectTypeOption(GameObjectType.Object12)
+				new GameObjectTypeOption(GameObjectType.Object12),
+				new GameObjectTypeOption(GameObjectType.Object13),
+				new GameObjectTypeOption(GameObjectType.Object17)
 			};
 
 			foreach (var option in ObjectTypeOptions)
@@ -362,7 +407,8 @@ namespace MESharp.ViewModels
 			{
 				var activeTypes = GetActiveTypes();
 				IsNpcSelected = activeTypes.Contains(GameObjectType.NPC);
-				IsObjectsSelected = activeTypes.Contains(GameObjectType.Object) || activeTypes.Contains(GameObjectType.Object12);
+				IsObjectsSelected = activeTypes.Contains(GameObjectType.Object) || activeTypes.Contains(GameObjectType.Object12) ||
+					activeTypes.Contains(GameObjectType.Object13) || activeTypes.Contains(GameObjectType.Object17);
 				IsGroundItemSelected = activeTypes.Contains(GameObjectType.GroundItem);
 				RefreshOffsetOptions();
 			}
@@ -432,6 +478,7 @@ namespace MESharp.ViewModels
 				categories.Add(ActionOffsets.OffsetCategory.Player);
 
 			if (activeTypes.Contains(GameObjectType.Object) || activeTypes.Contains(GameObjectType.Object12) ||
+				activeTypes.Contains(GameObjectType.Object13) || activeTypes.Contains(GameObjectType.Object17) ||
 				activeTypes.Contains(GameObjectType.GroundItem) || activeTypes.Contains(GameObjectType.Highlight) ||
 				activeTypes.Contains(GameObjectType.Projectile))
 			{
@@ -440,7 +487,8 @@ namespace MESharp.ViewModels
 			}
 
 			if (activeTypes.Contains(GameObjectType.Tile) || activeTypes.Contains(GameObjectType.Object) ||
-				activeTypes.Contains(GameObjectType.Object12) || activeTypes.Contains(GameObjectType.NPC) ||
+				activeTypes.Contains(GameObjectType.Object12) || activeTypes.Contains(GameObjectType.Object13) ||
+				activeTypes.Contains(GameObjectType.Object17) || activeTypes.Contains(GameObjectType.NPC) ||
 				activeTypes.Contains(GameObjectType.Player))
 			{
 				categories.Add(ActionOffsets.OffsetCategory.Movement);
@@ -472,6 +520,8 @@ namespace MESharp.ViewModels
 			GameObjectType.Projectile => obj.Type == (int)Objects.ObjectKind.Projectile,
 			GameObjectType.Tile => obj.Type == (int)Objects.ObjectKind.Tile,
 			GameObjectType.Object12 => obj.Type == (int)Objects.ObjectKind.Object12,
+			GameObjectType.Object13 => obj.Type == (int)Objects.ObjectKind.Object13,
+			GameObjectType.Object17 => obj.Type == (int)Objects.ObjectKind.Object17,
 			_ => true
 		};
 
@@ -499,6 +549,27 @@ namespace MESharp.ViewModels
 			ObjectCount = AllObjects.Count;
 			OnPropertyChanged(nameof(HasObjects));
 			ObjectsView?.Refresh();
+		}
+
+		private void RefreshSelectedObjectDiagnostics()
+		{
+			if (SelectedObject == null)
+			{
+				SelectedTileHasObjects = false;
+				SelectedTileHasAnyGroundItems = false;
+				SelectedTileHasMatchingGroundItem = false;
+				SelectedProjectileDestination = string.Empty;
+				return;
+			}
+
+			var tile = new WorldPoint(SelectedObject.TileX, SelectedObject.TileY, SelectedObject.TileZ);
+			SelectedTileHasObjects = Objects.HasObjectsAtTile(tile);
+			SelectedTileHasAnyGroundItems = GroundItems.HasItemsAtTile(tile);
+			SelectedTileHasMatchingGroundItem = SelectedObject.Type == (int)Objects.ObjectKind.GroundItem
+				&& GroundItems.HasItemAtTile(tile, SelectedObject.Id);
+			SelectedProjectileDestination = SelectedObject.IsProjectile
+				? SelectedObject.ProjectileDestination.ToString()
+				: string.Empty;
 		}
 
 		private void OnTypeOptionPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -633,6 +704,9 @@ namespace MESharp.ViewModels
 						GameObjectType.Object => true,
 						GameObjectType.NPC => true,
 						GameObjectType.GroundItem => true,
+						GameObjectType.Object12 => true,
+						GameObjectType.Object13 => true,
+						GameObjectType.Object17 => true,
 						_ => false
 					};
 				}
@@ -725,7 +799,8 @@ namespace MESharp.ViewModels
 
 			// Objects-specific filters
 			if (OnlyInteractable &&
-				(go.Type == (int)Objects.ObjectKind.Object || go.Type == (int)Objects.ObjectKind.Object12) &&
+				(go.Type == (int)Objects.ObjectKind.Object || go.Type == (int)Objects.ObjectKind.Object12 ||
+				 go.Type == (int)Objects.ObjectKind.Object13 || go.Type == (int)Objects.ObjectKind.Object17) &&
 				string.IsNullOrWhiteSpace(go.Action))
 				return false;
 

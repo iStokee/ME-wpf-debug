@@ -24,6 +24,7 @@ namespace MESharp.ViewModels
     public sealed class DoActionSignalsViewModel : INotifyPropertyChanged, IActivatableViewModel, IDisposable
     {
         private readonly DispatcherTimer _timer;
+        private readonly EventHandler _timerTickHandler;
         private bool _isActive;
         private bool _disposed;
         private int _maxCount = 100;
@@ -128,13 +129,8 @@ namespace MESharp.ViewModels
             {
                 Interval = TimeSpan.FromMilliseconds(750)
             };
-            _timer.Tick += (_, _) =>
-            {
-                if (_isActive && AutoRefresh)
-                {
-                    RefreshSignals();
-                }
-            };
+            _timerTickHandler = OnTimerTick;
+            _timer.Tick += _timerTickHandler;
 
             RefreshSignals();
         }
@@ -242,7 +238,16 @@ namespace MESharp.ViewModels
             }
 
             _timer.Stop();
+            _timer.Tick -= _timerTickHandler;
             _disposed = true;
+        }
+
+        private void OnTimerTick(object? sender, EventArgs e)
+        {
+            if (_isActive && AutoRefresh)
+            {
+                RefreshSignals();
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

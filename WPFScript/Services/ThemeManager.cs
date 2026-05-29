@@ -20,7 +20,7 @@ namespace MESharp.Services
 
         private static Uri GetThemePackUri(string relative)
         {
-            var asm = Application.ResourceAssembly ?? typeof(ThemeManager).Assembly;
+            var asm = typeof(ThemeManager).Assembly;
             var asmName = asm.GetName().Name;
             return new Uri($"pack://application:,,,/{asmName};component/{relative}", UriKind.Absolute);
         }

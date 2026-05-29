@@ -145,6 +145,8 @@ namespace MESharp.ViewModels
 		// ─── Summary Stats ───────────────────────────────────────────────────
 		private int _itemCount;
 		private string _statusMessage;
+		private ulong _selectedContainerAddress;
+		private int _selectedContainerOccupiedSlots;
 
 		public int ItemCount
 		{
@@ -156,6 +158,18 @@ namespace MESharp.ViewModels
 		{
 			get => _statusMessage;
 			set => SetProperty(ref _statusMessage, value);
+		}
+
+		public ulong SelectedContainerAddress
+		{
+			get => _selectedContainerAddress;
+			set => SetProperty(ref _selectedContainerAddress, value);
+		}
+
+		public int SelectedContainerOccupiedSlots
+		{
+			get => _selectedContainerOccupiedSlots;
+			set => SetProperty(ref _selectedContainerOccupiedSlots, value);
 		}
 
 		// ─── Container-specific visibility ──────────────────────────────────
@@ -506,6 +520,8 @@ namespace MESharp.ViewModels
 				{
 					Items.Clear();
 				SelectedItem = null;
+				SelectedContainerAddress = 0;
+				SelectedContainerOccupiedSlots = 0;
 				ItemCount = 0;
 				StatusMessage = "Cleared.";
 			});
@@ -638,6 +654,9 @@ namespace MESharp.ViewModels
 				SelectedItem = null;
 
 				var items = ItemContainers.Read(SelectedContainer, IncludeCoordinates);
+				var settings = ItemContainers.GetSettings((int)SelectedContainer).FirstOrDefault();
+				SelectedContainerAddress = settings?.Address ?? 0;
+				SelectedContainerOccupiedSlots = settings?.OccupiedSlots ?? 0;
 
 				foreach (var item in items)
 				{

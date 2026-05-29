@@ -151,6 +151,8 @@ namespace MESharp.ViewModels
         private bool _isRunEnabled;
         private bool _isRunEnabledAlt;
         private bool _isQuickPrayerEnabled;
+        private bool _isBeingTargetedByNpc;
+        private bool _isBeingTargetedByPlayer;
         private string _targetName = "";
         private int _targetHitChancePercent;
         private int _targetCombatLevel;
@@ -308,6 +310,18 @@ namespace MESharp.ViewModels
             set { _isQuickPrayerEnabled = value; OnPropertyChanged(); }
         }
 
+        public bool IsBeingTargetedByNpc
+        {
+            get => _isBeingTargetedByNpc;
+            set { _isBeingTargetedByNpc = value; OnPropertyChanged(); }
+        }
+
+        public bool IsBeingTargetedByPlayer
+        {
+            get => _isBeingTargetedByPlayer;
+            set { _isBeingTargetedByPlayer = value; OnPropertyChanged(); }
+        }
+
         public string TargetName
         {
             get => _targetName;
@@ -441,6 +455,8 @@ namespace MESharp.ViewModels
                     IsRunEnabled = false;
                     IsRunEnabledAlt = false;
                     IsQuickPrayerEnabled = false;
+                    IsBeingTargetedByNpc = false;
+                    IsBeingTargetedByPlayer = false;
                     TargetName = string.Empty;
                     TargetHitChancePercent = 0;
                     TargetCombatLevel = 0;
@@ -485,6 +501,8 @@ namespace MESharp.ViewModels
                     IsRunEnabled = LocalPlayer.IsRunEnabled();
                     IsRunEnabledAlt = LocalPlayer.IsRunEnabledAlt();
                     IsQuickPrayerEnabled = LocalPlayer.IsQuickPrayerEnabled();
+                    IsBeingTargetedByNpc = LocalPlayer.IsBeingTargetedByNpc();
+                    IsBeingTargetedByPlayer = LocalPlayer.IsBeingTargetedByPlayer();
 
                     var target = LocalPlayer.GetTarget();
                     TargetName = target.Name;

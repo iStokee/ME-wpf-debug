@@ -93,10 +93,10 @@
                 <Border Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource Card}">
                 <StackPanel>
                     <TextBlock FontWeight="SemiBold" Text="How To Use" />
-                    <TextBlock Margin="0,4,0,0" Style="{StaticResource HintText}" Text="1) Pick a route in the catalog or create a new one." />
-                    <TextBlock Style="{StaticResource HintText}" Text="2) Build/edit waypoints in the middle column and save." />
-                    <TextBlock Style="{StaticResource HintText}" Text="3) Use the right column to edit selected waypoint details and run routes." />
-                    <TextBlock Style="{StaticResource HintText}" Text="Tip: transition waypoints are for ladders/gates/doors (supply object IDs when needed)." />
+                    <TextBlock Margin="0,4,0,0" Style="{StaticResource HintText}" Text="Use the left column to search the route catalog, review existing paths, and load a route into the editor." />
+                    <TextBlock Style="{StaticResource HintText}" Text="Use the middle column to define route metadata, build the waypoint list, and save a reusable route definition." />
+                    <TextBlock Style="{StaticResource HintText}" Text="Use the right column for waypoint editing. Most routes only need position and label; open Advanced Waypoint Settings only when timing, radius, or transition handling needs tuning." />
+                    <TextBlock Style="{StaticResource HintText}" Text="The top-right ? opens the full guide with API examples and route concepts. Transition waypoints are intended for ladders, gates, and doors when object IDs matter." />
                 </StackPanel>
             </Border>
 
@@ -118,20 +118,8 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" Margin="0,0,0,8">
-                            <DockPanel>
-                                <StackPanel DockPanel.Dock="Left">
-                                    <TextBlock FontWeight="SemiBold" Text="Step 1: Route Catalog" />
-                                    <TextBlock Margin="0,2,0,6" Style="{StaticResource HintText}" Text="Search by route name, category, or tags." />
-                                </StackPanel>
-                                <Button
-                                    Width="24"
-                                    Height="24"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Content="?"
-                                    ToolTip="Pick a route from library, then load it into editor. Use New Draft to start from scratch."
-                                    Style="{StaticResource SecondaryCommandButton}" />
-                            </DockPanel>
+                            <TextBlock FontWeight="SemiBold" Text="Step 1: Route Catalog" />
+                            <TextBlock Margin="0,2,0,6" Style="{StaticResource HintText}" Text="Search by route name, category, or tags." />
                             <TextBox Padding="6" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
 
@@ -173,20 +161,10 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <DockPanel Grid.Row="0" Margin="0,0,0,8">
-                            <StackPanel DockPanel.Dock="Left">
-                                <TextBlock FontWeight="SemiBold" Text="Step 2: Route Setup" />
-                                <TextBlock Margin="0,2,0,6" Style="{StaticResource HintText}" Text="Define route metadata. Use stable names for scripts (e.g. core.wildy_wall.to_green_dragons)." />
-                            </StackPanel>
-                            <Button
-                                Width="24"
-                                Height="24"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Content="?"
-                                ToolTip="Name is the primary script reference. Category and tags help scripts discover routes dynamically."
-                                Style="{StaticResource SecondaryCommandButton}" />
-                        </DockPanel>
+                        <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                            <TextBlock FontWeight="SemiBold" Text="Step 2: Route Setup" />
+                            <TextBlock Margin="0,2,0,6" Style="{StaticResource HintText}" Text="Define route metadata. Use stable names for scripts (e.g. core.wildy_wall.to_green_dragons)." />
+                        </StackPanel>
 
                         <Grid Grid.Row="1" Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
@@ -259,18 +237,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <DockPanel>
-                            <TextBlock FontWeight="SemiBold" Text="Step 3: Waypoint + Execution" />
-                            <Button
-                                Width="24"
-                                Height="24"
-                                Margin="8,0,0,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
-                                Content="?"
-                                ToolTip="Edit selected waypoint here. Save route before running so scripts consume the latest metadata."
-                                Style="{StaticResource SecondaryCommandButton}" />
-                        </DockPanel>
+                        <TextBlock FontWeight="SemiBold" Text="Step 3: Waypoint + Execution" />
                         <TextBlock Grid.Row="1" Margin="0,2,0,8" Style="{StaticResource HintText}" Text="Edit selected waypoint, then save route and run current or selected route." />
 
                         <StackPanel Grid.Row="2">

@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:MESharp.Views"
+    xmlns:conv="clr-namespace:MESharp.Converters"
     xmlns:controls="clr-namespace:MESharp.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:MESharp.Models"
@@ -15,6 +16,9 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+
         <!--  Code Block Style  -->
         <Style x:Key="CodeBlockStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Consolas, Courier New" />
