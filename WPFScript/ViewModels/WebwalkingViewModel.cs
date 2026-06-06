@@ -756,7 +756,48 @@ namespace MESharp.ViewModels
                 return;
             }
 
-            _ = RunRouteAsync(route.Name, route.Waypoints.Select(CloneWaypoint).ToList());
+            _ = RunSavedRouteAsync(route.Id, route.Name);
+        }
+
+        private async Task RunSavedRouteAsync(string routeId, string routeName)
+        {
+            if (_disposed || IsRunning) return;
+
+            _runCts?.Cancel();
+            _runCts?.Dispose();
+            _runCts = new CancellationTokenSource();
+            var ct = _runCts.Token;
+
+            IsRunning = true;
+            RunStatus = $"Running {routeName}";
+            AddLog($"Route run started: {routeName}");
+
+            try
+            {
+                var result = await Webwalking.RunRouteDetailedAsync(routeId, ct);
+
+                LastStatus = result.Status switch
+                {
+                    WebwalkingRunStatus.Success => $"Route '{result.RouteName}' completed.",
+                    WebwalkingRunStatus.Cancelled => $"Route '{result.RouteName}' cancelled.",
+                    WebwalkingRunStatus.RouteNotFound => $"Route '{routeId}' not found — save it first.",
+                    WebwalkingRunStatus.WaypointTimeout => $"Route '{result.RouteName}' timed out at waypoint {result.WaypointIndex + 1} ({result.WaypointLabel}).",
+                    _ => $"Route '{result.RouteName}': {result.Message}"
+                };
+                AddLog(LastStatus);
+            }
+            catch (Exception ex)
+            {
+                LastStatus = $"Route '{routeName}' error: {ex.Message}";
+                AddLog(LastStatus);
+            }
+            finally
+            {
+                IsRunning = false;
+                RunStatus = "Idle";
+                _runCts?.Dispose();
+                _runCts = null;
+            }
         }
 
         private async Task RunRouteAsync(string routeName, IReadOnlyList<RouteWaypoint> waypoints)

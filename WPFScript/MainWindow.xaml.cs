@@ -33,7 +33,7 @@ namespace MESharp
 	/// </summary>
     public partial class MainWindow
     {
-		private Guid? _orbitSessionId;
+        private Guid? _orbitSessionId;
         private IntPtr _windowHandle = IntPtr.Zero;
         private bool _nativeWindowRegistered;
         private static readonly bool EnableOrbitDocking =
