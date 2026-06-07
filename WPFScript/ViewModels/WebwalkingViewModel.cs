@@ -18,7 +18,6 @@ namespace MESharp.ViewModels
     {
         private readonly DispatcherTimer _refreshTimer;
         private readonly NotifyCollectionChangedEventHandler _currentRouteChangedHandler;
-        private readonly Random _random = new();
         private CancellationTokenSource? _runCts;
         private bool _isActive;
         private bool _disposed;
@@ -744,7 +743,8 @@ namespace MESharp.ViewModels
                 return;
             }
 
-            _ = RunRouteAsync(RouteName, CurrentRoute.Select(CloneWaypoint).ToList());
+            var waypoints = CurrentRoute.Select(ToWebwalkingWaypoint).ToList();
+            _ = RunDraftRouteAsync(RouteName, waypoints);
         }
 
         private void RunSelectedRoute()
@@ -775,15 +775,7 @@ namespace MESharp.ViewModels
             try
             {
                 var result = await Webwalking.RunRouteDetailedAsync(routeId, ct);
-
-                LastStatus = result.Status switch
-                {
-                    WebwalkingRunStatus.Success => $"Route '{result.RouteName}' completed.",
-                    WebwalkingRunStatus.Cancelled => $"Route '{result.RouteName}' cancelled.",
-                    WebwalkingRunStatus.RouteNotFound => $"Route '{routeId}' not found — save it first.",
-                    WebwalkingRunStatus.WaypointTimeout => $"Route '{result.RouteName}' timed out at waypoint {result.WaypointIndex + 1} ({result.WaypointLabel}).",
-                    _ => $"Route '{result.RouteName}': {result.Message}"
-                };
+                LastStatus = FormatRouteResult(result);
                 AddLog(LastStatus);
             }
             catch (Exception ex)
@@ -800,12 +792,9 @@ namespace MESharp.ViewModels
             }
         }
 
-        private async Task RunRouteAsync(string routeName, IReadOnlyList<RouteWaypoint> waypoints)
+        private async Task RunDraftRouteAsync(string draftName, IReadOnlyList<WebwalkingWaypoint> waypoints)
         {
-            if (_disposed || IsRunning)
-            {
-                return;
-            }
+            if (_disposed || IsRunning) return;
 
             _runCts?.Cancel();
             _runCts?.Dispose();
@@ -813,52 +802,18 @@ namespace MESharp.ViewModels
             var ct = _runCts.Token;
 
             IsRunning = true;
-            RunStatus = $"Running {routeName}";
-            AddLog($"Route run started: {routeName} ({waypoints.Count} waypoints)");
+            RunStatus = $"Running {draftName}";
+            AddLog($"Draft run started: {draftName} ({waypoints.Count} waypoints)");
 
             try
             {
-                for (var i = 0; i < waypoints.Count; i++)
-                {
-                    ct.ThrowIfCancellationRequested();
-
-                    var waypoint = waypoints[i];
-                    waypoint.Normalize();
-                    RunStatus = $"WP {i + 1}/{waypoints.Count}: {waypoint}";
-
-                    var dispatched = waypoint.IsTransition
-                        ? TryExecuteTransitionWaypoint(waypoint)
-                        : TryExecuteWalkWaypoint(waypoint);
-
-                    if (!dispatched)
-                    {
-                        LastStatus = $"Route '{routeName}' failed to dispatch waypoint {i + 1}.";
-                        AddLog(LastStatus);
-                        return;
-                    }
-
-                    var reached = await WaitForWaypointAsync(waypoint, ct);
-                    if (!reached)
-                    {
-                        LastStatus = $"Route '{routeName}' timed out at waypoint {i + 1}.";
-                        AddLog(LastStatus);
-                        return;
-                    }
-
-                    await Task.Delay(100, ct);
-                }
-
-                LastStatus = $"Route '{routeName}' completed ({waypoints.Count} waypoints).";
-                AddLog(LastStatus);
-            }
-            catch (OperationCanceledException)
-            {
-                LastStatus = $"Route '{routeName}' cancelled.";
+                var result = await Webwalking.RunRouteDetailedAsync(waypoints, draftName, ct);
+                LastStatus = FormatRouteResult(result);
                 AddLog(LastStatus);
             }
             catch (Exception ex)
             {
-                LastStatus = $"Route '{routeName}' error: {ex.Message}";
+                LastStatus = $"Draft '{draftName}' error: {ex.Message}";
                 AddLog(LastStatus);
             }
             finally
@@ -870,71 +825,18 @@ namespace MESharp.ViewModels
             }
         }
 
-        private bool TryExecuteWalkWaypoint(RouteWaypoint waypoint)
+        private static WebwalkingWaypoint ToWebwalkingWaypoint(RouteWaypoint wp) => new()
         {
-            var clickX = waypoint.X;
-            var clickY = waypoint.Y;
-
-            if (waypoint.AreaRadius > 0)
-            {
-                clickX += _random.Next(-waypoint.AreaRadius, waypoint.AreaRadius + 1);
-                clickY += _random.Next(-waypoint.AreaRadius, waypoint.AreaRadius + 1);
-            }
-
-            return Traversal.ClickTo(clickX, clickY, waypoint.Z, waypoint.JitterTiles);
-        }
-
-        private bool TryExecuteTransitionWaypoint(RouteWaypoint waypoint)
-        {
-            if (waypoint.TransitionObjectIds?.Count > 0)
-            {
-                var candidate = Objects.GetAll()
-                    .Where(o => (o.Type == (int)Objects.ObjectKind.Object ||
-                                 o.Type == (int)Objects.ObjectKind.Object12 ||
-                                 o.Type == (int)Objects.ObjectKind.Object13 ||
-                                 o.Type == (int)Objects.ObjectKind.Object17)
-                                && waypoint.TransitionObjectIds.Contains(o.Id)
-                                && o.Distance <= 12)
-                    .OrderBy(o => o.Distance)
-                    .FirstOrDefault();
-
-                if (candidate != null)
-                {
-                    return Objects.DoActionByIds(new[] { candidate.Id }, 1, Objects.Offsets.GeneralRoute0, 12);
-                }
-            }
-
-            return TryExecuteWalkWaypoint(waypoint);
-        }
-
-        private async Task<bool> WaitForWaypointAsync(RouteWaypoint waypoint, CancellationToken ct)
-        {
-            var start = Environment.TickCount64;
-            var timeout = Math.Max(1000, waypoint.TimeoutMs);
-
-            while (!ct.IsCancellationRequested && Environment.TickCount64 - start <= timeout)
-            {
-                var tile = LocalPlayer.GetTilePosition();
-                var inArea = waypoint.IsWithinArea(tile.x, tile.y, tile.z);
-                var dx = Math.Abs(waypoint.X - tile.x);
-                var dy = Math.Abs(waypoint.Y - tile.y);
-                var withinDistance = Math.Max(dx, dy) <= Math.Max(0, waypoint.ArrivalDistance);
-
-                if (inArea && withinDistance)
-                {
-                    return true;
-                }
-
-                if (waypoint.ChainWhileMoving && inArea && LocalPlayer.IsMoving())
-                {
-                    return true;
-                }
-
-                await Task.Delay(90, ct);
-            }
-
-            return false;
-        }
+            Label = wp.Label,
+            Point = new WorldPoint(wp.X, wp.Y, wp.Z),
+            AreaRadius = wp.AreaRadius,
+            ArrivalDistance = wp.ArrivalDistance,
+            TimeoutMs = wp.TimeoutMs,
+            JitterTiles = wp.JitterTiles,
+            ChainWhileMoving = wp.ChainWhileMoving,
+            IsTransition = wp.IsTransition,
+            TransitionObjectIds = wp.TransitionObjectIds?.ToArray() ?? Array.Empty<int>()
+        };
 
         private void StopRun()
         {
@@ -1081,6 +983,18 @@ namespace MESharp.ViewModels
                 ActivityLog.RemoveAt(ActivityLog.Count - 1);
             }
         }
+
+        private static string FormatRouteResult(WebwalkingRunResult result) => result.Status switch
+        {
+            WebwalkingRunStatus.Success => $"Route '{result.RouteName}' completed.",
+            WebwalkingRunStatus.Cancelled => $"Route '{result.RouteName}' cancelled.",
+            WebwalkingRunStatus.RouteNotFound => $"Route '{result.RouteId}' not found — save it first.",
+            WebwalkingRunStatus.RouteDisabled => $"Route '{result.RouteName}' is disabled.",
+            WebwalkingRunStatus.EmptyRoute => $"Route '{result.RouteName}' has no waypoints.",
+            WebwalkingRunStatus.DispatchFailed => $"Route '{result.RouteName}' failed to dispatch waypoint {result.WaypointIndex + 1} ({result.WaypointLabel}).",
+            WebwalkingRunStatus.WaypointTimeout => $"Route '{result.RouteName}' timed out at waypoint {result.WaypointIndex + 1} ({result.WaypointLabel}).",
+            _ => $"Route '{result.RouteName}': {result.Message}"
+        };
 
         private bool PersistRoutesWithFeedback()
         {

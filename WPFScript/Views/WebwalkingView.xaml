@@ -69,7 +69,7 @@
                         <iconPacks:PackIconMaterial Width="20" Height="20" Margin="0,0,8,0" Foreground="{DynamicResource PrimaryBrush}" Kind="MapSearch" />
                         <StackPanel>
                             <TextBlock FontSize="16" FontWeight="SemiBold" Text="Webwalking Tooling" />
-                            <TextBlock Style="{StaticResource HintText}" Text="Route planning and execution surface. Use this tab to build reusable travel chains; use Navigation for low-level API tests." />
+                            <TextBlock Style="{StaticResource HintText}" Text="Linear route authoring and execution surface. Use Graph for node/edge topology, and Navigation for low-level API tests." />
                         </StackPanel>
                     </StackPanel>
 

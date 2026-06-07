@@ -17,6 +17,7 @@ namespace MESharp.ViewModels
         Players,
         Navigation,
         Webwalking,
+        GraphEditor,
         ItemsUnified,
         GrandExchange,
         ObjectsUnified,
@@ -57,6 +58,7 @@ namespace MESharp.ViewModels
                     OnPropertyChanged(nameof(IsPlayersSelected));
                     OnPropertyChanged(nameof(IsNavigationSelected));
                     OnPropertyChanged(nameof(IsWebwalkingSelected));
+                    OnPropertyChanged(nameof(IsGraphEditorSelected));
                     OnPropertyChanged(nameof(IsItemsUnifiedSelected));
                     OnPropertyChanged(nameof(IsGrandExchangeSelected));
                     OnPropertyChanged(nameof(IsObjectsUnifiedSelected));
@@ -82,6 +84,7 @@ namespace MESharp.ViewModels
         public bool IsPlayersSelected => CurrentPage == AppPage.Players;
         public bool IsNavigationSelected => CurrentPage == AppPage.Navigation;
         public bool IsWebwalkingSelected => CurrentPage == AppPage.Webwalking;
+        public bool IsGraphEditorSelected => CurrentPage == AppPage.GraphEditor;
         public bool IsItemsUnifiedSelected => CurrentPage == AppPage.ItemsUnified;
         public bool IsGrandExchangeSelected => CurrentPage == AppPage.GrandExchange;
         public bool IsObjectsUnifiedSelected => CurrentPage == AppPage.ObjectsUnified;
@@ -99,6 +102,7 @@ namespace MESharp.ViewModels
         public ICommand ShowPlayersCommand { get; }
         public ICommand ShowNavigationCommand { get; }
         public ICommand ShowWebwalkingCommand { get; }
+        public ICommand ShowGraphEditorCommand { get; }
         public ICommand ShowItemsUnifiedCommand { get; }
         public ICommand ShowGrandExchangeCommand { get; }
         public ICommand ShowObjectsUnifiedCommand { get; }
@@ -128,6 +132,7 @@ namespace MESharp.ViewModels
             ShowPlayersCommand        = new RelayCommand(_ => ShowPlayers());
             ShowNavigationCommand     = new RelayCommand(_ => ShowNavigation());
             ShowWebwalkingCommand     = new RelayCommand(_ => ShowWebwalking());
+            ShowGraphEditorCommand    = new RelayCommand(_ => ShowGraphEditor());
             ShowItemsUnifiedCommand   = new RelayCommand(_ => ShowItemsUnified());
             ShowGrandExchangeCommand  = new RelayCommand(_ => ShowGrandExchange());
             ShowObjectsUnifiedCommand = new RelayCommand(_ => ShowObjectsUnified());
@@ -163,6 +168,7 @@ namespace MESharp.ViewModels
         private void ShowPlayers() => SwitchView(AppPage.Players, () => new PlayersViewModel());
         private void ShowNavigation() => SwitchView(AppPage.Navigation, () => new NavigationViewModel());
         private void ShowWebwalking() => SwitchView(AppPage.Webwalking, () => new WebwalkingViewModel());
+        private void ShowGraphEditor() => SwitchView(AppPage.GraphEditor, () => new WebwalkGraphViewModel());
         private void ShowItemsUnified() => SwitchView(AppPage.ItemsUnified, () => new ItemsUnifiedViewModel());
         private void ShowGrandExchange() => SwitchView(AppPage.GrandExchange, () => new GrandExchangeViewModel());
         private void ShowObjectsUnified() => SwitchView(AppPage.ObjectsUnified, () => new ObjectsUnifiedViewModel());
@@ -214,6 +220,7 @@ namespace MESharp.ViewModels
                     return;
                 case "Traversal":
                 case "Movement":
+                case "Navigation":
                 case "LodestoneData":
                 case "Teleports":
                 case "Minimap":
@@ -224,6 +231,13 @@ namespace MESharp.ViewModels
                 case "WebwalkingRoute":
                 case "WebwalkingWaypoint":
                     ShowWebwalking();
+                    return;
+                case "WebwalkGraph":
+                case "WebwalkGraphNode":
+                case "WebwalkGraphEdge":
+                case "WebwalkProfile":
+                case "WebwalkAuthoring":
+                    ShowGraphEditor();
                     return;
                 case "Inventory":
                 case "ItemContainers":

@@ -213,6 +213,9 @@
             <DataTemplate DataType="{x:Type vm:WebwalkingViewModel}">
                 <views:WebwalkingView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:WebwalkGraphViewModel}">
+                <views:WebwalkGraphView />
+            </DataTemplate>
             <!--<DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
                 <views:EquipmentView />
             </DataTemplate>-->
@@ -478,6 +481,20 @@
                                     Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
                                     Kind="MapSearch" />
                                 <TextBlock Text="Webwalking" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            Margin="5,0,5,0"
+                            Command="{Binding ShowGraphEditorCommand}"
+                            IsChecked="{Binding IsGraphEditorSelected, Mode=OneWay}"
+                            ToolTip="Graph node/edge recorder and editor">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                    Kind="Graph" />
+                                <TextBlock Text="Graph" />
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton
