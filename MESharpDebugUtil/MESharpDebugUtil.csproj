@@ -1,0 +1,82 @@
+﻿
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>annotations</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AssemblyName>MESharp_DebugUtil</AssemblyName>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command=":: ensure the target folder exists&#xD;&#xA;if not exist &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot; (&#xD;&#xA;  mkdir &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:: copy the freshly built DLL&#xD;&#xA;xcopy /Y /I &quot;$(TargetPath)&quot; &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;&#xD;&#xA;:: WebView2 native loader for the in-app map (managed WebView2 dlls are Costura-embedded; the loader cannot be)&#xD;&#xA;if exist &quot;$(OutputPath)runtimes\win-x64\native\WebView2Loader.dll&quot; (&#xD;&#xA;  xcopy /Y /I &quot;$(OutputPath)runtimes\win-x64\native\WebView2Loader.dll&quot; &quot;%25USERPROFILE%25\MemoryError\CSharp_scripts\&quot;&#xD;&#xA;)" />
+  </Target>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\EquipmentViewModel.cs" />
+    <Compile Remove="ViewModels\LootViewModel.cs" />
+    <Compile Remove="ViewModels\MaterialCacheViewModel.cs" />
+    <Compile Remove="ViewModels\TradeWindowViewModel.cs" />
+    <Compile Remove="Views\EquipmentView.xaml.cs" />
+    <Compile Remove="Views\LootView.xaml.cs" />
+    <Compile Remove="Views\MaterialCacheView.xaml.cs" />
+    <Compile Remove="Views\SlayerDebug.xaml.cs" />
+    <Compile Remove="Views\TradeWindowView.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Views\EquipmentView.xaml" />
+    <Page Remove="Views\LootView.xaml" />
+    <Page Remove="Views\MaterialCacheView.xaml" />
+    <Page Remove="Views\SlayerDebug.xaml" />
+    <Page Remove="Views\TradeWindowView.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Fody" Version="6.9.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MahApps.Metro" Version="2.4.11" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0" />
+    <PackageReference Include="McMaster.NETCore.Plugins" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Classes\" />
+  </ItemGroup>
+
+  <!-- Copy XML docs next to the debug util so the API browser can show summaries/params/returns. -->
+  <ItemGroup>
+    <None Include="..\..\..\..\ME\x64\Build_DLL\csharp_interop.xml" Condition="Exists('..\..\..\..\ME\x64\Build_DLL\csharp_interop.xml')" Link="csharp_interop.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="csharp_interop">
+      <HintPath>..\..\..\csharp_interop\bin\Debug\net10.0-windows\csharp_interop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="CopyInteropDependencies" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <HotReloadDependencies Include="@(ReferenceCopyLocalPaths)" Condition=" '%(ReferenceCopyLocalPaths.Extension)' == '.dll' " />
+    </ItemGroup>
+    <Message Importance="High" Text="[HotReload] Copying dependencies to $(OutputPath)HotReload" />
+    <MakeDir Directories="$(OutputPath)HotReload" />
+    <Copy SourceFiles="@(HotReloadDependencies)" DestinationFolder="$(OutputPath)HotReload" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

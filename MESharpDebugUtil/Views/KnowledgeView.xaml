@@ -1,0 +1,483 @@
+<UserControl
+    x:Class="MESharp.Views.KnowledgeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:MESharp.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:KnowledgeViewModel}"
+    d:DesignHeight="900"
+    d:DesignWidth="1280"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource App.CardBrush}" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style x:Key="HintText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+            <Setter Property="Margin" Value="0,0,0,3" />
+        </Style>
+        <Style x:Key="MetaLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="Foreground" Value="{DynamicResource App.SubtleForegroundBrush}" />
+        </Style>
+
+        <!-- Status color dot style -->
+        <Style x:Key="StatusDot" TargetType="Ellipse">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Fill" Value="#888888" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,8" Style="{StaticResource Card}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Width="20" Height="20" Margin="0,0,8,0" Foreground="{DynamicResource PrimaryBrush}" Kind="Brain" />
+                    <StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Knowledge Dashboard" />
+                        <TextBlock Style="{StaticResource HintText}" Text="{Binding StorePath}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Margin="0,0,6,0" Command="{Binding NewCommand}" Style="{StaticResource SecondaryCommandButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14" Height="14" Margin="0,0,5,0" Kind="Plus" />
+                            <TextBlock Text="New" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryCommandButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Width="14" Height="14" Margin="0,0,5,0" Kind="Refresh" />
+                            <TextBlock Text="Refresh" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <TextBlock Margin="18,0,14,0" VerticalAlignment="Center" FontFamily="Consolas" Style="{StaticResource HintText}" Text="{Binding LastStatus}" TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" MinWidth="300" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="1.9*" MinWidth="480" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Filters + List -->
+            <Border Grid.Column="0" Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <!-- View preset row -->
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="View Preset" />
+                                <ComboBox ItemsSource="{Binding ViewPresets}" SelectedItem="{Binding ViewPreset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+                                <CheckBox Content="Blocking" IsChecked="{Binding BlockingFilter, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4" VerticalAlignment="Bottom">
+                                <CheckBox Content="Question Debt" IsChecked="{Binding QuestionDebtFilter, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Search -->
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Search" />
+                        <TextBox Margin="0,0,0,8" Padding="6" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <!-- Facet filters row 1 -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Category" />
+                                <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding CategoryFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Status" />
+                                <ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding StatusFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Kind" />
+                                <ComboBox ItemsSource="{Binding Kinds}" SelectedItem="{Binding KindFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Facet filters row 2 -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Target" />
+                                <ComboBox ItemsSource="{Binding Targets}" SelectedItem="{Binding TargetFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Time Horizon" />
+                                <ComboBox ItemsSource="{Binding TimeHorizons}" SelectedItem="{Binding TimeHorizonFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Item list with status color indicators -->
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="6,4" Margin="0,0,0,2">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Status color dot (spec-compliant colors) -->
+                                        <Ellipse Grid.Column="0">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse" BasedOn="{StaticResource StatusDot}">
+                                                    <Style.Triggers>
+                                                        <!-- open → Blue -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="open">
+                                                            <Setter Property="Fill" Value="#2196F3" />
+                                                        </DataTrigger>
+                                                        <!-- investigating → Yellow -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="investigating">
+                                                            <Setter Property="Fill" Value="#FFEB3B" />
+                                                        </DataTrigger>
+                                                        <!-- partial → Yellow-orange -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="partial">
+                                                            <Setter Property="Fill" Value="#FFC107" />
+                                                        </DataTrigger>
+                                                        <!-- waiting-user → Orange -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="waiting-user">
+                                                            <Setter Property="Fill" Value="#FF9800" />
+                                                        </DataTrigger>
+                                                        <!-- answered → Gray -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="answered">
+                                                            <Setter Property="Fill" Value="#9E9E9E" />
+                                                        </DataTrigger>
+                                                        <!-- validated → Green -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="validated">
+                                                            <Setter Property="Fill" Value="#4CAF50" />
+                                                        </DataTrigger>
+                                                        <!-- promoted → Green -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="promoted">
+                                                            <Setter Property="Fill" Value="#66BB6A" />
+                                                        </DataTrigger>
+                                                        <!-- stale → Gray -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="stale">
+                                                            <Setter Property="Fill" Value="#9E9E9E" />
+                                                        </DataTrigger>
+                                                        <!-- archived → Dim -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="archived">
+                                                            <Setter Property="Fill" Value="#546E7A" />
+                                                        </DataTrigger>
+                                                        <!-- draft → Blue-gray -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="draft">
+                                                            <Setter Property="Fill" Value="#78909C" />
+                                                        </DataTrigger>
+                                                        <!-- active → Blue -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="active">
+                                                            <Setter Property="Fill" Value="#42A5F5" />
+                                                        </DataTrigger>
+                                                        <!-- failed → Red -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="failed">
+                                                            <Setter Property="Fill" Value="#D32F2F" />
+                                                        </DataTrigger>
+                                                        <!-- deprecated → Red-orange -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="deprecated">
+                                                            <Setter Property="Fill" Value="#EF5350" />
+                                                        </DataTrigger>
+                                                        <!-- Blocking override → Red dot when Blocking=true -->
+                                                        <DataTrigger Binding="{Binding Blocking}" Value="True">
+                                                            <Setter Property="Fill" Value="#F44336" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                        <StackPanel Grid.Column="1">
+                                            <!-- Title with status-based text styling -->
+                                            <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                                        <Style.Triggers>
+                                                            <!-- promoted → Bold + Green -->
+                                                            <DataTrigger Binding="{Binding Status}" Value="promoted">
+                                                                <Setter Property="FontWeight" Value="Bold" />
+                                                                <Setter Property="Foreground" Value="#66BB6A" />
+                                                            </DataTrigger>
+                                                            <!-- stale → Italic + Gray -->
+                                                            <DataTrigger Binding="{Binding Status}" Value="stale">
+                                                                <Setter Property="FontStyle" Value="Italic" />
+                                                                <Setter Property="Foreground" Value="#9E9E9E" />
+                                                            </DataTrigger>
+                                                            <!-- archived → Dimmed -->
+                                                            <DataTrigger Binding="{Binding Status}" Value="archived">
+                                                                <Setter Property="Opacity" Value="0.45" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
+                                                <TextBlock FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="{Binding Category}" />
+                                                <TextBlock Margin="6,0,0,0" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="{Binding Kind}" />
+                                                <TextBlock Margin="6,0,0,0" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource App.SubtleForegroundBrush}" Text="{Binding Status}" />
+                                                <TextBlock Margin="6,0,0,0" FontFamily="Consolas" FontSize="10" Foreground="#EF5350">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Blocking}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                    <Run Text="⬛ BLOCKING" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- Right: Editor -->
+            <Border Grid.Column="2" Style="{StaticResource Card}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Core fields -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.ColumnSpan="7">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Title" />
+                                <TextBox Padding="6" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,6,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Kind" />
+                                <TextBox Text="{Binding Kind, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,6,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Category" />
+                                <TextBox Text="{Binding Category, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="4" Margin="0,6,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Status" />
+                                <TextBox Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.Column="6" Margin="0,6,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Source" />
+                                <TextBox Text="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.ColumnSpan="7" Margin="0,6,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Tags (comma-separated)" />
+                                <TextBox Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="7" Margin="0,6,0,0">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLabel}" Text="Confidence" />
+                                    <TextBlock DockPanel.Dock="Right" Width="32" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="Consolas" Text="{Binding Confidence}" />
+                                    <Slider Margin="8,0" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="{Binding Confidence, Mode=TwoWay}" />
+                                </DockPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Body -->
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Body" />
+                        <TextBox AcceptsReturn="True" MinHeight="100" MaxHeight="220" Padding="8" Text="{Binding Body, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+
+                        <!-- Extended fields (Expander) -->
+                        <Expander Margin="0,10,0,0" Header="Extended Fields" IsExpanded="False">
+                            <Grid Margin="0,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Row 0: Target, TimeHorizon, Mode -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Target" />
+                                    <TextBox Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="4" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Time Horizon" />
+                                    <TextBox Text="{Binding TimeHorizon, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="6" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Mode" />
+                                    <TextBox Text="{Binding ItemMode, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <!-- Row 1: Impact, Urgency, Blocking -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Impact (1-5)" />
+                                    <TextBox Text="{Binding Impact, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Urgency (1-5)" />
+                                    <TextBox Text="{Binding Urgency, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3" VerticalAlignment="Bottom" Margin="0,0,0,6">
+                                    <CheckBox Content="Blocking" IsChecked="{Binding IsBlocking, Mode=TwoWay}" />
+                                </StackPanel>
+
+                                <!-- Row 2: DeferReason -->
+                                <StackPanel Grid.Row="2" Grid.ColumnSpan="7" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Defer Reason" />
+                                    <TextBox Text="{Binding DeferReason, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <!-- Row 3: EvidenceSummary -->
+                                <StackPanel Grid.Row="3" Grid.ColumnSpan="7" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Evidence Summary" />
+                                    <TextBox AcceptsReturn="True" MinHeight="48" MaxHeight="80" Text="{Binding EvidenceSummary, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                                </StackPanel>
+
+                                <!-- Row 4: Related Item IDs -->
+                                <StackPanel Grid.Row="4" Grid.ColumnSpan="7" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Related Item IDs (comma-separated)" />
+                                    <TextBox Text="{Binding RelatedItemIdsText, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <!-- Row 5: Originating fields -->
+                                <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Originating Agent" />
+                                    <TextBox Text="{Binding OriginatingAgent, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="3" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Originating Task" />
+                                    <TextBox Text="{Binding OriginatingTask, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <!-- Row 6: Counts (read-only) -->
+                                <StackPanel Grid.Row="6" Grid.Column="0" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Validations" />
+                                    <TextBlock FontFamily="Consolas" Style="{StaticResource MetaLabel}" Text="{Binding ValidationCount}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="6" Grid.Column="2" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Failures" />
+                                    <TextBlock FontFamily="Consolas" Style="{StaticResource MetaLabel}" Text="{Binding FailureCount}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="6" Grid.Column="4" Margin="0,0,0,6">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Usage Count" />
+                                    <TextBlock FontFamily="Consolas" Style="{StaticResource MetaLabel}" Text="{Binding UsageCount}" />
+                                </StackPanel>
+
+                                <!-- Row 7: Timestamps (read-only) -->
+                                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,0">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Last Reviewed" />
+                                    <TextBlock FontFamily="Consolas" Style="{StaticResource MetaLabel}" Text="{Binding LastReviewedAt}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="7" Grid.Column="4" Grid.ColumnSpan="3" Margin="0,0,0,0">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Last Validated" />
+                                    <TextBlock FontFamily="Consolas" Style="{StaticResource MetaLabel}" Text="{Binding LastValidatedAt}" />
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
+
+                        <!-- Created/Updated timestamps -->
+                        <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource MetaLabel}">
+                                <Run Text="Created: " />
+                                <Run Text="{Binding CreatedUtc}" />
+                            </TextBlock>
+                            <TextBlock Margin="16,0,0,0" Style="{StaticResource MetaLabel}">
+                                <Run Text="Updated: " />
+                                <Run Text="{Binding UpdatedUtc}" />
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Action buttons -->
+                        <WrapPanel Margin="0,10,0,0">
+                            <Button Margin="0,0,6,4" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryCommandButton}" Content="Save" />
+                            <Button Margin="0,0,6,4" Command="{Binding ReviewCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Mark Reviewed" />
+                            <Button Margin="0,0,6,4" Command="{Binding PromoteTrustedCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Promote" />
+                            <Button Margin="0,0,6,4" Command="{Binding MarkDeprecatedCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Deprecate" />
+                            <Button Margin="0,0,6,4" Command="{Binding ArchiveCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Archive" />
+                            <Button Margin="0,0,0,4" Command="{Binding DeleteCommand}" Style="{StaticResource SecondaryCommandButton}" Content="Delete" />
+                        </WrapPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
